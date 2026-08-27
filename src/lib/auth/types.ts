@@ -1,6 +1,11 @@
-export const AUTH_COOKIE = "icc_wp_token";
+export const WP_TOKEN_COOKIE = "icc_wp_token";
+export const SESSION_COOKIE = "icc_session";
 
-export const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 jours
+/** Durée de session côté Next (alignée cookie) */
+export const AUTH_COOKIE_MAX_AGE = 60 * 60 * 12; // 12 heures
+
+/** Compat : ancien nom */
+export const AUTH_COOKIE = WP_TOKEN_COOKIE;
 
 export type WpJwtTokenResponse = {
   token: string;
@@ -23,4 +28,13 @@ export type WpMeResponse = {
   slug: string;
   email?: string;
   avatar_urls?: Record<string, string>;
+};
+
+export type SessionPayload = {
+  /** user id WP */
+  sub: number;
+  /** unix seconds */
+  exp: number;
+  /** slug */
+  slug: string;
 };

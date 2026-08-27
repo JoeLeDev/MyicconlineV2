@@ -37,7 +37,14 @@ export function LoginForm() {
 
       await refresh();
       const next = searchParams.get("next") || "/espace";
-      router.replace(next.startsWith("/") ? next : "/espace");
+      const safeNext =
+        next.startsWith("/") &&
+        !next.startsWith("//") &&
+        !next.includes("://") &&
+        !next.includes("\\")
+          ? next
+          : "/espace";
+      router.replace(safeNext);
       router.refresh();
     } catch {
       setError("Erreur réseau. Réessayez.");

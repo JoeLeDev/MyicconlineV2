@@ -45,6 +45,7 @@ Ouvrir [http://localhost:3000](http://localhost:3000).
 | `NEXT_PUBLIC_WP_URL` | URL du WordPress (API) | `https://myicconline.com` |
 | `NEXT_PUBLIC_WP_LOGIN_URL` | Lien « Je me connecte » (reste sur WP) | `https://myicconline.com/` |
 | `NEXT_PUBLIC_SITE_URL` | URL canonique du front (SEO / OG) | optionnel |
+| `AUTH_SECRET` | Secret HMAC session (`openssl rand -base64 48`) | **requis pour l’auth** |
 | `RESEND_API_KEY` | Clé API Resend pour le formulaire contact | optionnel |
 | `CONTACT_TO_EMAIL` | Destinataire des messages contact | `netezoua@yahoo.fr` |
 | `CONTACT_FROM_EMAIL` | Expéditeur Resend (domaine vérifié) | `ICC Online <onboarding@resend.dev>` |
@@ -79,10 +80,15 @@ Ne **pas** placer ce front dans `wp-content` / cPanel.
 
 Connexion via le plugin WordPress `jwt-auth` :
 
-- `POST /api/auth/login` → cookie httpOnly `icc_wp_token`
+- `POST /api/auth/login` → cookies httpOnly `icc_wp_token` + `icc_session` (HMAC)
+- Rate limit : 5 tentatives / 15 min / IP
+- Contrôle Origin/Referer (anti-CSRF)
+- Erreurs de login génériques (pas d’énumération d’utilisateurs)
 - `POST /api/auth/logout`
-- `GET /api/auth/me`
-- Pages : `/connexion`, `/espace` (protégée par `src/proxy.ts`)
+- `GET /api/auth/me` (revalide JWT WP + session signée)
+- Pages : `/connexion`, `/espace` (proxy vérifie la session signée)
+
+`AUTH_SECRET` est **obligatoire** (Vercel + `.env.local`).
 
 ## Contact
 

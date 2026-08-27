@@ -1,18 +1,26 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { AUTH_COOKIE } from "@/lib/auth/types";
+import { SESSION_COOKIE, WP_TOKEN_COOKIE } from "@/lib/auth/types";
+import { safeInternalPath, verifySessionToken } from "@/lib/auth/session-token";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const token = request.cookies.get(AUTH_COOKIE)?.value;
+  const session = verifySessionToken(
+    request.cookies.get(SESSION_COOKIE)?.value,
+  );
+  const hasWpToken = Boolean(request.cookies.get(WP_TOKEN_COOKIE)?.value);
+  const authenticated = Boolean(session && hasWpToken);
 
-  if (pathname.startsWith("/espace") && !token) {
+  if (pathname.startsWith("/espace") && !authenticated) {
     const loginUrl = new URL("/connexion", request.url);
-    loginUrl.searchParams.set("next", pathname);
+    loginUrl.searchParams.set(
+      "next",
+      safeInternalPath(pathname + request.nextUrl.search, "/espace"),
+    );
     return NextResponse.redirect(loginUrl);
   }
 
-  if (pathname === "/connexion" && token) {
+  if (pathname === "/connexion" && authenticated) {
     return NextResponse.redirect(new URL("/espace", request.url));
   }
 
