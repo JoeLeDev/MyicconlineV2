@@ -44,7 +44,7 @@ export function PostCard({ post, featured = false }: Props) {
               {formatFrDate(post.date)}
             </span>
             <span className="text-icc-muted normal-case tracking-normal font-medium">
-              {post.readingTimeMinutes} min
+              {post.readingTimeLabel}
             </span>
           </div>
           <h2

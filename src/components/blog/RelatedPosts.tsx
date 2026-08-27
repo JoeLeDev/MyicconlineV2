@@ -44,7 +44,7 @@ export function RelatedPosts({ posts }: Props) {
               {post.title}
             </h3>
             <p className="mt-1 text-sm text-icc-muted">
-              {formatFrDate(post.date)} · {post.readingTimeMinutes} min
+              {formatFrDate(post.date)} · {post.readingTimeLabel}
             </p>
           </Link>
         ))}

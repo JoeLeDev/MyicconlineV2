@@ -45,6 +45,24 @@ export type WpPostMeta = {
   [key: string]: unknown;
 };
 
+/** Champ REST enrichi exposé par WordPress (préféré aux fallbacks). */
+export type IccEditorialFile = {
+  id?: number;
+  url: string;
+  title?: string;
+  extension?: string;
+  filesize?: number | string;
+  mime_type?: string;
+};
+
+export type IccEditorial = {
+  youtube_url?: string | null;
+  youtube_id?: string | null;
+  files?: IccEditorialFile[];
+  /** Ex. "1 min de lecture" */
+  reading_time?: string | number | null;
+};
+
 export type WpPost = {
   id: number;
   date: string;
@@ -59,6 +77,7 @@ export type WpPost = {
   categories: number[];
   tags: number[];
   meta?: WpPostMeta;
+  icc_editorial?: IccEditorial | null;
   _embedded?: {
     author?: Array<WpAuthor | { code: string; message: string }>;
     "wp:featuredmedia"?: WpMedia[];
@@ -71,6 +90,8 @@ export type BlogAttachment = {
   title: string;
   url: string;
   mimeType: string;
+  extension?: string;
+  filesize?: number;
 };
 
 export type BlogPost = {
@@ -92,5 +113,7 @@ export type BlogPost = {
   };
   youtubeUrl?: string;
   attachments: BlogAttachment[];
+  /** Libellé d’affichage (ex. "1 min de lecture") */
+  readingTimeLabel: string;
   readingTimeMinutes: number;
 };

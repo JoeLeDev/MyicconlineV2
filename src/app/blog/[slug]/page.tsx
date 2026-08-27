@@ -62,7 +62,7 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold uppercase tracking-[0.14em] text-icc-coral">
             {post.category ? <span>{post.category.name}</span> : null}
             <span className="font-medium normal-case tracking-normal text-icc-muted">
-              {post.readingTimeMinutes} min de lecture
+              {post.readingTimeLabel}
             </span>
           </div>
 

@@ -42,18 +42,21 @@ Ouvrir [http://localhost:3000](http://localhost:3000).
 | `NEXT_PUBLIC_WP_LOGIN_URL` | Lien « Je me connecte » (reste sur WP) | `https://myicconline.com/` |
 | `NEXT_PUBLIC_SITE_URL` | URL canonique du front (SEO / OG) | optionnel |
 
-## Blog & métas WordPress
+## Blog & champ `icc_editorial`
 
-Le front consomme les posts natifs WP et lit, si exposées dans `meta` :
+Le front consomme les posts natifs WP via `/wp-json/wp/v2/posts?_embed` et privilégie le champ enrichi :
 
-- `_myicc_youtube_url` ou `usp_youtube_url` → embed YouTube
-- `_myicc_attached_files` → IDs média (PDF, etc.)
+```json
+"icc_editorial": {
+  "youtube_url": "https://www.youtube.com/watch?v=…",
+  "youtube_id": "…",
+  "files": [{ "url": "…", "title": "…", "extension": "pdf", "filesize": 12345 }],
+  "reading_time": "1 min de lecture"
+}
+```
 
-Sinon, fallback : extraction YouTube / PDF depuis le contenu HTML, et médias `parent` du post.  
+Fallbacks (si `icc_editorial` vide) : `meta._myicc_youtube_url` / `meta._myicc_attached_files`, puis extraction HTML.  
 Les images `.pdf` cassées dans le contenu HTML sont filtrées.
-
-> Pour exposer les metas custom dans l’API REST, enregistrer les champs avec `show_in_rest` côté WordPress (plugin / `register_post_meta`).
-
 ## Déploiement Vercel
 
 1. Importer le repo GitHub dans Vercel

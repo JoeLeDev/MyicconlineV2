@@ -10,6 +10,8 @@ import { estimateReadingTimeMinutes } from "../utils/reading-time";
 import type {
   BlogAttachment,
   BlogPost,
+  IccEditorial,
+  IccEditorialFile,
   WpMedia,
   WpPost,
   WpTerm,
@@ -71,31 +73,94 @@ function getYoutubeFromMeta(meta: WpPost["meta"]): string | undefined {
   return url?.trim() || undefined;
 }
 
+function getYoutubeFromEditorial(
+  editorial: IccEditorial | null | undefined,
+): string | undefined {
+  if (!editorial) return undefined;
+  const url = editorial.youtube_url?.trim();
+  if (url) return url;
+  const id = editorial.youtube_id?.trim();
+  if (id) return `https://www.youtube.com/watch?v=${id}`;
+  return undefined;
+}
+
+function parseFilesize(value: number | string | undefined): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const n = Number(value.replace(/[^\d.]/g, ""));
+    return Number.isFinite(n) ? n : undefined;
+  }
+  return undefined;
+}
+
+function mapEditorialFiles(files: IccEditorialFile[]): BlogAttachment[] {
+  return files
+    .filter((f) => Boolean(f?.url))
+    .map((f, index) => {
+      const extension = (f.extension || f.url.split(".").pop() || "")
+        .replace(/^\./, "")
+        .toLowerCase();
+      return {
+        id: f.id ?? index,
+        title: decodeHtmlEntities(f.title || `Fichier ${index + 1}`),
+        url: f.url,
+        mimeType:
+          f.mime_type ||
+          (extension === "pdf"
+            ? "application/pdf"
+            : `application/${extension || "octet-stream"}`),
+        extension: extension || undefined,
+        filesize: parseFilesize(f.filesize),
+      } satisfies BlogAttachment;
+    });
+}
+
+function formatReadingTimeLabel(
+  editorial: IccEditorial | null | undefined,
+  contentHtml: string,
+): { label: string; minutes: number } {
+  const raw = editorial?.reading_time;
+  if (typeof raw === "number" && Number.isFinite(raw) && raw > 0) {
+    const minutes = Math.round(raw);
+    return { label: `${minutes} min de lecture`, minutes };
+  }
+  if (typeof raw === "string" && raw.trim()) {
+    const label = raw.trim();
+    const match = label.match(/(\d+)/);
+    const minutes = match ? Number(match[1]) : estimateReadingTimeMinutes(contentHtml);
+    return { label, minutes: Math.max(1, minutes) };
+  }
+  const minutes = estimateReadingTimeMinutes(contentHtml);
+  return { label: `${minutes} min de lecture`, minutes };
+}
+
 async function fetchAttachmentsByIds(ids: number[]): Promise<BlogAttachment[]> {
   if (!ids.length) return [];
   const unique = [...new Set(ids)];
   const results = await Promise.all(
-    unique.map(async (id) => {
+    unique.map(async (id): Promise<BlogAttachment | null> => {
       try {
         const media = await wpFetch<WpMedia>(`/wp/v2/media/${id}`, {
           revalidate: 300,
           tags: ["wp-media"],
         });
+        const extension = media.source_url.split(".").pop()?.toLowerCase();
         return {
           id: media.id,
           title: decodeHtmlEntities(media.title?.rendered || `Fichier ${id}`),
           url: media.source_url,
           mimeType: media.mime_type || "application/octet-stream",
-        } satisfies BlogAttachment;
+          ...(extension ? { extension } : {}),
+        };
       } catch {
         return null;
       }
     }),
   );
-  return results.filter((a): a is BlogAttachment => Boolean(a));
+  return results.filter((a): a is BlogAttachment => a !== null);
 }
 
-/** Récupère les PDF attachés au post (parent) si meta absente. */
+/** Fallback : PDF attachés au post (parent) si editorial / meta absents. */
 async function fetchPdfAttachmentsForPost(
   postId: number,
 ): Promise<BlogAttachment[]> {
@@ -115,6 +180,7 @@ async function fetchPdfAttachmentsForPost(
         title: decodeHtmlEntities(m.title?.rendered || "Document PDF"),
         url: m.source_url,
         mimeType: m.mime_type || "application/pdf",
+        extension: "pdf",
       }));
   } catch {
     return [];
@@ -122,37 +188,49 @@ async function fetchPdfAttachmentsForPost(
 }
 
 export async function mapWpPostToBlogPost(post: WpPost): Promise<BlogPost> {
-  const youtubeFromMeta = getYoutubeFromMeta(post.meta);
-  const youtubeFromContent = extractYoutubeUrlFromHtml(post.content.rendered);
-  const youtubeUrl = youtubeFromMeta || youtubeFromContent;
+  const editorial = post.icc_editorial;
+
+  // Priorité : icc_editorial → meta → HTML
+  const youtubeUrl =
+    getYoutubeFromEditorial(editorial) ||
+    getYoutubeFromMeta(post.meta) ||
+    extractYoutubeUrlFromHtml(post.content.rendered);
 
   let contentHtml = stripBrokenPdfImages(post.content.rendered);
   if (youtubeUrl) {
     contentHtml = stripYoutubeEmbeds(contentHtml);
   }
 
-  const metaIds = parseAttachedFileIds(post.meta);
-  let attachments =
-    metaIds.length > 0
-      ? await fetchAttachmentsByIds(metaIds)
-      : await fetchPdfAttachmentsForPost(post.id);
+  let attachments: BlogAttachment[] = [];
+  const editorialFiles = editorial?.files;
 
-  // Aussi collecter les PDF référencés dans le contenu
-  const pdfUrls = [
-    ...contentHtml.matchAll(
-      /href=["']([^"']+\.pdf[^"']*)["']/gi,
-    ),
-  ].map((m) => m[1]);
-  for (const url of pdfUrls) {
-    if (!attachments.some((a) => a.url === url)) {
-      attachments.push({
-        id: 0,
-        title: decodeHtmlEntities(url.split("/").pop() || "Document PDF"),
-        url,
-        mimeType: "application/pdf",
-      });
+  if (Array.isArray(editorialFiles) && editorialFiles.length > 0) {
+    attachments = mapEditorialFiles(editorialFiles);
+  } else {
+    const metaIds = parseAttachedFileIds(post.meta);
+    attachments =
+      metaIds.length > 0
+        ? await fetchAttachmentsByIds(metaIds)
+        : await fetchPdfAttachmentsForPost(post.id);
+
+    const pdfUrls = [
+      ...contentHtml.matchAll(/href=["']([^"']+\.pdf[^"']*)["']/gi),
+    ].map((m) => m[1]);
+    for (const url of pdfUrls) {
+      if (!attachments.some((a) => a.url === url)) {
+        attachments.push({
+          id: 0,
+          title: decodeHtmlEntities(url.split("/").pop() || "Document PDF"),
+          url,
+          mimeType: "application/pdf",
+          extension: "pdf",
+        });
+      }
     }
   }
+
+  const { label: readingTimeLabel, minutes: readingTimeMinutes } =
+    formatReadingTimeLabel(editorial, post.content.rendered);
 
   return {
     id: post.id,
@@ -168,7 +246,8 @@ export async function mapWpPostToBlogPost(post: WpPost): Promise<BlogPost> {
     featuredImage: getFeaturedImage(post),
     youtubeUrl,
     attachments,
-    readingTimeMinutes: estimateReadingTimeMinutes(post.content.rendered),
+    readingTimeLabel,
+    readingTimeMinutes,
   };
 }
 
