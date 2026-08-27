@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import { getWpLoginUrl } from "@/lib/wp/config";
 
 const MAP_SRC =
   "https://myicconline.com/wp-content/uploads/2025/09/Carte-1.webp";
@@ -22,7 +21,7 @@ export function ConnectedFamily() {
               à proximité de chez elles.
             </p>
             <div className="mt-8">
-              <Button href={getWpLoginUrl()} variant="ghost">
+              <Button href="/connexion" variant="ghost">
                 Je me connecte
               </Button>
             </div>

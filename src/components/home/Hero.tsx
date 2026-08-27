@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/Button";
-import { getWpLoginUrl } from "@/lib/wp/config";
 
 const HERO_VIDEO =
   "https://myicconline.com/wp-content/themes/network-child/assets/video1.mp4";
@@ -39,7 +38,7 @@ export function Hero() {
           dynamique et engagée.
         </p>
         <div className="mt-8 animate-[fadeUp_.9s_ease_.1s_both]">
-          <Button href={getWpLoginUrl()} variant="outline">
+          <Button href="/connexion" variant="outline">
             Je me connecte
           </Button>
         </div>

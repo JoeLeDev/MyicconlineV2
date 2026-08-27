@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/Button";
-import { getWpLoginUrl } from "@/lib/wp/config";
 
 export const metadata: Metadata = {
   title: "À propos",
@@ -44,7 +43,7 @@ export default function AboutPage() {
         </div>
 
         <div className="mt-10 flex flex-wrap gap-3">
-          <Button href={getWpLoginUrl()} variant="primary">
+          <Button href="/connexion" variant="primary">
             Je me connecte
           </Button>
           <Button href="/contact" variant="ghost">

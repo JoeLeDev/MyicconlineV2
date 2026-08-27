@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
@@ -48,9 +49,11 @@ export default function RootLayout({
       className={`${poppins.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-white font-sans text-icc-ink">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

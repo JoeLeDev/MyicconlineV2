@@ -35,7 +35,10 @@ export function JoinCommunity() {
           FIO (Familles d’Impact Online) sont faites pour vous.
         </p>
         <div className="mt-8">
-          <Button href={getWpLoginUrl()} variant="light">
+          <Button
+            href={`${getWpLoginUrl().replace(/\/$/, "")}/register/`}
+            variant="light"
+          >
             Je rejoins une famille
           </Button>
         </div>

@@ -4,17 +4,32 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getWpLoginUrl } from "@/lib/wp/config";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { MAIN_NAV, SITE_LOGO, SOCIAL_LINKS } from "@/lib/site";
 import { Button } from "@/components/ui/Button";
 
 export function Header() {
   const pathname = usePathname();
+  const { user, loading } = useAuth();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  const authCta = user ? (
+    <Button href="/espace" variant="primary" className="!px-4 !py-2 text-xs">
+      Mon espace
+    </Button>
+  ) : (
+    <Button
+      href="/connexion"
+      variant="primary"
+      className="!px-4 !py-2 text-xs"
+    >
+      Je me connecte
+    </Button>
+  );
 
   return (
     <header className="sticky top-0 z-50 border-b border-black/5 bg-white text-icc-ink">
@@ -77,13 +92,7 @@ export function Header() {
               </a>
             ))}
           </div>
-          <Button
-            href={getWpLoginUrl()}
-            variant="primary"
-            className="!px-4 !py-2 text-xs"
-          >
-            Je me connecte
-          </Button>
+          {!loading ? authCta : null}
         </div>
 
         <button
@@ -155,13 +164,7 @@ export function Header() {
                 </a>
               ))}
             </div>
-            <Button
-              href={getWpLoginUrl()}
-              variant="primary"
-              className="!px-4 !py-2 text-xs"
-            >
-              Je me connecte
-            </Button>
+            {authCta}
           </div>
         </div>
       ) : null}

@@ -18,6 +18,8 @@ WordPress reste le backend (API REST) sur cPanel — ce dépôt ne remplace pas 
 | `/blog` | Liste des articles |
 | `/blog/[slug]` | Article (YouTube, PDF, articles liés) |
 | `/contact` | Formulaire de contact |
+| `/connexion` | Connexion JWT WordPress |
+| `/espace` | Espace membre (protégé) |
 | `/mentions-legales` | Mentions légales |
 | `/politique-de-confidentialite` | Politique de confidentialité RGPD |
 
@@ -72,6 +74,15 @@ Les images `.pdf` cassées dans le contenu HTML sont filtrées.
 4. Déployer — utiliser l’URL `*.vercel.app` tant que `myicconline.com` pointe encore vers WordPress
 
 Ne **pas** placer ce front dans `wp-content` / cPanel.
+
+## Auth (phase 2)
+
+Connexion via le plugin WordPress `jwt-auth` :
+
+- `POST /api/auth/login` → cookie httpOnly `icc_wp_token`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
+- Pages : `/connexion`, `/espace` (protégée par `src/proxy.ts`)
 
 ## Contact
 
