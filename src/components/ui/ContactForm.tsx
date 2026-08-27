@@ -3,39 +3,67 @@
 import { FormEvent, useState } from "react";
 import { CONTACT_EMAIL } from "@/lib/site";
 
-export function ContactForm() {
-  const [sent, setSent] = useState(false);
+type Status = "idle" | "loading" | "success" | "error";
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+export function ContactForm() {
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setStatus("loading");
+    setError(null);
+
     const form = e.currentTarget;
     const data = new FormData(form);
     const name = String(data.get("name") || "").trim();
     const email = String(data.get("email") || "").trim();
     const message = String(data.get("message") || "").trim();
 
-    const subject = encodeURIComponent(`Contact ICC Online — ${name}`);
-    const body = encodeURIComponent(
-      `Nom : ${name}\nE-mail : ${email}\n\nMessage :\n${message}`,
-    );
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message }),
+      });
+      const json = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        fallback?: string;
+      };
 
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
-    setSent(true);
+      if (res.ok && json.ok) {
+        setStatus("success");
+        form.reset();
+        return;
+      }
+
+      // Pas de Resend configuré → mailto
+      if (json.fallback === "mailto" || res.status === 503) {
+        const subject = encodeURIComponent(`Contact ICC Online — ${name}`);
+        const body = encodeURIComponent(
+          `Nom : ${name}\nE-mail : ${email}\n\nMessage :\n${message}`,
+        );
+        window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+        setStatus("success");
+        return;
+      }
+
+      setError(json.error || "Envoi impossible.");
+      setStatus("error");
+    } catch {
+      setError("Erreur réseau. Réessayez dans un instant.");
+      setStatus("error");
+    }
   }
 
-  if (sent) {
+  if (status === "success") {
     return (
       <div className="border border-icc-coral/25 bg-icc-cream px-6 py-10">
         <h2 className="text-xl font-bold text-icc-ink">Merci !</h2>
         <p className="mt-2 text-icc-muted">
-          Votre client e-mail devrait s’ouvrir pour envoyer le message à{" "}
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="font-medium text-icc-coral hover:text-icc-coral-deep"
-          >
-            {CONTACT_EMAIL}
-          </a>
-          . Si ce n’est pas le cas, écrivez-nous directement à cette adresse.
+          Votre message a bien été transmis. L’équipe ICC Online vous répondra
+          bientôt.
         </p>
       </div>
     );
@@ -57,7 +85,8 @@ export function ContactForm() {
           id="name"
           name="name"
           required
-          className="w-full border border-black/10 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-icc-coral"
+          disabled={status === "loading"}
+          className="w-full border border-black/10 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-icc-coral disabled:opacity-60"
         />
       </div>
       <div>
@@ -72,7 +101,8 @@ export function ContactForm() {
           name="email"
           type="email"
           required
-          className="w-full border border-black/10 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-icc-coral"
+          disabled={status === "loading"}
+          className="w-full border border-black/10 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-icc-coral disabled:opacity-60"
         />
       </div>
       <div>
@@ -87,14 +117,23 @@ export function ContactForm() {
           name="message"
           required
           rows={5}
-          className="w-full resize-y border border-black/10 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-icc-coral"
+          disabled={status === "loading"}
+          className="w-full resize-y border border-black/10 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-icc-coral disabled:opacity-60"
         />
       </div>
+
+      {error ? (
+        <p className="text-sm text-red-700" role="alert">
+          {error}
+        </p>
+      ) : null}
+
       <button
         type="submit"
-        className="inline-flex items-center justify-center rounded-lg border border-icc-coral bg-icc-coral px-5 py-3 text-sm font-semibold text-white transition hover:border-icc-coral-deep hover:bg-icc-coral-deep"
+        disabled={status === "loading"}
+        className="inline-flex items-center justify-center rounded-lg border border-icc-coral bg-icc-coral px-5 py-3 text-sm font-semibold text-white transition hover:border-icc-coral-deep hover:bg-icc-coral-deep disabled:opacity-60"
       >
-        Envoyer
+        {status === "loading" ? "Envoi…" : "Envoyer"}
       </button>
     </form>
   );

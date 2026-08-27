@@ -43,6 +43,9 @@ Ouvrir [http://localhost:3000](http://localhost:3000).
 | `NEXT_PUBLIC_WP_URL` | URL du WordPress (API) | `https://myicconline.com` |
 | `NEXT_PUBLIC_WP_LOGIN_URL` | Lien « Je me connecte » (reste sur WP) | `https://myicconline.com/` |
 | `NEXT_PUBLIC_SITE_URL` | URL canonique du front (SEO / OG) | optionnel |
+| `RESEND_API_KEY` | Clé API Resend pour le formulaire contact | optionnel |
+| `CONTACT_TO_EMAIL` | Destinataire des messages contact | `netezoua@yahoo.fr` |
+| `CONTACT_FROM_EMAIL` | Expéditeur Resend (domaine vérifié) | `ICC Online <onboarding@resend.dev>` |
 
 ## Blog & champ `icc_editorial`
 
@@ -69,6 +72,13 @@ Les images `.pdf` cassées dans le contenu HTML sont filtrées.
 4. Déployer — utiliser l’URL `*.vercel.app` tant que `myicconline.com` pointe encore vers WordPress
 
 Ne **pas** placer ce front dans `wp-content` / cPanel.
+
+## Contact
+
+Le formulaire `/contact` appelle `POST /api/contact` (Resend).  
+Sans `RESEND_API_KEY`, fallback automatique vers `mailto:`.
+
+Sur Vercel, ajouter `RESEND_API_KEY`, `CONTACT_TO_EMAIL` et idéalement un `CONTACT_FROM_EMAIL` avec domaine vérifié.
 
 ## Scripts
 
