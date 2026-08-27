@@ -356,21 +356,35 @@ export async function getRelatedPosts(
 }
 
 export async function getAllPostSlugs(): Promise<string[]> {
-  const slugs: string[] = [];
+  const entries = await getAllPostsForSitemap();
+  return entries.map((e) => e.slug);
+}
+
+export async function getAllPostsForSitemap(): Promise<
+  Array<{ slug: string; modified: string }>
+> {
+  const entries: Array<{ slug: string; modified: string }> = [];
   let page = 1;
   let totalPages = 1;
 
   while (page <= totalPages && page <= 20) {
-    const { data, totalPages: pages } = await wpFetchWithTotal<WpPost[]>(
-      `/wp/v2/posts?per_page=100&page=${page}&_fields=slug`,
+    const { data, totalPages: pages } = await wpFetchWithTotal<
+      Array<{ slug: string; modified: string }>
+    >(
+      `/wp/v2/posts?per_page=100&page=${page}&_fields=slug,modified`,
       { revalidate: 600, tags: ["wp-posts"] },
     );
     totalPages = pages || 1;
     for (const post of data) {
-      if (post.slug) slugs.push(post.slug);
+      if (post.slug) {
+        entries.push({
+          slug: post.slug,
+          modified: post.modified || new Date().toISOString(),
+        });
+      }
     }
     page += 1;
   }
 
-  return slugs;
+  return entries;
 }

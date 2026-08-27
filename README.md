@@ -93,8 +93,8 @@ npm run lint     # ESLint
 
 ```
 src/
-  app/                 # routes App Router
-  components/          # UI (layout, home, blog)
+  app/                 # routes App Router (+ sitemap.xml, robots.txt)
+  components/          # UI (layout, home, blog, legal)
   lib/wp/              # client + mapping API WordPress
   lib/utils/           # dates, HTML, temps de lecture
 ```

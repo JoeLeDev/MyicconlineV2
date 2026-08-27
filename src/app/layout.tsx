@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -12,9 +13,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://myicconline.com",
-  ),
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: "ICC Online — Impact Centre Chrétien",
     template: "%s · ICC Online",
