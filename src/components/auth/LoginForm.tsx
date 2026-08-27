@@ -1,11 +1,14 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useRouter } from "@/i18n/navigation";
 import { getWpLoginUrl } from "@/lib/wp/config";
 
 export function LoginForm() {
+  const t = useTranslations("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
   const { refresh } = useAuth();
@@ -30,7 +33,7 @@ export function LoginForm() {
       const json = (await res.json()) as { ok?: boolean; error?: string };
 
       if (!res.ok || !json.ok) {
-        setError(json.error || "Connexion impossible.");
+        setError(json.error || t("loginError"));
         setLoading(false);
         return;
       }
@@ -47,7 +50,7 @@ export function LoginForm() {
       router.replace(safeNext);
       router.refresh();
     } catch {
-      setError("Erreur réseau. Réessayez.");
+      setError(t("networkError"));
       setLoading(false);
     }
   }
@@ -62,7 +65,7 @@ export function LoginForm() {
           htmlFor="username"
           className="mb-1.5 block text-sm font-semibold text-icc-ink"
         >
-          Identifiant ou e-mail
+          {t("username")}
         </label>
         <input
           id="username"
@@ -78,7 +81,7 @@ export function LoginForm() {
           htmlFor="password"
           className="mb-1.5 block text-sm font-semibold text-icc-ink"
         >
-          Mot de passe
+          {t("password")}
         </label>
         <input
           id="password"
@@ -102,16 +105,16 @@ export function LoginForm() {
         disabled={loading}
         className="inline-flex w-full items-center justify-center rounded-lg border border-icc-coral bg-icc-coral px-5 py-3 text-sm font-semibold text-white transition hover:border-icc-coral-deep hover:bg-icc-coral-deep disabled:opacity-60"
       >
-        {loading ? "Connexion…" : "Je me connecte"}
+        {loading ? t("submitting") : t("submit")}
       </button>
 
       <p className="text-center text-sm text-icc-muted">
-        Pas encore de compte ?{" "}
+        {t("noAccount")}{" "}
         <a
           href={`${getWpLoginUrl().replace(/\/$/, "")}/register/`}
           className="font-medium text-icc-coral hover:text-icc-coral-deep"
         >
-          Créer un compte
+          {t("register")}
         </a>
       </p>
     </form>

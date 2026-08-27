@@ -1,11 +1,13 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useTranslations } from "next-intl";
 import { CONTACT_EMAIL } from "@/lib/site";
 
 type Status = "idle" | "loading" | "success" | "error";
 
 export function ContactForm() {
+  const t = useTranslations("contact");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +40,6 @@ export function ContactForm() {
         return;
       }
 
-      // Pas de Resend configuré → mailto
       if (json.fallback === "mailto" || res.status === 503) {
         const subject = encodeURIComponent(`Contact ICC Online — ${name}`);
         const body = encodeURIComponent(
@@ -49,10 +50,10 @@ export function ContactForm() {
         return;
       }
 
-      setError(json.error || "Envoi impossible.");
+      setError(json.error || t("sendError"));
       setStatus("error");
     } catch {
-      setError("Erreur réseau. Réessayez dans un instant.");
+      setError(t("networkError"));
       setStatus("error");
     }
   }
@@ -60,11 +61,8 @@ export function ContactForm() {
   if (status === "success") {
     return (
       <div className="border border-icc-coral/25 bg-icc-cream px-6 py-10">
-        <h2 className="text-xl font-bold text-icc-ink">Merci !</h2>
-        <p className="mt-2 text-icc-muted">
-          Votre message a bien été transmis. L’équipe ICC Online vous répondra
-          bientôt.
-        </p>
+        <h2 className="text-xl font-bold text-icc-ink">{t("thanksTitle")}</h2>
+        <p className="mt-2 text-icc-muted">{t("thanksBody")}</p>
       </div>
     );
   }
@@ -79,7 +77,7 @@ export function ContactForm() {
           htmlFor="name"
           className="mb-1.5 block text-sm font-semibold text-icc-ink"
         >
-          Nom
+          {t("name")}
         </label>
         <input
           id="name"
@@ -94,7 +92,7 @@ export function ContactForm() {
           htmlFor="email"
           className="mb-1.5 block text-sm font-semibold text-icc-ink"
         >
-          E-mail
+          {t("emailLabel")}
         </label>
         <input
           id="email"
@@ -110,7 +108,7 @@ export function ContactForm() {
           htmlFor="message"
           className="mb-1.5 block text-sm font-semibold text-icc-ink"
         >
-          Message
+          {t("message")}
         </label>
         <textarea
           id="message"
@@ -133,7 +131,7 @@ export function ContactForm() {
         disabled={status === "loading"}
         className="inline-flex items-center justify-center rounded-lg border border-icc-coral bg-icc-coral px-5 py-3 text-sm font-semibold text-white transition hover:border-icc-coral-deep hover:bg-icc-coral-deep disabled:opacity-60"
       >
-        {status === "loading" ? "Envoi…" : "Envoyer"}
+        {status === "loading" ? t("sending") : t("send")}
       </button>
     </form>
   );

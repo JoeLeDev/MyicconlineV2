@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { DownloadResources } from "@/components/blog/DownloadResources";
 import { PostContent } from "@/components/blog/PostContent";
 import { RelatedPosts } from "@/components/blog/RelatedPosts";
 import { YouTubeEmbed } from "@/components/blog/YouTubeEmbed";
-import { formatFrDate } from "@/lib/utils/dates";
+import { formatDate } from "@/lib/utils/dates";
 import {
   getAllPostSlugs,
   getPostBySlug,
@@ -13,7 +14,7 @@ import {
 } from "@/lib/wp/posts";
 
 type Props = {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 };
 
 export async function generateStaticParams() {
@@ -26,10 +27,11 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const t = await getTranslations({ locale, namespace: "blog" });
   const post = await getPostBySlug(slug).catch(() => null);
   if (!post) {
-    return { title: "Article introuvable" };
+    return { title: t("notFoundTitle") };
   }
 
   return {
@@ -49,7 +51,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("blog");
   const post = await getPostBySlug(slug).catch(() => null);
   if (!post) notFound();
 
@@ -71,9 +75,10 @@ export default async function BlogPostPage({ params }: Props) {
           </h1>
 
           <p className="mt-5 text-sm text-icc-muted md:text-base">
-            Par <span className="font-medium text-icc-ink">{post.authorName}</span>
+            {t("by")}{" "}
+            <span className="font-medium text-icc-ink">{post.authorName}</span>
             {" · "}
-            {formatFrDate(post.date)}
+            {formatDate(post.date, locale)}
           </p>
         </header>
 
@@ -99,7 +104,7 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
 
         <DownloadResources attachments={post.attachments} />
-        <RelatedPosts posts={related} />
+        <RelatedPosts posts={related} locale={locale} />
       </div>
     </article>
   );

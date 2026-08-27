@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "siteName": "ICC Online",
+    "defaultDescription": "ICC Online, der digitale Campus von Impact Centre Chrétien. Eine verbundene Familie für Glauben, Gebet und Gemeinschaft – überall."
+  },
+  "nav": {
+    "home": "Start",
+    "about": "Über uns",
+    "blog": "Blog",
+    "contact": "Kontakt",
+    "login": "Anmelden",
+    "mySpace": "Mein Bereich",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
+  },
+  "home": {
+    "heroTitleLine1": "Willkommen bei",
+    "heroTitleLine2": "ICC ONLINE",
+    "heroSubtitle": "Entdecke unsere Vision und Programme und werde Teil einer dynamischen, engagierten Gemeinschaft.",
+    "heroCta": "Anmelden",
+    "familyTitle": "Eine verbundene Familie",
+    "familyText": "Impact Centre Chrétien Online ist die digitale Dimension der Impact-Centre-Chrétien-Gemeinden. Als eigenständiger Campus bringt ICC ONLINE alle zusammen, die zur großen Familie gehören möchten, aber keinen physischen Campus in der Nähe haben.",
+    "familyCta": "Anmelden",
+    "familyMapAlt": "Karte der ICC-Online-Standorte",
+    "joinTitleLine1": "Tritt der Gemeinschaft bei",
+    "joinTitleLine2": "ICC Online",
+    "joinText": "Du bist weit von einem physischen ICC-Campus entfernt? Du möchtest deinen Glauben teilen, über Online-Gottesdienste sprechen, im Gebet getragen und im Glauben ermutigt werden? Du willst die Bibel besser verstehen und Gottes Pläne für dein Leben entdecken? Dann sind FIOs (Online Impact Families) für dich.",
+    "joinCta": "Einer Familie beitreten"
+  },
+  "about": {
+    "eyebrow": "Wer wir sind",
+    "title": "Über ICC Online",
+    "p1": "Impact Centre Chrétien Online ist die digitale Dimension der Impact-Centre-Chrétien-Gemeinden. Als eigenständiger Campus bringt ICC ONLINE alle zusammen, die zur großen Familie gehören möchten, aber keinen physischen Campus in der Nähe haben.",
+    "p2": "Unsere Vision: einen warmen Raum bieten, um den Glauben zu teilen, Gottesdienste zu feiern, im Wort zu wachsen, gemeinsam zu beten und einander zu ermutigen — wo auch immer du bist.",
+    "p3Before": "Die",
+    "p3Strong": "FIOs (Online Impact Families)",
+    "p3After": "sind das Herz dieser Gemeinschaft: kleine Gruppen für Gemeinschaft, Begleitung und täglichen Impact.",
+    "ctaLogin": "Anmelden",
+    "ctaContact": "Kontakt"
+  },
+  "blog": {
+    "eyebrow": "Ressourcen",
+    "title": "Blog",
+    "subtitle": "Gottesdienste, Termine, Ermutigung und Neuigkeiten der ICC-Online-Familie.",
+    "empty": "Noch keine Beiträge veröffentlicht.",
+    "error": "Beiträge können derzeit nicht geladen werden.",
+    "prev": "← Zurück",
+    "next": "Weiter →",
+    "page": "Seite {page} / {total}",
+    "readNext": "Als Nächstes lesen",
+    "downloads": "Downloads",
+    "by": "Von",
+    "notFoundTitle": "Beitrag nicht gefunden"
+  },
+  "contact": {
+    "eyebrow": "Schreib dem Team",
+    "title": "Kontakt",
+    "subtitle": "Eine Frage, ein Gebetsanliegen oder der Wunsch, einer FIO beizutreten? Hinterlasse uns eine Nachricht — wir antworten gerne.",
+    "emailLabel": "E-Mail",
+    "community": "Gemeinschaft",
+    "name": "Name",
+    "message": "Nachricht",
+    "send": "Senden",
+    "sending": "Wird gesendet…",
+    "thanksTitle": "Danke!",
+    "thanksBody": "Deine Nachricht wurde übermittelt. Das ICC-Online-Team meldet sich bald.",
+    "sendError": "Senden nicht möglich.",
+    "networkError": "Netzwerkfehler. Bitte gleich noch einmal versuchen."
+  },
+  "auth": {
+    "eyebrow": "Mitgliederbereich",
+    "loginTitle": "Anmelden",
+    "loginSubtitle": "Melde dich mit deinen Community-Zugangsdaten bei ICC Online an.",
+    "username": "Benutzername oder E-Mail",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "submitting": "Anmeldung…",
+    "noAccount": "Noch kein Konto?",
+    "register": "Konto erstellen",
+    "loading": "Laden…",
+    "spaceTitle": "Hallo {name}",
+    "spaceSubtitle": "Du bist bei ICC Online angemeldet. Die vollständige Community bleibt vorerst auf WordPress.",
+    "openCommunity": "WP-Community öffnen",
+    "viewBlog": "Blog ansehen",
+    "logout": "Abmelden",
+    "loggingOut": "Abmeldung…",
+    "loginError": "Anmeldung nicht möglich.",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen."
+  },
+  "footer": {
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "blog": "Blog",
+    "legal": "Impressum",
+    "privacy": "Datenschutz",
+    "copyright": "© {year} — My ICC Online · Impact Centre Chrétien"
+  },
+  "legal": {
+    "mentionsEyebrow": "Rechtliche Hinweise",
+    "mentionsTitle": "Impressum",
+    "privacyEyebrow": "Datenschutz",
+    "privacyTitle": "Datenschutzerklärung",
+    "updated": "Zuletzt aktualisiert: 2026",
+    "officialNote": "Offizielles Dokument. Der Referenztext ist Französisch."
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Seite nicht gefunden",
+    "body": "Diese Seite existiert nicht oder wurde verschoben.",
+    "home": "Zur Startseite"
+  },
+  "lang": {
+    "label": "Sprache"
+  }
+}

@@ -1,30 +1,41 @@
 import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ContactForm } from "@/components/ui/ContactForm";
 import { CONTACT_EMAIL } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Contactez l’équipe ICC Online — questions, prière, ou rejoindre une Famille d’Impact Online.",
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-export default function ContactPage() {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "contact" });
+  return {
+    title: t("title"),
+    description: t("subtitle"),
+  };
+}
+
+export default async function ContactPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("contact");
+
   return (
     <div className="bg-white py-12 md:py-16">
       <div className="container-icc grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-start">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-icc-coral">
-            Écrire à l’équipe
+            {t("eyebrow")}
           </p>
           <h1 className="mt-2 text-[clamp(2rem,5vw,3.2rem)] font-extrabold tracking-tight text-icc-ink">
-            Contact
+            {t("title")}
           </h1>
           <p className="mt-4 max-w-md text-base leading-relaxed text-icc-muted md:text-lg">
-            Une question, une demande de prière, ou l’envie de rejoindre une
-            FIO ? Laissez-nous un message — nous vous répondrons avec joie.
+            {t("subtitle")}
           </p>
           <p className="mt-6 text-sm text-icc-muted">
-            E-mail ·{" "}
+            {t("emailLabel")} ·{" "}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
               className="font-medium text-icc-coral hover:text-icc-coral-deep"
@@ -33,7 +44,7 @@ export default function ContactPage() {
             </a>
           </p>
           <p className="mt-2 text-sm text-icc-muted">
-            Communauté ·{" "}
+            {t("community")} ·{" "}
             <a
               href="https://myicconline.com/"
               className="font-medium text-icc-coral hover:text-icc-coral-deep"

@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "siteName": "ICC Online",
+    "defaultDescription": "ICC Online, the digital campus of Impact Centre Chrétien. A connected family to live faith, prayer and community wherever you are."
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "blog": "Blog",
+    "contact": "Contact",
+    "login": "Sign in",
+    "mySpace": "My space",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "home": {
+    "heroTitleLine1": "Welcome to",
+    "heroTitleLine2": "ICC ONLINE",
+    "heroSubtitle": "Discover our vision and programs by joining a dynamic, committed community.",
+    "heroCta": "Sign in",
+    "familyTitle": "A connected family",
+    "familyText": "Impact Centre Chrétien Online is the digital dimension of the Impact Centre Chrétien churches. A campus in its own right, ICC ONLINE brings together everyone who wants to belong to the Impact Centre Chrétien family but has no physical campus nearby.",
+    "familyCta": "Sign in",
+    "familyMapAlt": "ICC Online locations map",
+    "joinTitleLine1": "Join the community",
+    "joinTitleLine2": "ICC Online",
+    "joinText": "Are you far from a physical ICC campus? Would you like to share your faith, discuss online services, be supported in prayer and encouraged in your walk? Do you want to understand the Bible better and discover God’s plans for your life? Then FIOs (Online Impact Families) are for you.",
+    "joinCta": "Join a family"
+  },
+  "about": {
+    "eyebrow": "Who we are",
+    "title": "About ICC Online",
+    "p1": "Impact Centre Chrétien Online is the digital dimension of the Impact Centre Chrétien churches. A campus in its own right, ICC ONLINE brings together everyone who wants to belong to the Impact Centre Chrétien family but has no physical campus nearby.",
+    "p2": "Our vision: to offer a warm space to share faith, follow services, grow in the Word, pray together and encourage one another — wherever you are in the world.",
+    "p3Before": "The",
+    "p3Strong": "FIOs (Online Impact Families)",
+    "p3After": "are the heart of this community: small groups for fellowship, support and daily impact.",
+    "ctaLogin": "Sign in",
+    "ctaContact": "Contact us"
+  },
+  "blog": {
+    "eyebrow": "Resources",
+    "title": "Blog",
+    "subtitle": "Services, schedules, encouragement and news from the ICC Online family.",
+    "empty": "No posts published yet.",
+    "error": "Unable to load posts right now.",
+    "prev": "← Previous",
+    "next": "Next →",
+    "page": "Page {page} / {total}",
+    "readNext": "Read next",
+    "downloads": "Downloads",
+    "by": "By",
+    "notFoundTitle": "Post not found"
+  },
+  "contact": {
+    "eyebrow": "Write to the team",
+    "title": "Contact",
+    "subtitle": "A question, a prayer request, or a desire to join an FIO? Leave us a message — we’ll be glad to reply.",
+    "emailLabel": "Email",
+    "community": "Community",
+    "name": "Name",
+    "message": "Message",
+    "send": "Send",
+    "sending": "Sending…",
+    "thanksTitle": "Thank you!",
+    "thanksBody": "Your message has been sent. The ICC Online team will get back to you soon.",
+    "sendError": "Unable to send.",
+    "networkError": "Network error. Please try again shortly."
+  },
+  "auth": {
+    "eyebrow": "Member area",
+    "loginTitle": "Sign in",
+    "loginSubtitle": "Access your ICC Online space with your community credentials.",
+    "username": "Username or email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "noAccount": "No account yet?",
+    "register": "Create an account",
+    "loading": "Loading…",
+    "spaceTitle": "Hello {name}",
+    "spaceSubtitle": "You are signed in to ICC Online. The full community remains on WordPress for now.",
+    "openCommunity": "Open WP community",
+    "viewBlog": "View blog",
+    "logout": "Sign out",
+    "loggingOut": "Signing out…",
+    "loginError": "Unable to sign in.",
+    "networkError": "Network error. Please try again."
+  },
+  "footer": {
+    "about": "About",
+    "contact": "Contact",
+    "blog": "Blog",
+    "legal": "Legal notice",
+    "privacy": "Privacy policy",
+    "copyright": "© {year} — My ICC Online · Impact Centre Chrétien"
+  },
+  "legal": {
+    "mentionsEyebrow": "Legal information",
+    "mentionsTitle": "Legal notice",
+    "privacyEyebrow": "Data protection",
+    "privacyTitle": "Privacy policy",
+    "updated": "Last updated: 2026",
+    "officialNote": "Official document. The reference text is in French."
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Page not found",
+    "body": "This page does not exist or has been moved.",
+    "home": "Back to home"
+  },
+  "lang": {
+    "label": "Language"
+  }
+}

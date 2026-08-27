@@ -1,17 +1,25 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { MAIN_NAV, SITE_LOGO, SOCIAL_LINKS } from "@/lib/site";
 import { Button } from "@/components/ui/Button";
+import { Link, usePathname } from "@/i18n/navigation";
+import { SITE_LOGO, SOCIAL_LINKS } from "@/lib/site";
 
 export function Header() {
+  const t = useTranslations("nav");
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const [open, setOpen] = useState(false);
+
+  const nav = [
+    { href: "/", label: t("home") },
+    { href: "/a-propos", label: t("about") },
+    { href: "/blog", label: t("blog") },
+    { href: "/contact", label: t("contact") },
+  ] as const;
 
   useEffect(() => {
     setOpen(false);
@@ -19,15 +27,11 @@ export function Header() {
 
   const authCta = user ? (
     <Button href="/espace" variant="primary" className="!px-4 !py-2 text-xs">
-      Mon espace
+      {t("mySpace")}
     </Button>
   ) : (
-    <Button
-      href="/connexion"
-      variant="primary"
-      className="!px-4 !py-2 text-xs"
-    >
-      Je me connecte
+    <Button href="/connexion" variant="primary" className="!px-4 !py-2 text-xs">
+      {t("login")}
     </Button>
   );
 
@@ -45,11 +49,8 @@ export function Header() {
           />
         </Link>
 
-        <nav
-          className="hidden items-center gap-7 lg:flex"
-          aria-label="Principal"
-        >
-          {MAIN_NAV.map((item) => {
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Main">
+          {nav.map((item) => {
             const active =
               item.href === "/"
                 ? pathname === "/"
@@ -100,7 +101,7 @@ export function Header() {
           className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-black/15 md:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
-          aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-label={open ? t("closeMenu") : t("openMenu")}
           onClick={() => setOpen((v) => !v)}
         >
           <span className="sr-only">Menu</span>
@@ -133,7 +134,7 @@ export function Header() {
           className="border-t border-black/5 bg-white px-5 py-5 md:hidden"
         >
           <nav className="flex flex-col gap-3" aria-label="Mobile">
-            {MAIN_NAV.map((item) => (
+            {nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

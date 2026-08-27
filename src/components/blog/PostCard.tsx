@@ -1,27 +1,32 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { BlogPost } from "@/lib/wp/types";
-import { formatFrDate } from "@/lib/utils/dates";
+import { Link } from "@/i18n/navigation";
+import { formatDate } from "@/lib/utils/dates";
 
 type Props = {
   post: BlogPost;
   featured?: boolean;
+  locale?: string;
 };
 
-export function PostCard({ post, featured = false }: Props) {
+export function PostCard({ post, featured = false, locale = "fr" }: Props) {
   return (
     <article className="group border-b border-black/8 py-8 first:pt-0 last:border-b-0">
       <Link
         href={`/blog/${post.slug}`}
         className={[
           "grid gap-6",
-          featured ? "md:grid-cols-[1.15fr_1fr] md:items-center" : "md:grid-cols-[220px_1fr] md:items-start",
+          featured
+            ? "md:grid-cols-[1.15fr_1fr] md:items-center"
+            : "md:grid-cols-[220px_1fr] md:items-start",
         ].join(" ")}
       >
         <div
           className={[
             "relative overflow-hidden bg-icc-cream",
-            featured ? "aspect-[16/10] md:aspect-[5/3]" : "aspect-[16/10] md:aspect-[4/3]",
+            featured
+              ? "aspect-[16/10] md:aspect-[5/3]"
+              : "aspect-[16/10] md:aspect-[4/3]",
           ].join(" ")}
         >
           {post.featuredImage ? (
@@ -30,7 +35,11 @@ export function PostCard({ post, featured = false }: Props) {
               alt={post.featuredImage.alt}
               fill
               className="object-cover transition duration-500 group-hover:scale-[1.03]"
-              sizes={featured ? "(max-width:768px) 100vw, 55vw" : "(max-width:768px) 100vw, 220px"}
+              sizes={
+                featured
+                  ? "(max-width:768px) 100vw, 55vw"
+                  : "(max-width:768px) 100vw, 220px"
+              }
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-icc-warm-brown/40 to-icc-coral/30" />
@@ -41,7 +50,7 @@ export function PostCard({ post, featured = false }: Props) {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold uppercase tracking-[0.14em] text-icc-coral">
             {post.category ? <span>{post.category.name}</span> : null}
             <span className="text-icc-muted normal-case tracking-normal font-medium">
-              {formatFrDate(post.date)}
+              {formatDate(post.date, locale)}
             </span>
             <span className="text-icc-muted normal-case tracking-normal font-medium">
               {post.readingTimeLabel}

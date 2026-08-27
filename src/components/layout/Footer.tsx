@@ -1,9 +1,13 @@
+"use client";
+
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { Link } from "@/i18n/navigation";
 import { SOCIAL_LINKS } from "@/lib/site";
 
 export function Footer() {
+  const t = useTranslations("footer");
   const year = new Date().getFullYear();
 
   return (
@@ -32,31 +36,29 @@ export function Footer() {
 
         <LanguageSwitcher />
 
-        <p className="text-sm text-icc-muted">
-          © {year} — My ICC Online · Impact Centre Chrétien
-        </p>
+        <p className="text-sm text-icc-muted">{t("copyright", { year })}</p>
 
         <nav
           className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-icc-muted"
-          aria-label="Légal"
+          aria-label="Legal"
         >
           <Link href="/a-propos" className="hover:text-icc-ink">
-            À propos
+            {t("about")}
           </Link>
           <Link href="/contact" className="hover:text-icc-ink">
-            Contact
+            {t("contact")}
           </Link>
           <Link href="/blog" className="hover:text-icc-ink">
-            Blog
+            {t("blog")}
           </Link>
           <Link href="/mentions-legales" className="hover:text-icc-ink">
-            Mentions légales
+            {t("legal")}
           </Link>
           <Link
             href="/politique-de-confidentialite"
             className="hover:text-icc-ink"
           >
-            Politique de confidentialité
+            {t("privacy")}
           </Link>
         </nav>
       </div>

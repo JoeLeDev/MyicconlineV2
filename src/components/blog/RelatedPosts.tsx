@@ -1,19 +1,22 @@
-import Link from "next/link";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 import type { BlogPost } from "@/lib/wp/types";
-import { formatFrDate } from "@/lib/utils/dates";
+import { Link } from "@/i18n/navigation";
+import { formatDate } from "@/lib/utils/dates";
 
 type Props = {
   posts: BlogPost[];
+  locale?: string;
 };
 
-export function RelatedPosts({ posts }: Props) {
+export async function RelatedPosts({ posts, locale = "fr" }: Props) {
   if (!posts.length) return null;
+  const t = await getTranslations("blog");
 
   return (
     <section className="mt-16 border-t border-black/10 pt-12">
       <h2 className="text-2xl font-bold tracking-tight text-icc-ink">
-        À lire ensuite
+        {t("readNext")}
       </h2>
       <div className="mt-8 grid gap-8 md:grid-cols-3">
         {posts.map((post) => (
@@ -44,7 +47,7 @@ export function RelatedPosts({ posts }: Props) {
               {post.title}
             </h3>
             <p className="mt-1 text-sm text-icc-muted">
-              {formatFrDate(post.date)} · {post.readingTimeLabel}
+              {formatDate(post.date, locale)} · {post.readingTimeLabel}
             </p>
           </Link>
         ))}

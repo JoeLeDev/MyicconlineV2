@@ -1,10 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useRouter } from "@/i18n/navigation";
 
 export function LogoutButton() {
+  const t = useTranslations("auth");
   const { logout } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -23,7 +25,7 @@ export function LogoutButton() {
       disabled={loading}
       className="inline-flex items-center justify-center rounded-lg border border-icc-ink/15 bg-white px-4 py-2 text-sm font-semibold text-icc-ink transition hover:bg-icc-cream disabled:opacity-60"
     >
-      {loading ? "Déconnexion…" : "Se déconnecter"}
+      {loading ? t("loggingOut") : t("logout")}
     </button>
   );
 }

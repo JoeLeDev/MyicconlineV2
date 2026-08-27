@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import type { BlogAttachment } from "@/lib/wp/types";
 
 type Props = {
@@ -11,13 +12,14 @@ function formatFilesize(bytes?: number): string | null {
   return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
 }
 
-export function DownloadResources({ attachments }: Props) {
+export async function DownloadResources({ attachments }: Props) {
   if (!attachments.length) return null;
+  const t = await getTranslations("blog");
 
   return (
     <aside className="my-12 border-y border-black/10 py-8">
       <h2 className="text-lg font-bold tracking-tight text-icc-ink">
-        Ressources à télécharger
+        {t("downloads")}
       </h2>
       <ul className="mt-4 space-y-3">
         {attachments.map((file, index) => {

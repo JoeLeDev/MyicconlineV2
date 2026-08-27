@@ -1,19 +1,32 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LegalDocument } from "@/components/legal/LegalDocument";
+import { Link } from "@/i18n/navigation";
 
-export const metadata: Metadata = {
-  title: "Politique de confidentialité",
-  description:
-    "Politique de confidentialité RGPD d’ICC Online Community – Impact Centre Chrétien.",
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-export default function PolitiqueConfidentialitePage() {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "legal" });
+  return {
+    title: t("privacyTitle"),
+    description: t("privacyTitle"),
+  };
+}
+
+export default async function PolitiqueConfidentialitePage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("legal");
+
   return (
     <LegalDocument
-      eyebrow="Protection des données"
-      title="Politique de confidentialité"
-      updated="Dernière mise à jour : 2026"
+      eyebrow={t("privacyEyebrow")}
+      title={t("privacyTitle")}
+      updated={t("updated")}
+      note={locale === "fr" ? undefined : t("officialNote")}
     >
       <h2>1. Introduction</h2>
       <p>

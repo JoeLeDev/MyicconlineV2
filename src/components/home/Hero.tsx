@@ -1,9 +1,13 @@
+import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/Button";
 
 const HERO_VIDEO =
   "https://myicconline.com/wp-content/themes/network-child/assets/video1.mp4";
 
-export function Hero() {
+export async function Hero() {
+  const t = await getTranslations("home");
+
   return (
     <section className="relative flex min-h-[77vh] items-center overflow-hidden bg-icc-black py-16 md:min-h-[85vh] md:py-24">
       <video
@@ -29,17 +33,16 @@ export function Hero() {
 
       <div className="container-icc relative z-10 max-w-3xl text-white">
         <h1 className="text-[clamp(2.25rem,6vw,4.5rem)] font-extrabold leading-[1.05] tracking-tight animate-[fadeUp_.8s_ease_both]">
-          Bienvenue à
+          {t("heroTitleLine1")}
           <br />
-          ICC ONLINE
+          {t("heroTitleLine2")}
         </h1>
         <p className="mt-4 max-w-xl text-base text-white/92 md:text-lg animate-[fadeUp_.85s_ease_.05s_both]">
-          Découvrez notre vision, nos programmes en rejoignant une communauté
-          dynamique et engagée.
+          {t("heroSubtitle")}
         </p>
         <div className="mt-8 animate-[fadeUp_.9s_ease_.1s_both]">
           <Button href="/connexion" variant="outline">
-            Je me connecte
+            {t("heroCta")}
           </Button>
         </div>
       </div>

@@ -1,26 +1,33 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PostCard } from "@/components/blog/PostCard";
+import { Link } from "@/i18n/navigation";
 import { getPosts } from "@/lib/wp/posts";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description:
-    "Articles, cultes, agendas et ressources de la communauté ICC Online.",
-  openGraph: {
-    title: "Blog · ICC Online",
-    description:
-      "Articles, cultes, agendas et ressources de la communauté ICC Online.",
-  },
-};
-
 type Props = {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ page?: string }>;
 };
 
-export default async function BlogPage({ searchParams }: Props) {
-  const params = await searchParams;
-  const page = Math.max(1, Number(params.page) || 1);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "blog" });
+  return {
+    title: t("title"),
+    description: t("subtitle"),
+    openGraph: {
+      title: t("title"),
+      description: t("subtitle"),
+    },
+  };
+}
+
+export default async function BlogPage({ params, searchParams }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("blog");
+  const query = await searchParams;
+  const page = Math.max(1, Number(query.page) || 1);
 
   let posts: Awaited<ReturnType<typeof getPosts>>["posts"] = [];
   let totalPages = 1;
@@ -31,7 +38,7 @@ export default async function BlogPage({ searchParams }: Props) {
     posts = result.posts;
     totalPages = result.totalPages || 1;
   } catch {
-    error = "Impossible de charger les articles pour le moment.";
+    error = t("error");
   }
 
   return (
@@ -39,14 +46,13 @@ export default async function BlogPage({ searchParams }: Props) {
       <div className="container-icc max-w-4xl">
         <header className="mb-10 md:mb-14">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-icc-coral">
-            Ressources
+            {t("eyebrow")}
           </p>
           <h1 className="mt-2 text-[clamp(2rem,5vw,3.2rem)] font-extrabold tracking-tight text-icc-ink">
-            Blog
+            {t("title")}
           </h1>
           <p className="mt-3 max-w-xl text-base text-icc-muted md:text-lg">
-            Cultes, agendas, encouragements et actualités de la famille ICC
-            Online.
+            {t("subtitle")}
           </p>
         </header>
 
@@ -57,7 +63,7 @@ export default async function BlogPage({ searchParams }: Props) {
         ) : null}
 
         {!error && posts.length === 0 ? (
-          <p className="text-icc-muted">Aucun article publié pour le moment.</p>
+          <p className="text-icc-muted">{t("empty")}</p>
         ) : null}
 
         <div>
@@ -66,6 +72,7 @@ export default async function BlogPage({ searchParams }: Props) {
               key={post.id}
               post={post}
               featured={page === 1 && index === 0}
+              locale={locale}
             />
           ))}
         </div>
@@ -80,20 +87,20 @@ export default async function BlogPage({ searchParams }: Props) {
                 href={page === 2 ? "/blog" : `/blog?page=${page - 1}`}
                 className="text-icc-coral hover:text-icc-coral-deep"
               >
-                ← Précédent
+                {t("prev")}
               </Link>
             ) : (
               <span />
             )}
             <span className="text-icc-muted">
-              Page {page} / {totalPages}
+              {t("page", { page, total: totalPages })}
             </span>
             {page < totalPages ? (
               <Link
                 href={`/blog?page=${page + 1}`}
                 className="text-icc-coral hover:text-icc-coral-deep"
               >
-                Suivant →
+                {t("next")}
               </Link>
             ) : (
               <span />

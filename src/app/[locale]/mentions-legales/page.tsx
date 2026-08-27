@@ -1,19 +1,32 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LegalDocument } from "@/components/legal/LegalDocument";
+import { Link } from "@/i18n/navigation";
 
-export const metadata: Metadata = {
-  title: "Mentions légales",
-  description:
-    "Mentions légales du site ICC Online – Impact Centre Chrétien.",
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-export default function MentionsLegalesPage() {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "legal" });
+  return {
+    title: t("mentionsTitle"),
+    description: t("mentionsTitle"),
+  };
+}
+
+export default async function MentionsLegalesPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("legal");
+
   return (
     <LegalDocument
-      eyebrow="Informations légales"
-      title="Mentions légales"
-      updated="Dernière mise à jour : 2026"
+      eyebrow={t("mentionsEyebrow")}
+      title={t("mentionsTitle")}
+      updated={t("updated")}
+      note={locale === "fr" ? undefined : t("officialNote")}
     >
       <h2>1. Éditeur du site</h2>
       <p>
