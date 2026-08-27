@@ -26,11 +26,19 @@ export function Header() {
   }, [pathname]);
 
   const authCta = user ? (
-    <Button href="/espace" variant="primary" className="!px-4 !py-2 text-xs">
+    <Button
+      href="/espace"
+      variant="primary"
+      className="!min-h-10 !px-4 !py-2 text-xs md:!min-h-9"
+    >
       {t("mySpace")}
     </Button>
   ) : (
-    <Button href="/connexion" variant="primary" className="!px-4 !py-2 text-xs">
+    <Button
+      href="/connexion"
+      variant="primary"
+      className="!min-h-10 !px-4 !py-2 text-xs md:!min-h-9"
+    >
       {t("login")}
     </Button>
   );
@@ -144,7 +152,7 @@ export function Header() {
               </Link>
             ))}
           </nav>
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-5 flex flex-col gap-4">
             <div className="flex items-center gap-2.5">
               {SOCIAL_LINKS.map((social) => (
                 <a
@@ -153,19 +161,19 @@ export function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.name}
-                  className="inline-flex h-8 w-8 overflow-hidden rounded-full"
+                  className="inline-flex h-9 w-9 overflow-hidden rounded-full"
                 >
                   <Image
                     src={social.icon}
                     alt=""
-                    width={32}
-                    height={32}
+                    width={36}
+                    height={36}
                     className="h-full w-full object-contain"
                   />
                 </a>
               ))}
             </div>
-            {authCta}
+            <div className="[&_a]:w-full">{authCta}</div>
           </div>
         </div>
       ) : null}

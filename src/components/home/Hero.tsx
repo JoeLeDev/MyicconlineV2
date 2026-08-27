@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/Button";
 
@@ -9,7 +8,7 @@ export async function Hero() {
   const t = await getTranslations("home");
 
   return (
-    <section className="relative flex min-h-[77vh] items-center overflow-hidden bg-icc-black py-16 md:min-h-[85vh] md:py-24">
+    <section className="relative flex min-h-[min(100svh,42rem)] items-center overflow-hidden bg-icc-black py-20 md:min-h-[85vh] md:py-24">
       <video
         className="absolute inset-0 z-0 h-full w-full object-cover motion-reduce:hidden"
         autoPlay
@@ -26,22 +25,26 @@ export async function Hero() {
         className="absolute inset-0 z-[1]"
         style={{
           background:
-            "linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.25) 45%, rgba(0,0,0,.55) 100%)",
+            "linear-gradient(180deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.32) 45%, rgba(0,0,0,.62) 100%)",
         }}
         aria-hidden
       />
 
       <div className="container-icc relative z-10 max-w-3xl text-white">
-        <h1 className="text-[clamp(2.25rem,6vw,4.5rem)] font-extrabold leading-[1.05] tracking-tight animate-[fadeUp_.8s_ease_both]">
+        <h1 className="text-[clamp(2.15rem,8.5vw,4.5rem)] font-extrabold leading-[1.05] tracking-tight animate-[fadeUp_.8s_ease_both]">
           {t("heroTitleLine1")}
           <br />
-          {t("heroTitleLine2")}
+          <span className="whitespace-nowrap">{t("heroTitleLine2")}</span>
         </h1>
-        <p className="mt-4 max-w-xl text-base text-white/92 md:text-lg animate-[fadeUp_.85s_ease_.05s_both]">
+        <p className="mt-4 max-w-xl text-[0.98rem] leading-relaxed text-white/92 sm:text-base md:text-lg animate-[fadeUp_.85s_ease_.05s_both]">
           {t("heroSubtitle")}
         </p>
-        <div className="mt-8 animate-[fadeUp_.9s_ease_.1s_both]">
-          <Button href="/connexion" variant="outline">
+        <div className="mt-8 animate-[fadeUp_.9s_ease_.1s_both] sm:mt-9">
+          <Button
+            href="/connexion"
+            variant="outline"
+            className="w-full min-h-11 sm:w-auto sm:min-w-[12.5rem]"
+          >
             {t("heroCta")}
           </Button>
         </div>
