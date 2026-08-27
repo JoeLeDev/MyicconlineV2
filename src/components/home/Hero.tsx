@@ -39,7 +39,7 @@ export function Hero() {
           dynamique et engagée.
         </p>
         <div className="mt-8 animate-[fadeUp_.9s_ease_.1s_both]">
-          <Button href={getWpLoginUrl()} variant="primary">
+          <Button href={getWpLoginUrl()} variant="outline">
             Je me connecte
           </Button>
         </div>

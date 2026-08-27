@@ -13,7 +13,7 @@ WordPress reste le backend (API REST) sur cPanel — ce dépôt ne remplace pas 
 
 | Route | Description |
 |-------|-------------|
-| `/` | Accueil (hero vidéo, famille connectée, rejoindre la communauté, articles à la une) |
+| `/` | Accueil (hero vidéo, famille connectée, rejoindre la communauté) |
 | `/a-propos` | Présentation ICC Online |
 | `/blog` | Liste des articles |
 | `/blog/[slug]` | Article (YouTube, PDF, articles liés) |

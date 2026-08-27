@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { getWpLoginUrl } from "@/lib/wp/config";
 import { MAIN_NAV, SITE_LOGO, SOCIAL_LINKS } from "@/lib/site";
 import { Button } from "@/components/ui/Button";
-import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 
 export function Header() {
   const pathname = usePathname();
@@ -78,7 +77,6 @@ export function Header() {
               </a>
             ))}
           </div>
-          <LanguageSwitcher />
           <Button
             href={getWpLoginUrl()}
             variant="primary"
