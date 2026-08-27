@@ -5,24 +5,24 @@ export const CONTACT_EMAIL = "netezoua@yahoo.fr";
 
 export const SOCIAL_LINKS = [
   {
+    name: "YouTube",
+    href: "https://www.youtube.com/@icconline2410",
+    icon: "https://myicconline.com/wp-content/themes/network-child/assets/Youtube.png",
+  },
+  {
     name: "Instagram",
     href: "https://www.instagram.com/icc.online/",
     icon: "https://myicconline.com/wp-content/themes/network-child/assets/Instagram.png",
   },
   {
     name: "Facebook",
-    href: "https://www.facebook.com/profile.php?id=100090020607686&locale=fr_FR",
+    href: "https://www.facebook.com/people/ICC-Online/100090020607686/?locale=fr_FR",
     icon: "https://myicconline.com/wp-content/themes/network-child/assets/Facebook.png",
   },
   {
     name: "TikTok",
     href: "https://www.tiktok.com/@icc_online",
     icon: "https://myicconline.com/wp-content/themes/network-child/assets/Tiktok.png",
-  },
-  {
-    name: "YouTube",
-    href: "https://www.youtube.com/@icconline2410",
-    icon: "https://myicconline.com/wp-content/themes/network-child/assets/Youtube.png",
   },
 ] as const;
 
