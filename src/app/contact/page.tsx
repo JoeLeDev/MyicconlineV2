@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/ui/ContactForm";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="bg-white pt-28 pb-20 md:pt-32">
+    <div className="bg-white py-12 md:py-16">
       <div className="container-icc grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-start">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-icc-coral">
@@ -23,6 +24,15 @@ export default function ContactPage() {
             FIO ? Laissez-nous un message — nous vous répondrons avec joie.
           </p>
           <p className="mt-6 text-sm text-icc-muted">
+            E-mail ·{" "}
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="font-medium text-icc-coral hover:text-icc-coral-deep"
+            >
+              {CONTACT_EMAIL}
+            </a>
+          </p>
+          <p className="mt-2 text-sm text-icc-muted">
             Communauté ·{" "}
             <a
               href="https://myicconline.com/"

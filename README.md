@@ -13,11 +13,13 @@ WordPress reste le backend (API REST) sur cPanel — ce dépôt ne remplace pas 
 
 | Route | Description |
 |-------|-------------|
-| `/` | Accueil (hero, famille connectée, rejoindre la communauté, articles à la une) |
+| `/` | Accueil (hero vidéo, famille connectée, rejoindre la communauté, articles à la une) |
 | `/a-propos` | Présentation ICC Online |
 | `/blog` | Liste des articles |
 | `/blog/[slug]` | Article (YouTube, PDF, articles liés) |
-| `/contact` | Formulaire de contact (vitrine) |
+| `/contact` | Formulaire de contact |
+| `/mentions-legales` | Mentions légales |
+| `/politique-de-confidentialite` | Politique de confidentialité RGPD |
 
 ## Prérequis
 
@@ -89,6 +91,6 @@ src/
 
 ## Identité visuelle
 
-- Couleurs : noir / blanc / accent corail `#E55B48`
+- Couleurs : noir / blanc / accent bleu `#1894be`
 - Typo : Poppins
 - Logo & assets : hébergés sur le WordPress existant

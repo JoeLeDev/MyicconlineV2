@@ -1,29 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
-
-const SOCIALS = [
-  {
-    name: "Instagram",
-    href: "https://www.instagram.com/",
-    icon: "https://myicconline.com/wp-content/themes/network-child/assets/Instagram.png",
-  },
-  {
-    name: "Facebook",
-    href: "https://www.facebook.com/",
-    icon: "https://myicconline.com/wp-content/themes/network-child/assets/Facebook.png",
-  },
-  {
-    name: "TikTok",
-    href: "https://www.tiktok.com/",
-    icon: "https://myicconline.com/wp-content/themes/network-child/assets/Tiktok.png",
-  },
-  {
-    name: "YouTube",
-    href: "https://www.youtube.com/",
-    icon: "https://myicconline.com/wp-content/themes/network-child/assets/Youtube.png",
-  },
-];
+import { SOCIAL_LINKS } from "@/lib/site";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -32,7 +10,7 @@ export function Footer() {
     <footer className="border-t border-black/5 bg-white">
       <div className="container-icc flex flex-col items-center gap-6 py-12 text-center">
         <div className="flex items-center gap-4">
-          {SOCIALS.map((social) => (
+          {SOCIAL_LINKS.map((social) => (
             <a
               key={social.name}
               href={social.href}
@@ -70,6 +48,15 @@ export function Footer() {
           </Link>
           <Link href="/blog" className="hover:text-icc-ink">
             Blog
+          </Link>
+          <Link href="/mentions-legales" className="hover:text-icc-ink">
+            Mentions légales
+          </Link>
+          <Link
+            href="/politique-de-confidentialite"
+            className="hover:text-icc-ink"
+          >
+            Politique de confidentialité
           </Link>
         </nav>
       </div>

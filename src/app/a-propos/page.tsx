@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="bg-white pt-28 pb-20 md:pt-32">
+    <div className="bg-white py-12 md:py-16">
       <div className="container-icc max-w-3xl">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-icc-coral">
           Qui sommes-nous

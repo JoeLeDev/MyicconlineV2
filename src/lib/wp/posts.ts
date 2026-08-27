@@ -17,6 +17,11 @@ import type {
   WpTerm,
 } from "./types";
 
+type MapOptions = {
+  /** Résoudre les PDF via meta / media API (uniquement pour la page article). */
+  resolveAttachments?: boolean;
+};
+
 function getCategory(post: WpPost): BlogPost["category"] {
   const groups = post._embedded?.["wp:term"] || [];
   for (const terms of groups) {
@@ -37,9 +42,18 @@ function getAuthorName(post: WpPost): string {
 function getFeaturedImage(post: WpPost): BlogPost["featuredImage"] {
   const media = post._embedded?.["wp:featuredmedia"]?.[0];
   if (!media?.source_url) return undefined;
-  const large = media.media_details?.sizes?.large?.source_url;
+
+  // Erreur REST (ex. média privé) → pas d'image
+  if ("code" in media) return undefined;
+
+  const sizes = media.media_details?.sizes;
+  const preferred =
+    sizes?.medium_large?.source_url ||
+    sizes?.large?.source_url ||
+    sizes?.medium?.source_url;
+
   return {
-    url: large || media.source_url,
+    url: preferred || media.source_url,
     alt: media.alt_text || decodeHtmlEntities(post.title.rendered),
     width: media.media_details?.width,
     height: media.media_details?.height,
@@ -127,7 +141,9 @@ function formatReadingTimeLabel(
   if (typeof raw === "string" && raw.trim()) {
     const label = raw.trim();
     const match = label.match(/(\d+)/);
-    const minutes = match ? Number(match[1]) : estimateReadingTimeMinutes(contentHtml);
+    const minutes = match
+      ? Number(match[1])
+      : estimateReadingTimeMinutes(contentHtml);
     return { label, minutes: Math.max(1, minutes) };
   }
   const minutes = estimateReadingTimeMinutes(contentHtml);
@@ -141,7 +157,7 @@ async function fetchAttachmentsByIds(ids: number[]): Promise<BlogAttachment[]> {
     unique.map(async (id): Promise<BlogAttachment | null> => {
       try {
         const media = await wpFetch<WpMedia>(`/wp/v2/media/${id}`, {
-          revalidate: 300,
+          revalidate: 600,
           tags: ["wp-media"],
         });
         const extension = media.source_url.split(".").pop()?.toLowerCase();
@@ -160,14 +176,13 @@ async function fetchAttachmentsByIds(ids: number[]): Promise<BlogAttachment[]> {
   return results.filter((a): a is BlogAttachment => a !== null);
 }
 
-/** Fallback : PDF attachés au post (parent) si editorial / meta absents. */
 async function fetchPdfAttachmentsForPost(
   postId: number,
 ): Promise<BlogAttachment[]> {
   try {
     const media = await wpFetch<WpMedia[]>(
       `/wp/v2/media?parent=${postId}&per_page=20&media_type=file`,
-      { revalidate: 300, tags: ["wp-media"] },
+      { revalidate: 600, tags: ["wp-media"] },
     );
     return media
       .filter(
@@ -187,50 +202,72 @@ async function fetchPdfAttachmentsForPost(
   }
 }
 
-export async function mapWpPostToBlogPost(post: WpPost): Promise<BlogPost> {
+async function resolveAttachments(
+  post: WpPost,
+  contentHtml: string,
+): Promise<BlogAttachment[]> {
+  const editorial = post.icc_editorial;
+  const editorialFiles = editorial?.files;
+
+  // Si WP expose déjà `files` (même vide), on s'y fie — pas d'appel media.
+  if (Array.isArray(editorialFiles)) {
+    return mapEditorialFiles(editorialFiles);
+  }
+
+  const metaIds = parseAttachedFileIds(post.meta);
+  if (metaIds.length > 0) {
+    return fetchAttachmentsByIds(metaIds);
+  }
+
+  const fromParent = await fetchPdfAttachmentsForPost(post.id);
+  const pdfUrls = [
+    ...contentHtml.matchAll(/href=["']([^"']+\.pdf[^"']*)["']/gi),
+  ].map((m) => m[1]);
+
+  const attachments = [...fromParent];
+  for (const url of pdfUrls) {
+    if (!attachments.some((a) => a.url === url)) {
+      attachments.push({
+        id: 0,
+        title: decodeHtmlEntities(url.split("/").pop() || "Document PDF"),
+        url,
+        mimeType: "application/pdf",
+        extension: "pdf",
+      });
+    }
+  }
+  return attachments;
+}
+
+export async function mapWpPostToBlogPost(
+  post: WpPost,
+  options: MapOptions = {},
+): Promise<BlogPost> {
+  const { resolveAttachments: shouldResolveAttachments = true } = options;
   const editorial = post.icc_editorial;
 
-  // Priorité : icc_editorial → meta → HTML
   const youtubeUrl =
     getYoutubeFromEditorial(editorial) ||
     getYoutubeFromMeta(post.meta) ||
-    extractYoutubeUrlFromHtml(post.content.rendered);
+    (shouldResolveAttachments
+      ? extractYoutubeUrlFromHtml(post.content.rendered)
+      : undefined);
 
-  let contentHtml = stripBrokenPdfImages(post.content.rendered);
-  if (youtubeUrl) {
+  let contentHtml = shouldResolveAttachments
+    ? stripBrokenPdfImages(post.content.rendered)
+    : "";
+  if (shouldResolveAttachments && youtubeUrl) {
     contentHtml = stripYoutubeEmbeds(contentHtml);
   }
 
-  let attachments: BlogAttachment[] = [];
-  const editorialFiles = editorial?.files;
-
-  if (Array.isArray(editorialFiles) && editorialFiles.length > 0) {
-    attachments = mapEditorialFiles(editorialFiles);
-  } else {
-    const metaIds = parseAttachedFileIds(post.meta);
-    attachments =
-      metaIds.length > 0
-        ? await fetchAttachmentsByIds(metaIds)
-        : await fetchPdfAttachmentsForPost(post.id);
-
-    const pdfUrls = [
-      ...contentHtml.matchAll(/href=["']([^"']+\.pdf[^"']*)["']/gi),
-    ].map((m) => m[1]);
-    for (const url of pdfUrls) {
-      if (!attachments.some((a) => a.url === url)) {
-        attachments.push({
-          id: 0,
-          title: decodeHtmlEntities(url.split("/").pop() || "Document PDF"),
-          url,
-          mimeType: "application/pdf",
-          extension: "pdf",
-        });
-      }
-    }
-  }
+  const attachments = shouldResolveAttachments
+    ? await resolveAttachments(post, contentHtml)
+    : Array.isArray(editorial?.files)
+      ? mapEditorialFiles(editorial.files)
+      : [];
 
   const { label: readingTimeLabel, minutes: readingTimeMinutes } =
-    formatReadingTimeLabel(editorial, post.content.rendered);
+    formatReadingTimeLabel(editorial, post.content?.rendered || "");
 
   return {
     id: post.id,
@@ -271,20 +308,25 @@ export async function getPosts(params?: {
 
   const { data, total, totalPages } = await wpFetchWithTotal<WpPost[]>(
     `/wp/v2/posts?${search.toString()}`,
-    { revalidate: 60, tags: ["wp-posts"] },
+    { revalidate: 120, tags: ["wp-posts"] },
   );
 
-  const posts = await Promise.all(data.map(mapWpPostToBlogPost));
+  // Liste : 1 seul appel WP, sans N requêtes media pour les PDF
+  const posts = await Promise.all(
+    data.map((post) =>
+      mapWpPostToBlogPost(post, { resolveAttachments: false }),
+    ),
+  );
   return { posts, total, totalPages };
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   const posts = await wpFetch<WpPost[]>(
     `/wp/v2/posts?slug=${encodeURIComponent(slug)}&_embed=1`,
-    { revalidate: 60, tags: ["wp-posts", `wp-post-${slug}`] },
+    { revalidate: 120, tags: ["wp-posts", `wp-post-${slug}`] },
   );
   if (!posts.length) return null;
-  return mapWpPostToBlogPost(posts[0]);
+  return mapWpPostToBlogPost(posts[0], { resolveAttachments: true });
 }
 
 export async function getRelatedPosts(
@@ -303,11 +345,13 @@ export async function getRelatedPosts(
   }
 
   const data = await wpFetch<WpPost[]>(`/wp/v2/posts?${search.toString()}`, {
-    revalidate: 120,
+    revalidate: 300,
     tags: ["wp-posts"],
   });
 
-  const mapped = await Promise.all(data.map(mapWpPostToBlogPost));
+  const mapped = await Promise.all(
+    data.map((p) => mapWpPostToBlogPost(p, { resolveAttachments: false })),
+  );
   return mapped.filter((p) => p.id !== post.id).slice(0, limit);
 }
 
@@ -319,7 +363,7 @@ export async function getAllPostSlugs(): Promise<string[]> {
   while (page <= totalPages && page <= 20) {
     const { data, totalPages: pages } = await wpFetchWithTotal<WpPost[]>(
       `/wp/v2/posts?per_page=100&page=${page}&_fields=slug`,
-      { revalidate: 300, tags: ["wp-posts"] },
+      { revalidate: 600, tags: ["wp-posts"] },
     );
     totalPages = pages || 1;
     for (const post of data) {

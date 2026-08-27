@@ -56,7 +56,7 @@ export default async function BlogPostPage({ params }: Props) {
   const related = await getRelatedPosts(post, 3).catch(() => []);
 
   return (
-    <article className="bg-white pt-28 pb-20 md:pt-32">
+    <article className="bg-white py-12 md:py-16">
       <div className="container-icc max-w-3xl">
         <header>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold uppercase tracking-[0.14em] text-icc-coral">

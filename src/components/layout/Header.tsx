@@ -5,50 +5,24 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getWpLoginUrl } from "@/lib/wp/config";
+import { MAIN_NAV, SITE_LOGO, SOCIAL_LINKS } from "@/lib/site";
 import { Button } from "@/components/ui/Button";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
-
-const LOGO_SRC =
-  "https://myicconline.com/wp-content/themes/network-child/assets/logo-icc.png";
-
-const NAV = [
-  { href: "/", label: "Accueil" },
-  { href: "/a-propos", label: "À propos" },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact" },
-];
 
 export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const isHome = pathname === "/";
-  const solid = !isHome || scrolled || open;
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
   return (
-    <header
-      className={[
-        "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
-        solid
-          ? "border-b border-black/5 bg-icc-black/95 text-white backdrop-blur-md"
-          : "bg-transparent text-white",
-      ].join(" ")}
-    >
+    <header className="sticky top-0 z-50 border-b border-black/5 bg-white text-icc-ink">
       <div className="container-icc flex h-[4.25rem] items-center justify-between gap-4 md:h-[4.75rem]">
-        <Link href="/" className="flex items-center gap-2.5 shrink-0">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5">
           <Image
-            src={LOGO_SRC}
+            src={SITE_LOGO}
             alt="ICC Online"
             width={160}
             height={54}
@@ -57,8 +31,11 @@ export function Header() {
           />
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex" aria-label="Principal">
-          {NAV.map((item) => {
+        <nav
+          className="hidden items-center gap-7 lg:flex"
+          aria-label="Principal"
+        >
+          {MAIN_NAV.map((item) => {
             const active =
               item.href === "/"
                 ? pathname === "/"
@@ -69,7 +46,9 @@ export function Header() {
                 href={item.href}
                 className={[
                   "text-sm font-medium transition",
-                  active ? "text-icc-coral-hot" : "text-white/90 hover:text-white",
+                  active
+                    ? "text-icc-coral"
+                    : "text-icc-ink/75 hover:text-icc-ink",
                 ].join(" ")}
               >
                 {item.label}
@@ -79,15 +58,39 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-4 md:flex">
+          <div className="flex items-center gap-2.5">
+            {SOCIAL_LINKS.map((social) => (
+              <a
+                key={social.name}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.name}
+                className="inline-flex h-8 w-8 items-center justify-center overflow-hidden rounded-full transition hover:opacity-80"
+              >
+                <Image
+                  src={social.icon}
+                  alt=""
+                  width={32}
+                  height={32}
+                  className="h-full w-full object-contain"
+                />
+              </a>
+            ))}
+          </div>
           <LanguageSwitcher />
-          <Button href={getWpLoginUrl()} variant="outline" className="!py-2 !px-4 text-xs">
+          <Button
+            href={getWpLoginUrl()}
+            variant="primary"
+            className="!px-4 !py-2 text-xs"
+          >
             Je me connecte
           </Button>
         </div>
 
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/25 md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-black/15 md:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
@@ -97,19 +100,19 @@ export function Header() {
           <div className="flex w-4 flex-col gap-1.5">
             <span
               className={[
-                "h-0.5 w-full bg-white transition",
+                "h-0.5 w-full bg-icc-ink transition",
                 open ? "translate-y-[7px] rotate-45" : "",
               ].join(" ")}
             />
             <span
               className={[
-                "h-0.5 w-full bg-white transition",
+                "h-0.5 w-full bg-icc-ink transition",
                 open ? "opacity-0" : "",
               ].join(" ")}
             />
             <span
               className={[
-                "h-0.5 w-full bg-white transition",
+                "h-0.5 w-full bg-icc-ink transition",
                 open ? "-translate-y-[7px] -rotate-45" : "",
               ].join(" ")}
             />
@@ -120,22 +123,45 @@ export function Header() {
       {open ? (
         <div
           id="mobile-nav"
-          className="border-t border-white/10 bg-icc-black px-5 py-5 md:hidden"
+          className="border-t border-black/5 bg-white px-5 py-5 md:hidden"
         >
           <nav className="flex flex-col gap-3" aria-label="Mobile">
-            {NAV.map((item) => (
+            {MAIN_NAV.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="py-1 text-base font-medium text-white/90"
+                className="py-1 text-base font-medium text-icc-ink"
               >
                 {item.label}
               </Link>
             ))}
           </nav>
-          <div className="mt-5 flex items-center justify-between gap-3">
-            <LanguageSwitcher />
-            <Button href={getWpLoginUrl()} variant="outline" className="!py-2 !px-4 text-xs">
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              {SOCIAL_LINKS.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.name}
+                  className="inline-flex h-8 w-8 overflow-hidden rounded-full"
+                >
+                  <Image
+                    src={social.icon}
+                    alt=""
+                    width={32}
+                    height={32}
+                    className="h-full w-full object-contain"
+                  />
+                </a>
+              ))}
+            </div>
+            <Button
+              href={getWpLoginUrl()}
+              variant="primary"
+              className="!px-4 !py-2 text-xs"
+            >
               Je me connecte
             </Button>
           </div>

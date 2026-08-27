@@ -35,7 +35,7 @@ export default async function BlogPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="bg-white pt-28 pb-20 md:pt-32">
+    <div className="bg-white py-12 md:py-16">
       <div className="container-icc max-w-4xl">
         <header className="mb-10 md:mb-14">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-icc-coral">

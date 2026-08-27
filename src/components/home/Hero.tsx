@@ -6,7 +6,7 @@ const HERO_VIDEO =
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[77vh] items-center overflow-hidden bg-icc-black pb-16 pt-28 md:min-h-[88vh] md:pb-24 md:pt-32">
+    <section className="relative flex min-h-[77vh] items-center overflow-hidden bg-icc-black py-16 md:min-h-[85vh] md:py-24">
       <video
         className="absolute inset-0 z-0 h-full w-full object-cover motion-reduce:hidden"
         autoPlay
@@ -39,7 +39,7 @@ export function Hero() {
           dynamique et engagée.
         </p>
         <div className="mt-8 animate-[fadeUp_.9s_ease_.1s_both]">
-          <Button href={getWpLoginUrl()} variant="outline">
+          <Button href={getWpLoginUrl()} variant="primary">
             Je me connecte
           </Button>
         </div>
