@@ -12,19 +12,28 @@ type Props = {
   tabs: Tab[];
   panels: Record<string, ReactNode>;
   defaultTab?: string;
+  embedded?: boolean;
 };
 
-export function FioGroupTabs({ tabs, panels, defaultTab }: Props) {
+export function FioGroupTabs({ tabs, panels, defaultTab, embedded = false }: Props) {
   const [active, setActive] = useState(defaultTab ?? tabs[0]?.id ?? "feed");
 
   return (
-    <div>
+    <div className={embedded ? undefined : "bg-icc-cream/30"}>
       <div
-        className="border-b border-black/8 bg-white"
+        className={[
+          "border-b border-black/8 bg-white",
+          embedded ? "rounded-t-2xl border-x border-t" : undefined,
+        ].join(" ")}
         role="tablist"
         aria-label="Sections du groupe"
       >
-        <div className="container-icc flex max-w-5xl gap-1 overflow-x-auto">
+        <div
+          className={[
+            "flex gap-1 overflow-x-auto",
+            embedded ? "px-2" : "container-icc max-w-5xl",
+          ].join(" ")}
+        >
           {tabs.map((tab) => {
             const selected = active === tab.id;
             return (
@@ -56,7 +65,7 @@ export function FioGroupTabs({ tabs, panels, defaultTab }: Props) {
         </div>
       </div>
 
-      <div className="container-icc max-w-5xl py-8 md:py-10">
+      <div className={embedded ? "py-0" : "container-icc max-w-5xl py-8 md:py-10"}>
         {tabs.map((tab) => (
           <div
             key={tab.id}

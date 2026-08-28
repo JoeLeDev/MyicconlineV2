@@ -17,7 +17,12 @@ export const COMMUNITY_REVALIDATE = 120;
 export const COMMUNITY_TAG = "community";
 
 function normalizeFio(fio: WpFio, meta?: BpGroupMeta): WpFio {
-  return normalizeWpFioText(enrichFioImage(fio, meta));
+  const enriched = normalizeWpFioText(enrichFioImage(fio, meta));
+  return {
+    ...enriched,
+    status: meta?.status || enriched.status,
+    avatar: meta?.avatarFull || enriched.avatar,
+  };
 }
 
 function stripSensitiveMember(member: WpMemberSummary): CommunityMember {
@@ -115,7 +120,12 @@ async function fetchBpGroupMetaMap(): Promise<Map<number, BpGroupMeta>> {
 
   while (page <= totalPages && page <= 5) {
     const result = await wpFetchWithTotal<
-      Array<{ id: number; types?: string[]; avatar_urls?: { full?: string } }>
+      Array<{
+        id: number;
+        types?: string[];
+        status?: string;
+        avatar_urls?: { full?: string };
+      }>
     >(`/buddypress/v1/groups?per_page=100&page=${page}`, {
       revalidate: COMMUNITY_REVALIDATE,
       tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:bp-group-meta`],
@@ -125,6 +135,7 @@ async function fetchBpGroupMetaMap(): Promise<Map<number, BpGroupMeta>> {
       map.set(group.id, {
         types: group.types?.length ? group.types : ["fio"],
         avatarFull: group.avatar_urls?.full?.trim() ?? "",
+        status: group.status?.trim() ?? "",
       });
     }
 
@@ -168,7 +179,11 @@ export async function getFioBySlug(slug: string): Promise<WpFio | null> {
 async function enrichFioFromBuddyPress(fio: WpFio): Promise<WpFio> {
   try {
     const groups = await wpFetch<
-      Array<{ types?: string[]; avatar_urls?: { full?: string } }>
+      Array<{
+        types?: string[];
+        status?: string;
+        avatar_urls?: { full?: string };
+      }>
     >(`/buddypress/v1/groups/${fio.id}`, {
       revalidate: COMMUNITY_REVALIDATE,
       tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:bp-group:${fio.id}`],
@@ -179,6 +194,7 @@ async function enrichFioFromBuddyPress(fio: WpFio): Promise<WpFio> {
     const meta: BpGroupMeta = {
       types: group.types?.length ? group.types : ["fio"],
       avatarFull: group.avatar_urls?.full?.trim() ?? "",
+      status: group.status?.trim() ?? "",
     };
 
     return normalizeFio(

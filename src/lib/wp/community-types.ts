@@ -79,6 +79,8 @@ export type WpFio = {
   lng?: string;
   types?: string[];
   category?: string;
+  status?: string;
+  avatar?: string;
 };
 
 export type WpFioMember = {

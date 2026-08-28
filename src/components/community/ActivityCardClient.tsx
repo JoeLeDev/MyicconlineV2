@@ -1,6 +1,7 @@
+"use client";
+
 import { ActivityInteractions } from "@/components/community/ActivityInteractions";
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
 import { PostContent } from "@/components/blog/PostContent";
 import { rewriteCommunityHtml } from "@/lib/utils/community-html";
 import { formatDateTime } from "@/lib/utils/dates";
@@ -9,15 +10,9 @@ import type { WpActivityItem } from "@/lib/wp/community-types";
 type Props = {
   activity: WpActivityItem;
   locale?: string;
-  showExternalLink?: boolean;
 };
 
-export async function ActivityCard({
-  activity,
-  locale = "fr",
-  showExternalLink = true,
-}: Props) {
-  const t = await getTranslations("community");
+export function ActivityCardClient({ activity, locale = "fr" }: Props) {
   const when = formatDateTime(activity.date, locale);
   const actionHtml = rewriteCommunityHtml(activity.action);
   const content = activity.content.rendered.trim();
@@ -60,19 +55,6 @@ export async function ActivityCard({
           initialCommentCount={activity.comment_count}
           locale={locale}
         />
-
-        {showExternalLink ? (
-          <div className="mt-3">
-            <a
-              href={activity.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-medium text-icc-coral hover:text-icc-coral-deep"
-            >
-              {t("viewOnWp")}
-            </a>
-          </div>
-        ) : null}
       </div>
     </article>
   );

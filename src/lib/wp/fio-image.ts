@@ -3,6 +3,7 @@ const BP_MYSTERY_AVATAR = "mystery-group";
 export type BpGroupMeta = {
   types: string[];
   avatarFull: string;
+  status?: string;
 };
 
 export function isBpDefaultAvatar(url: string): boolean {

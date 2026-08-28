@@ -1,18 +1,37 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ActivityCard } from "@/components/community/ActivityCard";
+import { FioGroupAudience } from "@/components/community/FioGroupAudience";
+import { FioGroupEventsSection } from "@/components/community/FioGroupEventsSection";
+import { FioGroupFeed } from "@/components/community/FioGroupFeed";
+import { FioGroupGallery } from "@/components/community/FioGroupGallery";
 import { FioGroupHero } from "@/components/community/FioGroupHero";
+import { FioGroupLeaders } from "@/components/community/FioGroupLeaders";
+import { FioGroupMap } from "@/components/community/FioGroupMap";
+import { FioGroupNotificationBanner } from "@/components/community/FioGroupNotifications";
 import { FioGroupPostForm } from "@/components/community/FioGroupPostForm";
+import { FioGroupSidebar } from "@/components/community/FioGroupSidebar";
 import { FioGroupTabs } from "@/components/community/FioGroupTabs";
+import { FioGroupWelcome } from "@/components/community/FioGroupWelcome";
 import { FioMemberList } from "@/components/community/FioMemberList";
+import { FioSimilarGroups } from "@/components/community/FioSimilarGroups";
 import { CommunityText } from "@/components/community/CommunityText";
 import { Link } from "@/i18n/navigation";
 import { peekAuthToken } from "@/lib/auth/session";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { communityTextExcerpt } from "@/lib/utils/community-text";
 import { getFioActivitiesAuthenticated } from "@/lib/wp/community-auth";
-import { getFioActivities, getFioBySlug, getFioMembers } from "@/lib/wp/community";
+import {
+  buildMemberSlugIndex,
+  getFioActivities,
+  getFioBySlug,
+  getFioMembers,
+  getFios,
+  getMembers,
+} from "@/lib/wp/community";
+import { getRelatedEventsForFio } from "@/lib/wp/fio-events";
+import { buildFioGallery } from "@/lib/wp/fio-gallery";
+import { getSimilarFios } from "@/lib/wp/fio-similar";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -55,87 +74,103 @@ export default async function GroupDetailPage({ params }: Props) {
     notFound();
   }
 
-  const [members, token] = await Promise.all([
-    getFioMembers(fio.id).catch(() => []),
-    peekAuthToken(),
-  ]);
+  const [members, allFios, membersDirectory, token, relatedEvents] =
+    await Promise.all([
+      getFioMembers(fio.id).catch(() => []),
+      getFios().catch(() => []),
+      getMembers().catch(() => []),
+      peekAuthToken(),
+      getRelatedEventsForFio(fio).catch(() => []),
+    ]);
+
+  const slugById = buildMemberSlugIndex(membersDirectory);
+  const similarFios = getSimilarFios(fio, allFios);
+  const galleryImages = buildFioGallery(fio.nom, fio.image, {
+    avatarFull: fio.avatar ?? "",
+  });
 
   const activityResponse = token
     ? await getFioActivitiesAuthenticated(token, fio.id).catch(() => null)
     : null;
 
-  const activities =
+  const activityPayload =
     activityResponse?.ok === true
-      ? activityResponse.data.activities
-      : (
-          await getFioActivities(fio.id, { page: 1, perPage: 15 }).catch(
-            () => null,
-          )
-        )?.activities ?? [];
+      ? activityResponse.data
+      : await getFioActivities(fio.id, { page: 1, perPage: 15 }).catch(() => null);
+
+  const activities = activityPayload?.activities ?? [];
+  const hasMore = Boolean(activityPayload?.has_more);
+  const latestActivityId = activities[0]?.id ?? null;
 
   const schedule = [fio.jour, fio.horaire].filter((v) => !isPlaceholder(v)).join(" · ");
+  const mapLabel = [fio.ville, fio.nom].filter(Boolean).join(" · ");
 
   const feedPanel = (
     <div className="space-y-4">
+      <FioGroupNotificationBanner
+        fioId={fio.id}
+        latestActivityId={latestActivityId}
+        enabled={Boolean(token)}
+      />
+      <FioGroupWelcome
+        description={fio.description}
+        pilotName={isPlaceholder(fio.pilote) ? undefined : fio.pilote}
+        schedule={schedule || undefined}
+      />
       <FioGroupPostForm fioId={fio.id} fioSlug={fio.slug} />
-
-      {activities.length > 0 ? (
-        <div className="rounded-2xl border border-black/8 bg-white px-4 md:px-6">
-          {activities.map((activity) => (
-            <ActivityCard key={activity.id} activity={activity} locale={locale} />
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-2xl border border-black/8 bg-icc-cream/40 px-6 py-10 text-center">
-          <p className="text-icc-muted">{t("emptyGroupFeed")}</p>
-        </div>
-      )}
+      <FioGroupFeed
+        fioId={fio.id}
+        locale={locale}
+        initialActivities={activities}
+        initialHasMore={hasMore}
+        initialPage={activityPayload?.page ?? 1}
+      />
     </div>
   );
 
   const membersPanel = (
     <div className="rounded-2xl border border-black/8 bg-white p-4 md:p-6">
-      <FioMemberList members={members} />
+      <FioMemberList members={members} slugById={slugById} />
     </div>
   );
 
   const aboutPanel = (
-    <div className="rounded-2xl border border-black/8 bg-white p-6 md:p-8">
-      {fio.description ? (
-        <CommunityText
-          text={fio.description}
-          className="prose-icc max-w-3xl text-base leading-relaxed text-icc-muted md:text-lg"
-        />
-      ) : (
-        <p className="text-icc-muted">{t("groupAboutEmpty")}</p>
-      )}
+    <div className="space-y-6">
+      <FioGroupAudience description={fio.description} />
+      <FioGroupLeaders
+        fio={fio}
+        membersDirectory={membersDirectory}
+        fioMembers={members}
+      />
+      <FioGroupGallery images={galleryImages} />
+      <div className="rounded-2xl border border-black/8 bg-white p-6 md:p-8">
+        {fio.description ? (
+          <CommunityText
+            text={fio.description}
+            className="prose-icc max-w-3xl text-base leading-relaxed text-icc-muted md:text-lg"
+          />
+        ) : (
+          <p className="text-icc-muted">{t("groupAboutEmpty")}</p>
+        )}
 
-      <dl className="mt-8 grid gap-4 border-t border-black/8 pt-8 text-sm sm:grid-cols-2">
-        {schedule ? (
-          <div>
-            <dt className="font-semibold text-icc-ink">{t("schedule")}</dt>
-            <dd className="mt-1 text-icc-muted">{schedule}</dd>
-          </div>
-        ) : null}
-        {!isPlaceholder(fio.pilote) ? (
-          <div>
-            <dt className="font-semibold text-icc-ink">{t("pilotLabel")}</dt>
-            <dd className="mt-1 text-icc-muted">{fio.pilote}</dd>
-          </div>
-        ) : null}
-        {!isPlaceholder(fio.pilier) ? (
-          <div>
-            <dt className="font-semibold text-icc-ink">{t("pillarLabel")}</dt>
-            <dd className="mt-1 text-icc-muted">{fio.pilier}</dd>
-          </div>
-        ) : null}
-        {!isPlaceholder(fio.ville || "") ? (
-          <div>
-            <dt className="font-semibold text-icc-ink">{t("city")}</dt>
-            <dd className="mt-1 text-icc-muted">{fio.ville}</dd>
-          </div>
-        ) : null}
-      </dl>
+        <dl className="mt-8 grid gap-4 border-t border-black/8 pt-8 text-sm sm:grid-cols-2">
+          {schedule ? (
+            <div>
+              <dt className="font-semibold text-icc-ink">{t("schedule")}</dt>
+              <dd className="mt-1 text-icc-muted">{schedule}</dd>
+            </div>
+          ) : null}
+          {!isPlaceholder(fio.ville || "") ? (
+            <div>
+              <dt className="font-semibold text-icc-ink">{t("city")}</dt>
+              <dd className="mt-1 text-icc-muted">{fio.ville}</dd>
+            </div>
+          ) : null}
+        </dl>
+      </div>
+      {fio.lat && fio.lng ? (
+        <FioGroupMap lat={fio.lat} lng={fio.lng} label={mapLabel} />
+      ) : null}
     </div>
   );
 
@@ -153,21 +188,36 @@ export default async function GroupDetailPage({ params }: Props) {
         joinZoomLabel={t("joinZoom")}
       />
 
-      <FioGroupTabs
-        defaultTab="feed"
-        tabs={[
-          { id: "feed", label: t("groupTabFeed") },
-          { id: "members", label: t("groupTabMembers"), badge: members.length },
-          { id: "about", label: t("groupTabAbout") },
-        ]}
-        panels={{
-          feed: feedPanel,
-          members: membersPanel,
-          about: aboutPanel,
-        }}
-      />
+      <div className="container-icc max-w-6xl py-8 md:py-10">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+          <FioGroupTabs
+            defaultTab="feed"
+            tabs={[
+              { id: "feed", label: t("groupTabFeed") },
+              { id: "members", label: t("groupTabMembers"), badge: members.length },
+              { id: "about", label: t("groupTabAbout") },
+            ]}
+            panels={{
+              feed: feedPanel,
+              members: membersPanel,
+              about: aboutPanel,
+            }}
+            embedded
+          />
 
-      <div className="container-icc max-w-5xl pb-12">
+          <FioGroupSidebar
+            fio={fio}
+            schedule={schedule}
+            locale={locale}
+            notificationsEnabled={Boolean(token)}
+          />
+        </div>
+      </div>
+
+      <FioGroupEventsSection events={relatedEvents} locale={locale} />
+      <FioSimilarGroups fios={similarFios} />
+
+      <div className="container-icc max-w-6xl pb-12">
         <Link
           href="/groupes"
           className="text-sm font-semibold text-icc-coral hover:text-icc-coral-deep"

@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { FioCategorySection } from "@/components/community/FioCategorySection";
+import { FioDirectoryFilters } from "@/components/community/FioDirectoryFilters";
 import {
   getFioPrimaryCategory,
   getOrderedCategorySections,
@@ -17,12 +18,17 @@ type Props = {
 export function FioDirectory({ fios }: Props) {
   const t = useTranslations("community");
   const [query, setQuery] = useState("");
+  const [filteredByControls, setFilteredByControls] = useState(fios);
+
+  const handleFilterChange = useCallback((next: WpFio[]) => {
+    setFilteredByControls(next);
+  }, []);
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    if (!normalized) return fios;
+    if (!normalized) return filteredByControls;
 
-    return fios.filter((fio) => {
+    return filteredByControls.filter((fio) => {
       const category = fio.category ?? getFioPrimaryCategory(fio.types);
       const categoryLabel = t(
         category === "other"
@@ -46,7 +52,7 @@ export function FioDirectory({ fios }: Props) {
 
       return haystack.includes(normalized);
     });
-  }, [fios, query, t]);
+  }, [filteredByControls, query, t]);
 
   const sections = useMemo(
     () => getOrderedCategorySections(groupFiosByCategory(filtered)),
@@ -71,6 +77,8 @@ export function FioDirectory({ fios }: Props) {
           {t("groupsCount", { count: filtered.length })}
         </p>
       </div>
+
+      <FioDirectoryFilters fios={fios} onChange={handleFilterChange} />
 
       {sections.length === 0 ? (
         <p className="text-icc-muted">{t("noGroupsMatch")}</p>
