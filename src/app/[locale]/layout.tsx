@@ -4,6 +4,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { Poppins } from "next/font/google";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { CommunityNav } from "@/components/layout/CommunityNav";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { routing } from "@/i18n/routing";
@@ -70,6 +71,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>
             <Header />
+            <CommunityNav />
             <main className="flex-1">{children}</main>
             <Footer />
           </AuthProvider>

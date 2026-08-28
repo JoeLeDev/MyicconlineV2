@@ -41,6 +41,14 @@ export const CMS_PAGE_CONFIG: Record<string, CmsPageConfig> = {
 
 export const CMS_PAGE_ROUTES = Object.keys(CMS_PAGE_CONFIG);
 
+/** Liens barre communauté (header) */
+export const CMS_NAV_ITEMS = [
+  { href: "/nous-rejoindre", labelKey: "joinUs" as const },
+  { href: "/a-votre-ecoute", labelKey: "listen" as const },
+  { href: "/jai-besoin-de-prieres", labelKey: "prayer" as const },
+  { href: "/magazine", labelKey: "magazine" as const },
+];
+
 export function getCmsPageConfig(route: string): CmsPageConfig | undefined {
   return CMS_PAGE_CONFIG[route];
 }

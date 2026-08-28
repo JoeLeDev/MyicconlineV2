@@ -6,13 +6,6 @@ import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { Link } from "@/i18n/navigation";
 import { SOCIAL_LINKS } from "@/lib/site";
 
-const CMS_FOOTER_LINKS = [
-  { href: "/nous-rejoindre", labelKey: "joinUs" as const },
-  { href: "/a-votre-ecoute", labelKey: "listen" as const },
-  { href: "/jai-besoin-de-prieres", labelKey: "prayer" as const },
-  { href: "/magazine", labelKey: "magazine" as const },
-];
-
 export function Footer() {
   const t = useTranslations("footer");
   const year = new Date().getFullYear();
@@ -58,11 +51,6 @@ export function Footer() {
           <Link href="/blog" className="hover:text-icc-ink">
             {t("blog")}
           </Link>
-          {CMS_FOOTER_LINKS.map((item) => (
-            <Link key={item.href} href={item.href} className="hover:text-icc-ink">
-              {t(item.labelKey)}
-            </Link>
-          ))}
           <Link href="/mentions-legales" className="hover:text-icc-ink">
             {t("legal")}
           </Link>

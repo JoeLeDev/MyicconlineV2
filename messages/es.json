@@ -10,6 +10,11 @@
     "contact": "Contacto",
     "login": "Iniciar sesión",
     "mySpace": "Mi espacio",
+    "communityNav": "Comunidad",
+    "joinUs": "Únete",
+    "listen": "A tu escucha",
+    "prayer": "Petición de oración",
+    "magazine": "Revista",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú"
   },
@@ -142,10 +147,6 @@
     "about": "Acerca de",
     "contact": "Contacto",
     "blog": "Blog",
-    "joinUs": "Únete",
-    "listen": "A tu escucha",
-    "prayer": "Petición de oración",
-    "magazine": "Revista",
     "legal": "Aviso legal",
     "privacy": "Política de privacidad",
     "copyright": "© {year} — My ICC Online · Impact Centre Chrétien"

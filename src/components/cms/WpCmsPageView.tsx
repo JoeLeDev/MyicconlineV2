@@ -62,10 +62,34 @@ async function CmsDownloads({ downloads }: { downloads: IccPageDownload[] }) {
   );
 }
 
+function isFormOnlyPage(page: CmsPage): boolean {
+  return (
+    page.embeds.length > 0 &&
+    !page.magazine &&
+    !page.featuredImage &&
+    !page.introHtml.trim()
+  );
+}
+
 export async function WpCmsPageView({ page, messageKey }: Props) {
   const t = await getTranslations("wpPages");
   const eyebrow = t(`${messageKey}.eyebrow`);
   const fallbackTitle = t(`${messageKey}.title`);
+  const formOnly = isFormOnlyPage(page);
+
+  if (formOnly) {
+    return (
+      <div className="bg-white">
+        {page.embeds.map((embed, index) => (
+          <WpFormEmbed
+            key={`${embed.src}-${index}`}
+            embed={embed}
+            autoResize
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white py-12 md:py-16">
