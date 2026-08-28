@@ -20,6 +20,8 @@ export async function EventCard({
     event.startDate,
     event.endDate,
     locale,
+    event.startTime,
+    event.endTime,
   );
   const locationLabel = event.online ? t("online") : event.location;
 
@@ -36,7 +38,7 @@ export async function EventCard({
       >
         <div
           className={[
-            "relative overflow-hidden bg-icc-cream",
+            "relative flex items-center justify-center overflow-hidden bg-icc-cream",
             featured
               ? "aspect-[16/10] md:aspect-[5/3]"
               : "aspect-[16/10] md:aspect-[4/3]",
@@ -46,12 +48,7 @@ export async function EventCard({
             <EventBannerImage
               src={event.bannerUrl}
               alt={event.title}
-              className="object-cover transition duration-500 group-hover:scale-[1.03]"
-              sizes={
-                featured
-                  ? "(max-width:768px) 100vw, 55vw"
-                  : "(max-width:768px) 100vw, 220px"
-              }
+              layout="frame"
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-icc-warm-brown/40 to-icc-coral/30" />
@@ -63,9 +60,11 @@ export async function EventCard({
             {event.isUpcoming ? (
               <span>{t("upcomingBadge")}</span>
             ) : null}
-            <span className="font-medium normal-case tracking-normal text-icc-muted">
-              {schedule}
-            </span>
+            {schedule ? (
+              <span className="font-medium normal-case tracking-normal text-icc-muted">
+                {schedule}
+              </span>
+            ) : null}
           </div>
           <h2
             className={[

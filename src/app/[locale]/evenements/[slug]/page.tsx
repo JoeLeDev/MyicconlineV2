@@ -55,6 +55,8 @@ export default async function EventDetailPage({ params }: Props) {
     event.startDate,
     event.endDate,
     locale,
+    event.startTime,
+    event.endTime,
   );
   const locationLabel = event.online ? t("online") : event.location;
 
@@ -69,12 +71,11 @@ export default async function EventDetailPage({ params }: Props) {
         </Link>
 
         {event.bannerUrl ? (
-          <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-xl bg-icc-cream">
+          <div className="mt-8 overflow-hidden rounded-xl bg-icc-cream">
             <EventBannerImage
               src={event.bannerUrl}
               alt={event.title}
-              className="object-cover"
-              sizes="(max-width:768px) 100vw, 768px"
+              layout="full"
               priority
             />
           </div>
@@ -83,9 +84,11 @@ export default async function EventDetailPage({ params }: Props) {
         <header className={event.bannerUrl ? "mt-8" : "mt-6"}>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold uppercase tracking-[0.14em] text-icc-coral">
             {event.isUpcoming ? <span>{t("upcomingBadge")}</span> : null}
-            <span className="font-medium normal-case tracking-normal text-icc-muted">
-              {schedule}
-            </span>
+            {schedule ? (
+              <span className="font-medium normal-case tracking-normal text-icc-muted">
+                {schedule}
+              </span>
+            ) : null}
           </div>
 
           <h1 className="mt-4 text-[clamp(2rem,5.5vw,3.4rem)] font-extrabold leading-[1.1] tracking-tight text-icc-ink">

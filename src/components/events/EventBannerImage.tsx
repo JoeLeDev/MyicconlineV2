@@ -1,30 +1,34 @@
-import Image from "next/image";
-
 type Props = {
   src: string;
   alt: string;
   className?: string;
-  sizes?: string;
   priority?: boolean;
+  /** full = image entière (page détail) ; frame = cadre liste sans rognage */
+  layout?: "full" | "frame";
 };
 
-/** Bannières WP : chargement direct (sans optimizer) pour éviter les URLs unicode cassées. */
+/** Bannières WP servies directement (sans next/image) pour fiabilité des URLs externes. */
 export function EventBannerImage({
   src,
   alt,
-  className,
-  sizes,
+  className = "",
   priority = false,
+  layout = "full",
 }: Props) {
+  const layoutClass =
+    layout === "frame"
+      ? "max-h-full max-w-full object-contain"
+      : "block h-auto w-full";
+
   return (
-    <Image
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       src={src}
       alt={alt}
-      fill
-      unoptimized
-      className={className}
-      sizes={sizes}
-      priority={priority}
+      loading={priority ? "eager" : "lazy"}
+      decoding="async"
+      referrerPolicy="no-referrer"
+      className={[layoutClass, className].join(" ")}
     />
   );
 }
