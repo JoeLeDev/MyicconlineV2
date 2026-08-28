@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { EventBannerImage } from "@/components/events/EventBannerImage";
 import { FioDirectory } from "@/components/community/FioDirectory";
+import { FioGroupsHero } from "@/components/community/FioGroupsHero";
 import { buildPageMetadata } from "@/lib/seo/metadata";
-import { FIO_GROUPS_PAGE_BANNER } from "@/lib/wp/fio-assets";
+import { FIO_GROUPS_PAGE_HERO_IMAGE } from "@/lib/wp/fio-assets";
 import { getFios } from "@/lib/wp/community";
 
 type Props = {
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     href: "/groupes",
     title: t("groupsTitle"),
     description: t("groupsSubtitle"),
-    images: [FIO_GROUPS_PAGE_BANNER],
+    images: [FIO_GROUPS_PAGE_HERO_IMAGE],
   });
 }
 
@@ -40,18 +40,9 @@ export default async function GroupsPage({ params }: Props) {
 
   return (
     <div>
-      <section className="relative h-[60vh] max-h-[60vh] w-full overflow-hidden bg-icc-ink">
-        <EventBannerImage
-          src={FIO_GROUPS_PAGE_BANNER}
-          alt={t("groupsTitle")}
-          layout="contain"
-          priority
-        />
-        <h1 className="sr-only">{t("groupsTitle")}</h1>
-        <p className="sr-only">{t("groupsHeroSubtitle")}</p>
-      </section>
+      <FioGroupsHero />
 
-      <section className="bg-icc-cream/40 py-12 md:py-16">
+      <section className="relative z-20 bg-icc-cream/40 pb-12 md:pb-16">
         <div className="container-icc max-w-6xl">
           {error ? (
             <p className="rounded-lg border border-icc-coral/30 bg-white px-4 py-3 text-sm text-icc-ink">
@@ -60,10 +51,12 @@ export default async function GroupsPage({ params }: Props) {
           ) : null}
 
           {!error && fios.length === 0 ? (
-            <p className="text-icc-muted">{t("emptyGroups")}</p>
+            <p className="pt-8 text-icc-muted">{t("emptyGroups")}</p>
           ) : null}
 
-          {!error && fios.length > 0 ? <FioDirectory fios={fios} /> : null}
+          {!error && fios.length > 0 ? (
+            <FioDirectory fios={fios} searchOverlapsHero />
+          ) : null}
         </div>
       </section>
     </div>

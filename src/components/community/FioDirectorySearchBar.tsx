@@ -27,6 +27,7 @@ type Props = {
   value: FioDirectoryFilterState;
   onChange: (next: FioDirectoryFilterState) => void;
   resultCount: number;
+  overlapsHero?: boolean;
 };
 
 function isPlaceholder(value: string): boolean {
@@ -49,6 +50,7 @@ export function FioDirectorySearchBar({
   value,
   onChange,
   resultCount,
+  overlapsHero = false,
 }: Props) {
   const t = useTranslations("community");
   const locale = useLocale();
@@ -147,7 +149,10 @@ export function FioDirectorySearchBar({
 
   return (
     <>
-      <div ref={rootRef} className="mb-8">
+      <div
+        ref={rootRef}
+        className={overlapsHero ? "-mt-10 mb-8 md:-mt-14" : "mb-8"}
+      >
         <div className="mx-auto max-w-5xl rounded-2xl border border-black/10 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)] md:rounded-full md:p-2.5">
           {/* Mobile : recherche compacte + bouton Filtres */}
           <div className="flex items-center gap-2 md:hidden">

@@ -17,9 +17,10 @@ import type { WpFio } from "@/lib/wp/community-types";
 
 type Props = {
   fios: WpFio[];
+  searchOverlapsHero?: boolean;
 };
 
-export function FioDirectory({ fios }: Props) {
+export function FioDirectory({ fios, searchOverlapsHero = false }: Props) {
   const t = useTranslations("community");
   const locale = useLocale();
   const [filters, setFilters] = useState(DEFAULT_FIO_DIRECTORY_FILTERS);
@@ -46,6 +47,7 @@ export function FioDirectory({ fios }: Props) {
         value={filters}
         onChange={setFilters}
         resultCount={filtered.length}
+        overlapsHero={searchOverlapsHero}
       />
 
       {sections.length === 0 ? (
