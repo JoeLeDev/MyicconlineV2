@@ -4,6 +4,11 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { EventBannerImage } from "@/components/events/EventBannerImage";
 import { normalizeCommunityPlainText } from "@/lib/utils/community-text";
+import {
+  getCategoryAccentClass,
+  getFioPrimaryCategory,
+  type FioCategorySlug,
+} from "@/lib/wp/fio-categories";
 import type { WpFio } from "@/lib/wp/community-types";
 
 function fioDetailPath(slug: string): `/groupes/${string}` {
@@ -22,6 +27,13 @@ function isPlaceholder(value: string): boolean {
 export function FioCardClient({ fio }: Props) {
   const t = useTranslations("community");
   const schedule = [fio.jour, fio.horaire].filter((v) => !isPlaceholder(v)).join(" · ");
+  const category = (fio.category ??
+    getFioPrimaryCategory(fio.types)) as FioCategorySlug;
+  const categoryLabel = t(
+    category === "other"
+      ? "groupCategoryOther"
+      : (`groupCategory_${category}` as "groupCategory_fio"),
+  );
 
   return (
     <Link
@@ -39,6 +51,11 @@ export function FioCardClient({ fio }: Props) {
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-icc-warm-brown/35 to-icc-coral/25" />
         )}
+        {schedule ? (
+          <p className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-icc-ink shadow-sm">
+            {schedule}
+          </p>
+        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col p-5">
@@ -50,12 +67,31 @@ export function FioCardClient({ fio }: Props) {
             {normalizeCommunityPlainText(fio.description)}
           </p>
         ) : null}
-        <div className="mt-auto space-y-1 pt-4 text-sm text-icc-muted">
-          {schedule ? <p>{schedule}</p> : null}
-          {!isPlaceholder(fio.pilote) ? (
-            <p>{t("pilot", { name: fio.pilote })}</p>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <span
+            className={[
+              "inline-flex rounded-full px-2.5 py-1 text-xs font-semibold",
+              getCategoryAccentClass(category),
+            ].join(" ")}
+          >
+            {categoryLabel}
+          </span>
+          {!isPlaceholder(fio.pilier) ? (
+            <span className="inline-flex rounded-full bg-icc-cream px-2.5 py-1 text-xs font-medium text-icc-ink">
+              {fio.pilier}
+            </span>
           ) : null}
-          <p>{t("membersCountShort", { count: fio.membres })}</p>
+        </div>
+
+        <div className="mt-auto flex items-center justify-between gap-3 pt-4 text-sm text-icc-muted">
+          <span>{t("membersCountShort", { count: fio.membres })}</span>
+          {fio.zoom_link ? (
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-icc-coral">
+              <span aria-hidden>🌐</span>
+              {t("meetsOnline")}
+            </span>
+          ) : null}
         </div>
       </div>
     </Link>

@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { WpFioMembership } from "./community-types";
-import { joinFio, normalizeFioMembershipList } from "./community-auth";
+import {
+  getFioMembershipStatus,
+  joinFio,
+  normalizeFioMembershipList,
+  postGroupActivity,
+} from "./community-auth";
 
 const sampleFio: WpFioMembership = {
   id: 84,
@@ -40,11 +45,79 @@ describe("normalizeFioMembershipList", () => {
     expect(normalizeFioMembershipList({ meta: [] })).toEqual([]);
   });
 
+  it("accepte id + nom sans slug", () => {
+    const result = normalizeFioMembershipList([
+      { id: 12, nom: "Les restaurés", fio_slug: "les-restores" },
+    ]);
+    expect(result).toHaveLength(1);
+    expect(result[0]?.id).toBe(12);
+    expect(result[0]?.name).toBe("Les restaurés");
+    expect(result[0]?.slug).toBe("les-restores");
+  });
+
   it("permet .map() sans lever d'exception sur une réponse enveloppée", () => {
     const fios = normalizeFioMembershipList({ fios: [sampleFio] }).map(
       (fio) => fio.slug,
     );
     expect(fios).toEqual(["test-dev"]);
+  });
+});
+
+describe("getFioMembershipStatus", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("détecte un membre via /buddypress/v1/groups/me", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => [
+          { id: 55, name: "Les restaurés", slug: "les-restores", link: "" },
+        ],
+      }),
+    );
+
+    const result = await getFioMembershipStatus("jwt-token", 55, 999);
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.isMember).toBe(true);
+      expect(result.data.isPending).toBe(false);
+    }
+  });
+
+  it("détecte une demande en attente", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => [],
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => [],
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => [{ group_id: 78 }],
+        }),
+    );
+
+    const result = await getFioMembershipStatus("jwt-token", 78, 999);
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.isMember).toBe(false);
+      expect(result.data.isPending).toBe(true);
+    }
   });
 });
 
@@ -148,5 +221,57 @@ describe("joinFio", () => {
       expect(result.status).toBe(500);
       expect(result.message).toBe("Erreur serveur");
     }
+  });
+});
+
+describe("postGroupActivity", () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 201,
+        json: async () => ({
+          id: 700,
+          user_id: 1,
+          component: "groups",
+          type: "activity_update",
+          title: '<a href="#">Test User</a> posted an update',
+          content: { rendered: "<p>Hello group</p>" },
+          date: "2026-08-28T12:00:00",
+          link: "https://myicconline.com/activity/700/",
+          primary_item_id: 84,
+          favorited: false,
+          user_avatar: { thumb: "t.jpg", full: "f.jpg" },
+        }),
+      }),
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("publie une mise à jour dans le groupe via BuddyPress", async () => {
+    const result = await postGroupActivity("jwt-token", 84, "Hello group");
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.id).toBe(700);
+      expect(result.data.content.rendered).toContain("Hello group");
+    }
+
+    expect(fetch).toHaveBeenCalledWith(
+      "https://myicconline.com/wp-json/buddypress/v1/activity",
+      expect.objectContaining({ method: "POST" }),
+    );
+
+    const [, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+    expect(JSON.parse(String(init.body))).toEqual({
+      content: "Hello group",
+      component: "groups",
+      type: "activity_update",
+      primary_item_id: 84,
+    });
   });
 });

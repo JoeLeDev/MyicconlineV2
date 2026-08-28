@@ -77,6 +77,8 @@ export type WpFio = {
   ville?: string;
   lat?: string;
   lng?: string;
+  types?: string[];
+  category?: string;
 };
 
 export type WpFioMember = {

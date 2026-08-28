@@ -1,11 +1,14 @@
 import { getWpBaseUrl } from "./config";
+import { fetchGroupActivities, mapBpActivityToWp } from "./group-activity";
 import type {
   WpActivityComment,
+  WpActivityItem,
   WpActivityListResponse,
   WpFavoriteResult,
   WpFioMembership,
   WpJoinFioResult,
 } from "./community-types";
+import type { BpActivityItem } from "./group-activity";
 
 export type WpAuthResult<T> =
   | { ok: true; data: T; status: number }
@@ -81,19 +84,19 @@ export async function getFioActivitiesAuthenticated(
   fioId: number,
   params?: { page?: number; perPage?: number },
 ): Promise<WpAuthResult<WpActivityListResponse>> {
-  const page = params?.page ?? 1;
-  const perPage = params?.perPage ?? 15;
-  const query = new URLSearchParams({
-    group_id: String(fioId),
-    page: String(page),
-    per_page: String(perPage),
-    display_comments: "0",
-  });
-
-  return wpFetchAuth<WpActivityListResponse>(
-    token,
-    `/myicconline/v1/activity?${query.toString()}`,
-  );
+  try {
+    const data = await fetchGroupActivities({
+      fioId,
+      page: params?.page,
+      perPage: params?.perPage,
+      token,
+      revalidate: false,
+    });
+    return { ok: true, data, status: 200 };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Erreur WordPress.";
+    return { ok: false, message, status: 502 };
+  }
 }
 
 type BpGroupSummary = {
@@ -121,12 +124,39 @@ function mapBpGroupToMembership(group: BpGroupSummary): WpFioMembership {
   };
 }
 
+function coerceFioMembership(item: unknown): WpFioMembership | null {
+  if (!item || typeof item !== "object") return null;
+
+  const record = item as Record<string, unknown>;
+  const id = Number(record.id);
+  if (!Number.isFinite(id) || id <= 0) return null;
+
+  const name = String(record.name ?? record.nom ?? "").trim();
+  const slug = String(record.slug ?? record.fio_slug ?? "").trim();
+  if (!name && !slug) return null;
+
+  const types = record.types;
+  const typeFromArray = Array.isArray(types) ? String(types[0] ?? "") : "";
+
+  return {
+    id,
+    name,
+    slug,
+    link: String(record.link ?? ""),
+    status: String(record.status ?? ""),
+    type: String(record.type ?? (typeFromArray || "fio")),
+    role_in_group: String(record.role_in_group ?? record.role ?? "member"),
+    is_admin: Boolean(record.is_admin),
+    is_mod: Boolean(record.is_mod),
+    date_modified: String(record.date_modified ?? record.date_created ?? ""),
+  };
+}
+
 export function normalizeFioMembershipList(data: unknown): WpFioMembership[] {
   if (Array.isArray(data)) {
-    return data.filter(
-      (item): item is WpFioMembership =>
-        Boolean(item && typeof item === "object" && "id" in item && "slug" in item),
-    );
+    return data
+      .map(coerceFioMembership)
+      .filter((item): item is WpFioMembership => item !== null);
   }
 
   if (data && typeof data === "object") {
@@ -142,32 +172,122 @@ export function normalizeFioMembershipList(data: unknown): WpFioMembership[] {
   return [];
 }
 
-export async function getMyFios(
-  token: string,
-): Promise<WpAuthResult<WpFioMembership[]>> {
-  const primary = await wpFetchAuth<unknown>(token, "/myicconline/v1/me/fios");
-  if (primary.ok) {
-    return { ok: true, data: normalizeFioMembershipList(primary.data), status: primary.status };
+function mergeFioMemberships(
+  primary: WpFioMembership[],
+  secondary: WpFioMembership[],
+): WpFioMembership[] {
+  const merged = new Map<number, WpFioMembership>();
+  for (const fio of [...primary, ...secondary]) {
+    merged.set(fio.id, fio);
   }
+  return [...merged.values()];
+}
 
-  const fallback = await wpFetchAuth<BpGroupSummary[]>(
+export type FioMembershipStatus = {
+  isMember: boolean;
+  isPending: boolean;
+};
+
+export async function getFioMembershipStatus(
+  token: string,
+  fioId: number,
+  userId: number,
+): Promise<WpAuthResult<FioMembershipStatus>> {
+  const groupsResult = await wpFetchAuth<BpGroupSummary[]>(
     token,
     "/buddypress/v1/groups/me",
   );
-  if (!fallback.ok) {
+  if (groupsResult.ok) {
+    const groups = Array.isArray(groupsResult.data) ? groupsResult.data : [];
+    if (groups.some((group) => group.id === fioId)) {
+      return {
+        ok: true,
+        data: { isMember: true, isPending: false },
+        status: 200,
+      };
+    }
+  }
+
+  const membersResult = await wpFetchAuth<Array<{ id: number }>>(
+    token,
+    `/buddypress/v1/groups/${fioId}/members?user_id=${userId}`,
+  );
+  if (membersResult.ok) {
+    const members = Array.isArray(membersResult.data) ? membersResult.data : [];
+    if (members.some((member) => member.id === userId)) {
+      return {
+        ok: true,
+        data: { isMember: true, isPending: false },
+        status: 200,
+      };
+    }
+  }
+
+  const requestsResult = await wpFetchAuth<Array<{ group_id?: number }>>(
+    token,
+    `/buddypress/v1/groups/membership-requests?user_id=${userId}&group_id=${fioId}`,
+  );
+  if (requestsResult.ok) {
+    const requests = Array.isArray(requestsResult.data)
+      ? requestsResult.data
+      : [];
+    if (requests.some((request) => Number(request.group_id) === fioId)) {
+      return {
+        ok: true,
+        data: { isMember: false, isPending: true },
+        status: 200,
+      };
+    }
+  }
+
+  const myFios = await getMyFios(token);
+  if (myFios.ok && myFios.data.some((fio) => fio.id === fioId)) {
     return {
-      ok: false,
-      message: fallback.message,
-      status: fallback.status,
-      code: fallback.code,
+      ok: true,
+      data: { isMember: true, isPending: false },
+      status: 200,
     };
   }
 
-  const groups = Array.isArray(fallback.data) ? fallback.data : [];
   return {
     ok: true,
-    data: groups.map(mapBpGroupToMembership),
-    status: fallback.status,
+    data: { isMember: false, isPending: false },
+    status: 200,
+  };
+}
+
+export async function getMyFios(
+  token: string,
+): Promise<WpAuthResult<WpFioMembership[]>> {
+  const [primary, fallback] = await Promise.all([
+    wpFetchAuth<unknown>(token, "/myicconline/v1/me/fios"),
+    wpFetchAuth<BpGroupSummary[]>(token, "/buddypress/v1/groups/me"),
+  ]);
+
+  const iccList = primary.ok ? normalizeFioMembershipList(primary.data) : [];
+  const bpList =
+    fallback.ok && Array.isArray(fallback.data)
+      ? fallback.data.map(mapBpGroupToMembership)
+      : [];
+  const merged = mergeFioMemberships(iccList, bpList);
+
+  if (merged.length > 0) {
+    return { ok: true, data: merged, status: 200 };
+  }
+
+  if (fallback.ok) {
+    return { ok: true, data: bpList, status: fallback.status };
+  }
+
+  if (primary.ok) {
+    return { ok: true, data: iccList, status: primary.status };
+  }
+
+  return {
+    ok: false,
+    message: fallback.message || primary.message,
+    status: fallback.status || primary.status,
+    code: fallback.code || primary.code,
   };
 }
 
@@ -214,6 +334,45 @@ export async function postActivityComment(
       body: JSON.stringify({ content }),
     },
   );
+}
+
+export async function postGroupActivity(
+  token: string,
+  fioId: number,
+  content: string,
+): Promise<WpAuthResult<WpActivityItem>> {
+  const result = await wpFetchAuth<BpActivityItem>(
+    token,
+    "/buddypress/v1/activity",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content,
+        component: "groups",
+        type: "activity_update",
+        primary_item_id: fioId,
+      }),
+    },
+  );
+
+  if (!result.ok) {
+    return result;
+  }
+
+  if (result.data.primary_item_id !== fioId) {
+    return {
+      ok: false,
+      message: "Publication hors groupe.",
+      status: 502,
+    };
+  }
+
+  return {
+    ok: true,
+    data: mapBpActivityToWp(result.data),
+    status: result.status,
+  };
 }
 
 export async function joinFio(

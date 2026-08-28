@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ActivityCard } from "@/components/community/ActivityCard";
 import { FioGroupHero } from "@/components/community/FioGroupHero";
+import { FioGroupPostForm } from "@/components/community/FioGroupPostForm";
 import { FioGroupTabs } from "@/components/community/FioGroupTabs";
 import { FioMemberList } from "@/components/community/FioMemberList";
 import { CommunityText } from "@/components/community/CommunityText";
@@ -59,36 +60,38 @@ export default async function GroupDetailPage({ params }: Props) {
     peekAuthToken(),
   ]);
 
-  const activityResult = token
+  const activityResponse = token
     ? await getFioActivitiesAuthenticated(token, fio.id).catch(() => null)
     : null;
+
   const activities =
-    activityResult?.ok === true
-      ? activityResult.data.activities
-      : (await getFioActivities(fio.id).catch(() => null))?.activities ?? [];
+    activityResponse?.ok === true
+      ? activityResponse.data.activities
+      : (
+          await getFioActivities(fio.id, { page: 1, perPage: 15 }).catch(
+            () => null,
+          )
+        )?.activities ?? [];
 
   const schedule = [fio.jour, fio.horaire].filter((v) => !isPlaceholder(v)).join(" · ");
 
-  const feedPanel =
-    activities.length > 0 ? (
-      <div className="rounded-2xl border border-black/8 bg-white px-4 md:px-6">
-        {activities.map((activity) => (
-          <ActivityCard key={activity.id} activity={activity} locale={locale} />
-        ))}
-      </div>
-    ) : (
-      <div className="rounded-2xl border border-black/8 bg-icc-cream/40 px-6 py-12 text-center">
-        <p className="text-icc-muted">{t("emptyGroupFeed")}</p>
-        <a
-          href={fio.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 inline-flex text-sm font-semibold text-icc-coral hover:text-icc-coral-deep"
-        >
-          {t("viewOnWp")}
-        </a>
-      </div>
-    );
+  const feedPanel = (
+    <div className="space-y-4">
+      <FioGroupPostForm fioId={fio.id} fioSlug={fio.slug} />
+
+      {activities.length > 0 ? (
+        <div className="rounded-2xl border border-black/8 bg-white px-4 md:px-6">
+          {activities.map((activity) => (
+            <ActivityCard key={activity.id} activity={activity} locale={locale} />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-black/8 bg-icc-cream/40 px-6 py-10 text-center">
+          <p className="text-icc-muted">{t("emptyGroupFeed")}</p>
+        </div>
+      )}
+    </div>
+  );
 
   const membersPanel = (
     <div className="rounded-2xl border border-black/8 bg-white p-4 md:p-6">

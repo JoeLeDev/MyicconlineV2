@@ -2,7 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { FioCardClient } from "@/components/community/FioCardClient";
+import { FioCategorySection } from "@/components/community/FioCategorySection";
+import {
+  getFioPrimaryCategory,
+  getOrderedCategorySections,
+  groupFiosByCategory,
+} from "@/lib/wp/fio-categories";
 import type { WpFio } from "@/lib/wp/community-types";
 
 type Props = {
@@ -18,17 +23,39 @@ export function FioDirectory({ fios }: Props) {
     if (!normalized) return fios;
 
     return fios.filter((fio) => {
-      const haystack = [fio.nom, fio.description, fio.pilote, fio.ville, fio.jour]
+      const category = fio.category ?? getFioPrimaryCategory(fio.types);
+      const categoryLabel = t(
+        category === "other"
+          ? "groupCategoryOther"
+          : (`groupCategory_${category}` as "groupCategory_fio"),
+      );
+
+      const haystack = [
+        fio.nom,
+        fio.description,
+        fio.pilote,
+        fio.pilier,
+        fio.ville,
+        fio.jour,
+        categoryLabel,
+        ...(fio.types ?? []),
+      ]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
+
       return haystack.includes(normalized);
     });
-  }, [fios, query]);
+  }, [fios, query, t]);
+
+  const sections = useMemo(
+    () => getOrderedCategorySections(groupFiosByCategory(filtered)),
+    [filtered],
+  );
 
   return (
     <div>
-      <div className="mb-8 max-w-xl">
+      <div className="mb-10 max-w-xl">
         <label htmlFor="fio-search" className="sr-only">
           {t("searchGroups")}
         </label>
@@ -45,16 +72,18 @@ export function FioDirectory({ fios }: Props) {
         </p>
       </div>
 
-      {filtered.length === 0 ? (
+      {sections.length === 0 ? (
         <p className="text-icc-muted">{t("noGroupsMatch")}</p>
       ) : (
-        <ul className="grid list-none gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((fio) => (
-            <li key={fio.id} className="h-full">
-              <FioCardClient fio={fio} />
-            </li>
+        <div className="space-y-12 md:space-y-14">
+          {sections.map((section) => (
+            <FioCategorySection
+              key={section.category}
+              category={section.category}
+              fios={section.fios}
+            />
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

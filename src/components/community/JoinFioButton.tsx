@@ -44,14 +44,18 @@ export function JoinFioButton({
 
     void (async () => {
       try {
-        const res = await fetch("/api/community/me/fios", { cache: "no-store" });
+        const res = await fetch(`/api/community/fio/${fioId}/membership`, {
+          cache: "no-store",
+        });
         const json = (await res.json()) as {
           ok?: boolean;
-          fios?: { id: number }[];
+          isMember?: boolean;
+          isPending?: boolean;
         };
 
-        if (!cancelled && res.ok && json.ok && json.fios) {
-          setIsMember(json.fios.some((fio) => fio.id === fioId));
+        if (!cancelled && res.ok && json.ok) {
+          setIsMember(Boolean(json.isMember));
+          setPending(Boolean(json.isPending));
         }
       } catch {
         // Ne pas bloquer la page si la vérification échoue.

@@ -1,4 +1,6 @@
-import { wpFetch } from "./client";
+import { wpFetch, wpFetchWithTotal } from "./client";
+import { fetchGroupActivities } from "./group-activity";
+import { getFioPrimaryCategory } from "./fio-categories";
 import type {
   CommunityMember,
   CommunityMemberProfile,
@@ -78,10 +80,47 @@ export async function getMemberBySlug(
 }
 
 export async function getFios(): Promise<WpFio[]> {
-  return wpFetch<WpFio[]>("/myicconline/v1/fios", {
-    revalidate: COMMUNITY_REVALIDATE,
-    tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:fios`],
+  const [fios, typeMap] = await Promise.all([
+    wpFetch<WpFio[]>("/myicconline/v1/fios", {
+      revalidate: COMMUNITY_REVALIDATE,
+      tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:fios`],
+    }),
+    fetchBpGroupTypesMap().catch(() => new Map<number, string[]>()),
+  ]);
+
+  return fios.map((fio) => {
+    const types = typeMap.get(fio.id) ?? ["fio"];
+    return {
+      ...fio,
+      types,
+      category: getFioPrimaryCategory(types),
+    };
   });
+}
+
+async function fetchBpGroupTypesMap(): Promise<Map<number, string[]>> {
+  const map = new Map<number, string[]>();
+  let page = 1;
+  let totalPages = 1;
+
+  while (page <= totalPages && page <= 5) {
+    const result = await wpFetchWithTotal<Array<{ id: number; types?: string[] }>>(
+      `/buddypress/v1/groups?per_page=100&page=${page}`,
+      {
+        revalidate: COMMUNITY_REVALIDATE,
+        tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:bp-group-types`],
+      },
+    );
+
+    for (const group of result.data) {
+      map.set(group.id, group.types?.length ? group.types : ["fio"]);
+    }
+
+    totalPages = result.totalPages || 1;
+    page += 1;
+  }
+
+  return map;
 }
 
 export async function getFioBySlug(slug: string): Promise<WpFio | null> {
@@ -129,22 +168,13 @@ export async function getFioActivities(
   fioId: number,
   params?: { page?: number; perPage?: number },
 ): Promise<WpActivityListResponse> {
-  const page = params?.page ?? 1;
-  const perPage = params?.perPage ?? 15;
-  const query = new URLSearchParams({
-    group_id: String(fioId),
-    page: String(page),
-    per_page: String(perPage),
-    display_comments: "0",
+  return fetchGroupActivities({
+    fioId,
+    page: params?.page,
+    perPage: params?.perPage,
+    revalidate: COMMUNITY_REVALIDATE,
+    tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:fio-activity:${fioId}`],
   });
-
-  return wpFetch<WpActivityListResponse>(
-    `/myicconline/v1/activity?${query.toString()}`,
-    {
-      revalidate: COMMUNITY_REVALIDATE,
-      tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:fio-activity:${fioId}`],
-    },
-  );
 }
 
 export async function getFioMembers(fioId: number): Promise<WpFioMember[]> {
