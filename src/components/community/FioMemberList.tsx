@@ -5,11 +5,12 @@ import type { WpFioMember } from "@/lib/wp/community-types";
 
 type Props = {
   members: WpFioMember[];
-  slugById: Map<number, string>;
+  slugById?: Map<number, string>;
 };
 
 export async function FioMemberList({ members, slugById }: Props) {
   const t = await getTranslations("community");
+  const slugIndex = slugById ?? new Map<number, string>();
 
   if (!members.length) {
     return <p className="text-icc-muted">{t("noFioMembers")}</p>;
@@ -18,7 +19,7 @@ export async function FioMemberList({ members, slugById }: Props) {
   return (
     <ul className="grid list-none gap-3 sm:grid-cols-2">
       {members.map((member) => {
-        const slug = slugById.get(member.id);
+        const slug = slugIndex.get(member.id);
         const inner = (
           <>
             {member.avatar ? (

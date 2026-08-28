@@ -8,14 +8,7 @@ import { CommunityText } from "@/components/community/CommunityText";
 import { Link } from "@/i18n/navigation";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { communityTextExcerpt } from "@/lib/utils/community-text";
-import { peekAuthToken } from "@/lib/auth/session";
-import { getMyFios } from "@/lib/wp/community-auth";
-import {
-  buildMemberSlugIndex,
-  getFioBySlug,
-  getFioMembers,
-  getMembers,
-} from "@/lib/wp/community";
+import { getFioBySlug, getFioMembers } from "@/lib/wp/community";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -58,19 +51,7 @@ export default async function GroupDetailPage({ params }: Props) {
     notFound();
   }
 
-  const [members, allMembers, myFiosResult] = await Promise.all([
-    getFioMembers(fio.id).catch(() => []),
-    getMembers().catch(() => []),
-    (async () => {
-      const token = await peekAuthToken();
-      if (!token) return null;
-      return getMyFios(token);
-    })(),
-  ]);
-  const slugById = buildMemberSlugIndex(allMembers);
-  const isMember = myFiosResult?.ok
-    ? myFiosResult.data.some((membership) => membership.id === fio.id)
-    : false;
+  const members = await getFioMembers(fio.id).catch(() => []);
   const schedule = [fio.jour, fio.horaire].filter((v) => !isPlaceholder(v)).join(" · ");
 
   return (
@@ -151,14 +132,13 @@ export default async function GroupDetailPage({ params }: Props) {
             fioId={fio.id}
             fioName={fio.nom}
             fioSlug={fio.slug}
-            initialMember={isMember}
           />
         </header>
 
         <section className="mt-12">
           <h2 className="text-lg font-bold text-icc-ink">{t("groupMembers")}</h2>
           <div className="mt-4">
-            <FioMemberList members={members} slugById={slugById} />
+            <FioMemberList members={members} />
           </div>
         </section>
       </div>

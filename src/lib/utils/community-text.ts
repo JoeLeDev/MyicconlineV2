@@ -1,5 +1,26 @@
-import { formatPostContent } from "@/lib/wp/article-submit";
 import { decodeHtmlEntities } from "./html";
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function plainTextToHtml(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return "";
+
+  return trimmed
+    .split(/\n{2,}/)
+    .filter(Boolean)
+    .map(
+      (paragraph) =>
+        `<p>${escapeHtml(paragraph).replace(/\n/g, "<br />")}</p>`,
+    )
+    .join("");
+}
 
 /** Nettoie le texte brut renvoyé par myicconline/v1 (échappements, sauts de ligne). */
 export function normalizeCommunityPlainText(raw: string): string {
@@ -18,7 +39,7 @@ export function normalizeCommunityPlainText(raw: string): string {
 export function formatCommunityText(raw: string): string {
   const text = normalizeCommunityPlainText(raw);
   if (!text) return "";
-  return formatPostContent(text);
+  return plainTextToHtml(text);
 }
 
 /** Extrait une ligne pour les aperçus (cartes, meta description). */

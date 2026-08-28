@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -9,21 +9,55 @@ type Props = {
   fioId: number;
   fioName: string;
   fioSlug: string;
-  initialMember?: boolean;
 };
 
-export function JoinFioButton({
-  fioId,
-  fioName,
-  fioSlug,
-  initialMember = false,
-}: Props) {
+function groupPath(slug: string): `/groupes/${string}` {
+  return `/groupes/${encodeURIComponent(slug)}`;
+}
+
+export function JoinFioButton({ fioId, fioName, fioSlug }: Props) {
   const t = useTranslations("community");
   const { user, loading } = useAuth();
-  const [isMember, setIsMember] = useState(initialMember);
+  const [isMember, setIsMember] = useState(false);
+  const [membershipChecked, setMembershipChecked] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setIsMember(false);
+      setMembershipChecked(true);
+      return;
+    }
+
+    let cancelled = false;
+    setMembershipChecked(false);
+
+    void (async () => {
+      try {
+        const res = await fetch("/api/community/me/fios", { cache: "no-store" });
+        const json = (await res.json()) as {
+          ok?: boolean;
+          fios?: { id: number }[];
+        };
+
+        if (!cancelled && res.ok && json.ok && json.fios) {
+          setIsMember(json.fios.some((fio) => fio.id === fioId));
+        }
+      } catch {
+        // Ne pas bloquer la page si la vérification échoue.
+      } finally {
+        if (!cancelled) {
+          setMembershipChecked(true);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user, fioId]);
 
   async function handleJoin() {
     if (!user || busy || isMember) return;
@@ -52,7 +86,7 @@ export function JoinFioButton({
     }
   }
 
-  if (loading) {
+  if (loading || (user && !membershipChecked)) {
     return null;
   }
 
@@ -63,7 +97,7 @@ export function JoinFioButton({
         <Link
           href={{
             pathname: "/connexion",
-            query: { next: `/groupes/${fioSlug}` },
+            query: { next: groupPath(fioSlug) },
           }}
           className="font-semibold text-icc-coral hover:text-icc-coral-deep"
         >
