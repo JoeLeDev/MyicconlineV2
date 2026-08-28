@@ -74,7 +74,11 @@ export function FioDirectorySearchBar({
   );
 
   const activeAdvancedCount =
-    value.days.length + (value.onlineOnly ? 1 : 0);
+    value.days.length +
+    (value.onlineOnly ? 1 : 0) +
+    (value.pillar ? 1 : 0) +
+    (value.category ? 1 : 0);
+  const hasActiveFilters = activeAdvancedCount > 0;
 
   const pillarLabel = value.pillar || t("filterPillarHint");
   const categoryLabel = value.category
@@ -124,20 +128,82 @@ export function FioDirectorySearchBar({
     setDraft({
       ...value,
       days: [],
+      pillar: "",
+      category: "",
       onlineOnly: false,
     });
   };
 
   const applyDraft = () => {
-    onChange({ ...value, days: draft.days, onlineOnly: draft.onlineOnly });
+    onChange({
+      ...value,
+      days: draft.days,
+      pillar: draft.pillar,
+      category: draft.category,
+      onlineOnly: draft.onlineOnly,
+    });
     setModalOpen(false);
   };
 
   return (
     <>
       <div ref={rootRef} className="mb-8">
-        <div className="mx-auto max-w-5xl rounded-full border border-black/10 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)] md:p-2.5">
-          <div className="flex flex-col gap-2 md:flex-row md:items-stretch">
+        <div className="mx-auto max-w-5xl rounded-2xl border border-black/10 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)] md:rounded-full md:p-2.5">
+          {/* Mobile : recherche compacte + bouton Filtres */}
+          <div className="flex items-center gap-2 md:hidden">
+            <label className="flex min-w-0 flex-1 items-center gap-2.5 rounded-xl border border-black/8 bg-black/[0.02] px-3 py-2.5">
+              <span className="sr-only">{t("searchGroups")}</span>
+              <svg
+                aria-hidden
+                viewBox="0 0 24 24"
+                className="h-4 w-4 shrink-0 text-icc-muted"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3.5-3.5" />
+              </svg>
+              <input
+                type="search"
+                value={value.query}
+                onChange={(event) => patch({ query: event.target.value })}
+                placeholder={t("searchGroupsPlaceholder")}
+                className="min-w-0 flex-1 bg-transparent text-sm text-icc-ink outline-none placeholder:text-icc-muted"
+              />
+            </label>
+
+            <button
+              type="button"
+              onClick={() => setModalOpen(true)}
+              aria-label={t("filterMore")}
+              className={[
+                "relative inline-flex shrink-0 items-center justify-center rounded-xl border px-3 py-2.5 transition",
+                hasActiveFilters
+                  ? "border-icc-ink bg-icc-ink text-white"
+                  : "border-black/10 bg-white text-icc-ink hover:border-black/20",
+              ].join(" ")}
+            >
+              <svg
+                aria-hidden
+                viewBox="0 0 24 24"
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M4 7h16M7 12h10M10 17h4" />
+              </svg>
+              {hasActiveFilters ? (
+                <span className="absolute -right-1.5 -top-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-icc-coral px-1 text-[11px] font-bold text-white">
+                  {activeAdvancedCount}
+                </span>
+              ) : null}
+            </button>
+          </div>
+
+          {/* Desktop : barre pill complète */}
+          <div className="hidden md:flex md:items-stretch">
             <label className="flex min-w-0 flex-1 items-center gap-3 rounded-full px-4 py-2 md:py-3">
               <span className="sr-only">{t("searchGroups")}</span>
               <svg
@@ -285,41 +351,12 @@ export function FioDirectorySearchBar({
                 <path d="M4 7h16M7 12h10M10 17h4" />
               </svg>
               {t("filterMore")}
-              {activeAdvancedCount > 0 ? (
+              {hasActiveFilters ? (
                 <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-icc-coral px-1.5 text-[11px] font-bold text-white">
                   {activeAdvancedCount}
                 </span>
               ) : null}
             </button>
-          </div>
-
-          <div className="flex flex-wrap gap-2 px-2 pb-1 md:hidden">
-            <select
-              value={value.pillar}
-              onChange={(event) => patch({ pillar: event.target.value })}
-              className="flex-1 rounded-full border border-black/10 bg-white px-3 py-2 text-sm"
-            >
-              <option value="">{t("filterPillarAll")}</option>
-              {pillars.map((pillar) => (
-                <option key={pillar} value={pillar}>
-                  {pillar}
-                </option>
-              ))}
-            </select>
-            <select
-              value={value.category}
-              onChange={(event) =>
-                patch({ category: event.target.value as FioCategorySlug | "" })
-              }
-              className="flex-1 rounded-full border border-black/10 bg-white px-3 py-2 text-sm"
-            >
-              <option value="">{t("filterCategoryAll")}</option>
-              {FIO_CATEGORY_ORDER.map((cat) => (
-                <option key={cat} value={cat}>
-                  {t(`groupCategory_${cat}` as "groupCategory_fio")}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
 
@@ -358,6 +395,36 @@ export function FioDirectorySearchBar({
             <div className="flex-1 overflow-y-auto px-6 py-5">
               <section>
                 <h3 className="text-base font-bold text-icc-ink">
+                  {t("filterPillar")}
+                </h3>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    className={pillClass(!draft.pillar)}
+                    onClick={() => setDraft((current) => ({ ...current, pillar: "" }))}
+                  >
+                    {t("filterPillarAll")}
+                  </button>
+                  {pillars.map((pillar) => (
+                    <button
+                      key={pillar}
+                      type="button"
+                      className={pillClass(draft.pillar === pillar)}
+                      onClick={() =>
+                        setDraft((current) => ({
+                          ...current,
+                          pillar: current.pillar === pillar ? "" : pillar,
+                        }))
+                      }
+                    >
+                      {pillar}
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              <section className="mt-8 border-t border-black/8 pt-6">
+                <h3 className="text-base font-bold text-icc-ink">
                   {t("filterSchedule")}
                 </h3>
                 <p className="mt-1 text-sm text-icc-muted">{t("filterMeetingDays")}</p>
@@ -384,11 +451,12 @@ export function FioDirectorySearchBar({
                     <button
                       key={cat}
                       type="button"
-                      className={pillClass(value.category === cat)}
+                      className={pillClass(draft.category === cat)}
                       onClick={() =>
-                        patch({
-                          category: value.category === cat ? "" : cat,
-                        })
+                        setDraft((current) => ({
+                          ...current,
+                          category: current.category === cat ? "" : cat,
+                        }))
                       }
                     >
                       {t(`groupCategory_${cat}` as "groupCategory_fio")}
