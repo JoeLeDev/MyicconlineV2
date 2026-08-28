@@ -76,10 +76,99 @@ export async function getActivitiesAuthenticated(
   );
 }
 
+export async function getFioActivitiesAuthenticated(
+  token: string,
+  fioId: number,
+  params?: { page?: number; perPage?: number },
+): Promise<WpAuthResult<WpActivityListResponse>> {
+  const page = params?.page ?? 1;
+  const perPage = params?.perPage ?? 15;
+  const query = new URLSearchParams({
+    group_id: String(fioId),
+    page: String(page),
+    per_page: String(perPage),
+    display_comments: "0",
+  });
+
+  return wpFetchAuth<WpActivityListResponse>(
+    token,
+    `/myicconline/v1/activity?${query.toString()}`,
+  );
+}
+
+type BpGroupSummary = {
+  id: number;
+  name: string;
+  slug: string;
+  link: string;
+  status?: string;
+  types?: string[];
+  date_created?: string;
+};
+
+function mapBpGroupToMembership(group: BpGroupSummary): WpFioMembership {
+  return {
+    id: group.id,
+    name: group.name,
+    slug: group.slug,
+    link: group.link,
+    status: group.status ?? "",
+    type: group.types?.[0] ?? "fio",
+    role_in_group: "member",
+    is_admin: false,
+    is_mod: false,
+    date_modified: group.date_created ?? "",
+  };
+}
+
+export function normalizeFioMembershipList(data: unknown): WpFioMembership[] {
+  if (Array.isArray(data)) {
+    return data.filter(
+      (item): item is WpFioMembership =>
+        Boolean(item && typeof item === "object" && "id" in item && "slug" in item),
+    );
+  }
+
+  if (data && typeof data === "object") {
+    const record = data as Record<string, unknown>;
+    for (const key of ["fios", "groups", "data"]) {
+      const nested = record[key];
+      if (Array.isArray(nested)) {
+        return normalizeFioMembershipList(nested);
+      }
+    }
+  }
+
+  return [];
+}
+
 export async function getMyFios(
   token: string,
 ): Promise<WpAuthResult<WpFioMembership[]>> {
-  return wpFetchAuth<WpFioMembership[]>(token, "/myicconline/v1/me/fios");
+  const primary = await wpFetchAuth<unknown>(token, "/myicconline/v1/me/fios");
+  if (primary.ok) {
+    return { ok: true, data: normalizeFioMembershipList(primary.data), status: primary.status };
+  }
+
+  const fallback = await wpFetchAuth<BpGroupSummary[]>(
+    token,
+    "/buddypress/v1/groups/me",
+  );
+  if (!fallback.ok) {
+    return {
+      ok: false,
+      message: fallback.message,
+      status: fallback.status,
+      code: fallback.code,
+    };
+  }
+
+  const groups = Array.isArray(fallback.data) ? fallback.data : [];
+  return {
+    ok: true,
+    data: groups.map(mapBpGroupToMembership),
+    status: fallback.status,
+  };
 }
 
 export async function getActivityComments(
@@ -131,25 +220,65 @@ export async function joinFio(
   token: string,
   fioId: number,
 ): Promise<WpAuthResult<WpJoinFioResult>> {
-  const payload = JSON.stringify({ fio_id: fioId });
-
-  const primary = await wpFetchAuth<WpJoinFioResult>(
+  const joinPublic = await wpFetchAuth<{ id?: number }>(
     token,
-    "/myicconline/v1/join-fio",
+    `/buddypress/v1/groups/${fioId}/members`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: payload,
+      body: JSON.stringify({ context: "view" }),
     },
   );
 
-  if (primary.ok || primary.status !== 404) {
-    return primary;
+  if (joinPublic.ok) {
+    return {
+      ok: true,
+      data: { success: true, fio_id: fioId, status: "member" },
+      status: joinPublic.status,
+    };
   }
 
-  return wpFetchAuth<WpJoinFioResult>(token, "/myicconline/v1/fio/join", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: payload,
-  });
+  if (
+    joinPublic.code === "bp_rest_group_member_already_exists" ||
+    joinPublic.code === "bp_rest_member_already_exists"
+  ) {
+    return {
+      ok: true,
+      data: { success: true, fio_id: fioId, status: "member" },
+      status: 200,
+    };
+  }
+
+  const shouldRequestMembership =
+    joinPublic.code === "bp_rest_group_private" ||
+    joinPublic.code === "bp_rest_group_requires_invitation";
+
+  if (shouldRequestMembership) {
+    const request = await wpFetchAuth<{ id?: number; message?: string }>(
+      token,
+      "/buddypress/v1/groups/membership-requests",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ group_id: fioId }),
+      },
+    );
+
+    if (request.ok) {
+      return {
+        ok: true,
+        data: {
+          success: true,
+          fio_id: fioId,
+          status: "pending",
+          message: request.data.message,
+        },
+        status: request.status,
+      };
+    }
+
+    return request;
+  }
+
+  return joinPublic;
 }

@@ -43,7 +43,12 @@ export async function POST(request: Request) {
   try {
     const result = await joinFio(auth.token, fioId);
     if (!result.ok) {
-      const status = result.status === 401 || result.status === 403 ? 401 : 502;
+      const status =
+        result.status === 401 || result.status === 403
+          ? 401
+          : result.status >= 400 && result.status < 500
+            ? result.status
+            : 502;
       return NextResponse.json(
         { ok: false, error: result.message },
         { status },
@@ -54,7 +59,7 @@ export async function POST(request: Request) {
       ok: true,
       message: result.data.message,
       fioId: result.data.fio_id ?? fioId,
-      status: result.data.status,
+      membershipStatus: result.data.status ?? "member",
     });
   } catch (err) {
     console.error("[community/fio/join]", err);

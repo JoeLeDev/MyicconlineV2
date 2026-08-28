@@ -125,6 +125,28 @@ function normalizeFioSlug(slug: string): string {
   return safeDecodeURIComponent(slug).trim().toLowerCase();
 }
 
+export async function getFioActivities(
+  fioId: number,
+  params?: { page?: number; perPage?: number },
+): Promise<WpActivityListResponse> {
+  const page = params?.page ?? 1;
+  const perPage = params?.perPage ?? 15;
+  const query = new URLSearchParams({
+    group_id: String(fioId),
+    page: String(page),
+    per_page: String(perPage),
+    display_comments: "0",
+  });
+
+  return wpFetch<WpActivityListResponse>(
+    `/myicconline/v1/activity?${query.toString()}`,
+    {
+      revalidate: COMMUNITY_REVALIDATE,
+      tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:fio-activity:${fioId}`],
+    },
+  );
+}
+
 export async function getFioMembers(fioId: number): Promise<WpFioMember[]> {
   return wpFetch<WpFioMember[]>(
     `/myicconline/v1/fio/${fioId}/members`,

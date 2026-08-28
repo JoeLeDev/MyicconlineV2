@@ -9,20 +9,28 @@ type Props = {
   fioId: number;
   fioName: string;
   fioSlug: string;
+  variant?: "default" | "hero";
 };
 
 function groupPath(slug: string): `/groupes/${string}` {
   return `/groupes/${encodeURIComponent(slug)}`;
 }
 
-export function JoinFioButton({ fioId, fioName, fioSlug }: Props) {
+export function JoinFioButton({
+  fioId,
+  fioName,
+  fioSlug,
+  variant = "default",
+}: Props) {
   const t = useTranslations("community");
+  const hero = variant === "hero";
   const { user, loading } = useAuth();
   const [isMember, setIsMember] = useState(false);
   const [membershipChecked, setMembershipChecked] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -70,9 +78,19 @@ export function JoinFioButton({ fioId, fioName, fioSlug }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fioId }),
       });
-      const json = (await res.json()) as { ok?: boolean; error?: string };
+      const json = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        membershipStatus?: string;
+      };
 
       if (res.ok && json.ok) {
+        if (json.membershipStatus === "pending") {
+          setPending(true);
+          setSuccess(true);
+          return;
+        }
+
         setIsMember(true);
         setSuccess(true);
         return;
@@ -92,14 +110,19 @@ export function JoinFioButton({ fioId, fioName, fioSlug }: Props) {
 
   if (!user) {
     return (
-      <p className="mt-4 text-sm text-icc-muted">
+      <p className={[hero ? "text-sm text-white/85" : "mt-4 text-sm text-icc-muted"].join(" ")}>
         {t("loginToJoinFio")}{" "}
         <Link
           href={{
             pathname: "/connexion",
             query: { next: groupPath(fioSlug) },
           }}
-          className="font-semibold text-icc-coral hover:text-icc-coral-deep"
+          className={[
+            "font-semibold",
+            hero
+              ? "text-white underline decoration-white/40 underline-offset-2 hover:decoration-white"
+              : "text-icc-coral hover:text-icc-coral-deep",
+          ].join(" ")}
         >
           {t("loginLink")}
         </Link>
@@ -107,25 +130,45 @@ export function JoinFioButton({ fioId, fioName, fioSlug }: Props) {
     );
   }
 
-  if (isMember) {
+  if (isMember || pending) {
     return (
-      <p className="mt-4 inline-flex rounded-lg border border-icc-coral/30 bg-icc-coral/10 px-4 py-2 text-sm font-semibold text-icc-coral">
-        {success ? t("joinFioSuccess", { name: fioName }) : t("alreadyMember")}
+      <p
+        className={[
+          "inline-flex rounded-lg px-4 py-2 text-sm font-semibold",
+          hero
+            ? "border border-white/30 bg-white/10 text-white"
+            : "mt-4 border border-icc-coral/30 bg-icc-coral/10 text-icc-coral",
+        ].join(" ")}
+      >
+        {pending
+          ? t("joinFioPending", { name: fioName })
+          : success
+            ? t("joinFioSuccess", { name: fioName })
+            : t("alreadyMember")}
       </p>
     );
   }
 
   return (
-    <div className="mt-4">
+    <div className={hero ? undefined : "mt-4"}>
       <button
         type="button"
         onClick={() => void handleJoin()}
         disabled={busy}
-        className="inline-flex rounded-lg border border-icc-coral bg-icc-coral px-5 py-2.5 text-sm font-semibold text-white transition hover:border-icc-coral-deep hover:bg-icc-coral-deep disabled:opacity-60"
+        className={[
+          "inline-flex rounded-lg px-5 py-2.5 text-sm font-semibold transition disabled:opacity-60",
+          hero
+            ? "border border-white bg-white text-icc-coral hover:bg-icc-cream"
+            : "border border-icc-coral bg-icc-coral text-white hover:border-icc-coral-deep hover:bg-icc-coral-deep",
+        ].join(" ")}
       >
         {busy ? t("joinFioSubmitting") : t("joinFio")}
       </button>
-      {error ? <p className="mt-2 text-sm text-red-600">{error}</p> : null}
+      {error ? (
+        <p className={["mt-2 text-sm", hero ? "text-red-200" : "text-red-600"].join(" ")}>
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

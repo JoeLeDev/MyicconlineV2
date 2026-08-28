@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ActivityCard } from "@/components/community/ActivityCard";
+import { FioGroupHero } from "@/components/community/FioGroupHero";
+import { FioGroupTabs } from "@/components/community/FioGroupTabs";
 import { FioMemberList } from "@/components/community/FioMemberList";
-import { JoinFioButton } from "@/components/community/JoinFioButton";
 import { CommunityText } from "@/components/community/CommunityText";
 import { Link } from "@/i18n/navigation";
+import { peekAuthToken } from "@/lib/auth/session";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { communityTextExcerpt } from "@/lib/utils/community-text";
-import { getFioBySlug, getFioMembers } from "@/lib/wp/community";
+import { getFioActivitiesAuthenticated } from "@/lib/wp/community-auth";
+import { getFioActivities, getFioBySlug, getFioMembers } from "@/lib/wp/community";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -51,96 +54,123 @@ export default async function GroupDetailPage({ params }: Props) {
     notFound();
   }
 
-  const members = await getFioMembers(fio.id).catch(() => []);
+  const [members, token] = await Promise.all([
+    getFioMembers(fio.id).catch(() => []),
+    peekAuthToken(),
+  ]);
+
+  const activityResult = token
+    ? await getFioActivitiesAuthenticated(token, fio.id).catch(() => null)
+    : null;
+  const activities =
+    activityResult?.ok === true
+      ? activityResult.data.activities
+      : (await getFioActivities(fio.id).catch(() => null))?.activities ?? [];
+
   const schedule = [fio.jour, fio.horaire].filter((v) => !isPlaceholder(v)).join(" · ");
 
+  const feedPanel =
+    activities.length > 0 ? (
+      <div className="rounded-2xl border border-black/8 bg-white px-4 md:px-6">
+        {activities.map((activity) => (
+          <ActivityCard key={activity.id} activity={activity} locale={locale} />
+        ))}
+      </div>
+    ) : (
+      <div className="rounded-2xl border border-black/8 bg-icc-cream/40 px-6 py-12 text-center">
+        <p className="text-icc-muted">{t("emptyGroupFeed")}</p>
+        <a
+          href={fio.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-flex text-sm font-semibold text-icc-coral hover:text-icc-coral-deep"
+        >
+          {t("viewOnWp")}
+        </a>
+      </div>
+    );
+
+  const membersPanel = (
+    <div className="rounded-2xl border border-black/8 bg-white p-4 md:p-6">
+      <FioMemberList members={members} />
+    </div>
+  );
+
+  const aboutPanel = (
+    <div className="rounded-2xl border border-black/8 bg-white p-6 md:p-8">
+      {fio.description ? (
+        <CommunityText
+          text={fio.description}
+          className="prose-icc max-w-3xl text-base leading-relaxed text-icc-muted md:text-lg"
+        />
+      ) : (
+        <p className="text-icc-muted">{t("groupAboutEmpty")}</p>
+      )}
+
+      <dl className="mt-8 grid gap-4 border-t border-black/8 pt-8 text-sm sm:grid-cols-2">
+        {schedule ? (
+          <div>
+            <dt className="font-semibold text-icc-ink">{t("schedule")}</dt>
+            <dd className="mt-1 text-icc-muted">{schedule}</dd>
+          </div>
+        ) : null}
+        {!isPlaceholder(fio.pilote) ? (
+          <div>
+            <dt className="font-semibold text-icc-ink">{t("pilotLabel")}</dt>
+            <dd className="mt-1 text-icc-muted">{fio.pilote}</dd>
+          </div>
+        ) : null}
+        {!isPlaceholder(fio.pilier) ? (
+          <div>
+            <dt className="font-semibold text-icc-ink">{t("pillarLabel")}</dt>
+            <dd className="mt-1 text-icc-muted">{fio.pilier}</dd>
+          </div>
+        ) : null}
+        {!isPlaceholder(fio.ville || "") ? (
+          <div>
+            <dt className="font-semibold text-icc-ink">{t("city")}</dt>
+            <dd className="mt-1 text-icc-muted">{fio.ville}</dd>
+          </div>
+        ) : null}
+      </dl>
+    </div>
+  );
+
   return (
-    <div className="bg-white py-12 md:py-16">
-      <div className="container-icc max-w-4xl">
+    <div className="bg-icc-cream/30">
+      <FioGroupHero
+        fio={fio}
+        schedule={schedule}
+        backLabel={t("backToGroups")}
+        eyebrow={t("groupsEyebrow")}
+        pilotLabel={t("pilotLabel")}
+        cityLabel={t("city")}
+        membersLabel={t("membersLabel")}
+        membersCount={t("membersCountShort", { count: fio.membres })}
+        joinZoomLabel={t("joinZoom")}
+      />
+
+      <FioGroupTabs
+        defaultTab="feed"
+        tabs={[
+          { id: "feed", label: t("groupTabFeed") },
+          { id: "members", label: t("groupTabMembers"), badge: members.length },
+          { id: "about", label: t("groupTabAbout") },
+        ]}
+        panels={{
+          feed: feedPanel,
+          members: membersPanel,
+          about: aboutPanel,
+        }}
+      />
+
+      <div className="container-icc max-w-5xl pb-12">
         <Link
           href="/groupes"
           className="text-sm font-semibold text-icc-coral hover:text-icc-coral-deep"
         >
           {t("backToGroups")}
         </Link>
-
-        <header className="mt-6">
-          {fio.image ? (
-            <div className="relative mb-6 aspect-[16/9] overflow-hidden rounded-xl bg-icc-cream">
-              <Image
-                src={fio.image}
-                alt={fio.nom}
-                fill
-                className="object-cover"
-                sizes="(max-width: 896px) 100vw, 896px"
-                priority
-              />
-            </div>
-          ) : null}
-
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-icc-coral">
-            {t("groupsEyebrow")}
-          </p>
-          <h1 className="mt-2 text-[clamp(2rem,5vw,3rem)] font-extrabold tracking-tight text-icc-ink">
-            {fio.nom}
-          </h1>
-
-          {fio.description ? (
-            <CommunityText
-              text={fio.description}
-              className="prose-icc mt-4 max-w-2xl text-base leading-relaxed text-icc-muted md:text-lg [&_p:last-child]:mb-0"
-            />
-          ) : null}
-
-          <dl className="mt-6 grid gap-3 text-sm text-icc-muted sm:grid-cols-2">
-            {schedule ? (
-              <div>
-                <dt className="font-semibold text-icc-ink">{t("schedule")}</dt>
-                <dd>{schedule}</dd>
-              </div>
-            ) : null}
-            {!isPlaceholder(fio.pilote) ? (
-              <div>
-                <dt className="font-semibold text-icc-ink">{t("pilotLabel")}</dt>
-                <dd>{fio.pilote}</dd>
-              </div>
-            ) : null}
-            {!isPlaceholder(fio.ville || "") ? (
-              <div>
-                <dt className="font-semibold text-icc-ink">{t("city")}</dt>
-                <dd>{fio.ville}</dd>
-              </div>
-            ) : null}
-            <div>
-              <dt className="font-semibold text-icc-ink">{t("membersLabel")}</dt>
-              <dd>{t("membersCountShort", { count: fio.membres })}</dd>
-            </div>
-          </dl>
-
-          {fio.zoom_link ? (
-            <a
-              href={fio.zoom_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex rounded-lg border border-icc-coral bg-icc-coral px-5 py-2.5 text-sm font-semibold text-white transition hover:border-icc-coral-deep hover:bg-icc-coral-deep"
-            >
-              {t("joinZoom")}
-            </a>
-          ) : null}
-
-          <JoinFioButton
-            fioId={fio.id}
-            fioName={fio.nom}
-            fioSlug={fio.slug}
-          />
-        </header>
-
-        <section className="mt-12">
-          <h2 className="text-lg font-bold text-icc-ink">{t("groupMembers")}</h2>
-          <div className="mt-4">
-            <FioMemberList members={members} />
-          </div>
-        </section>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { FioCard } from "@/components/community/FioCard";
+import { FioDirectory } from "@/components/community/FioDirectory";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { getFios } from "@/lib/wp/community";
 
@@ -36,38 +36,36 @@ export default async function GroupsPage({ params }: Props) {
   }
 
   return (
-    <div className="bg-white py-12 md:py-16">
-      <div className="container-icc max-w-6xl">
-        <header className="mb-8 md:mb-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-icc-coral">
+    <div>
+      <section className="bg-icc-ink text-white">
+        <div className="container-icc max-w-6xl py-14 md:py-20">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-icc-coral-hot">
             {t("groupsEyebrow")}
           </p>
-          <h1 className="mt-2 text-[clamp(2rem,5vw,3rem)] font-extrabold tracking-tight text-icc-ink">
+          <h1 className="mt-3 max-w-3xl text-[clamp(2.2rem,5vw,3.5rem)] font-extrabold leading-[1.05] tracking-tight">
             {t("groupsTitle")}
           </h1>
-          <p className="mt-3 max-w-2xl text-base text-icc-muted md:text-lg">
-            {t("groupsSubtitle")}
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/80 md:text-lg">
+            {t("groupsHeroSubtitle")}
           </p>
-        </header>
+        </div>
+      </section>
 
-        {error ? (
-          <p className="rounded-lg border border-icc-coral/30 bg-icc-cream px-4 py-3 text-sm text-icc-ink">
-            {error}
-          </p>
-        ) : null}
+      <section className="bg-icc-cream/40 py-12 md:py-16">
+        <div className="container-icc max-w-6xl">
+          {error ? (
+            <p className="rounded-lg border border-icc-coral/30 bg-white px-4 py-3 text-sm text-icc-ink">
+              {error}
+            </p>
+          ) : null}
 
-        {!error && fios.length === 0 ? (
-          <p className="text-icc-muted">{t("emptyGroups")}</p>
-        ) : null}
+          {!error && fios.length === 0 ? (
+            <p className="text-icc-muted">{t("emptyGroups")}</p>
+          ) : null}
 
-        <ul className="grid list-none gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {fios.map((fio) => (
-            <li key={fio.id} className="h-full">
-              <FioCard fio={fio} />
-            </li>
-          ))}
-        </ul>
-      </div>
+          {!error && fios.length > 0 ? <FioDirectory fios={fios} /> : null}
+        </div>
+      </section>
     </div>
   );
 }

@@ -18,7 +18,7 @@ export async function GET() {
 
     return NextResponse.json({
       ok: true,
-      fios: result.data.map((fio) => ({
+      fios: (Array.isArray(result.data) ? result.data : []).map((fio) => ({
         id: fio.id,
         name: fio.name,
         slug: fio.slug,
