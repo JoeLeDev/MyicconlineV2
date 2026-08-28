@@ -87,6 +87,57 @@
     "loginError": "Unable to sign in.",
     "networkError": "Network error. Please try again."
   },
+  "memberSpace": {
+    "eyebrow": "Member area",
+    "pageTitle": "Hello {name}",
+    "pageSubtitle": "Find your shortcuts to the ICC Online community here.",
+    "connectedBadge": "Signed in",
+    "viewWpProfile": "View my WP profile",
+    "opensNewTab": "opens in a new tab",
+    "communityShortcuts": "Community shortcuts",
+    "v2Shortcuts": "On this site",
+    "infoBanner": "The full community (groups, messaging, courses) remains on ICC Online for now. You access it with the same credentials.",
+    "shortcuts": {
+      "publications": {
+        "title": "Publications",
+        "description": "Read and publish articles, videos and resources"
+      },
+      "submitArticle": {
+        "title": "Submit an article",
+        "description": "Publish a post via the community form"
+      },
+      "events": {
+        "title": "Events",
+        "description": "Community calendar and gatherings"
+      },
+      "activity": {
+        "title": "Site activity",
+        "description": "BuddyPress activity feed"
+      },
+      "members": {
+        "title": "Members",
+        "description": "Directory and community profiles"
+      },
+      "groups": {
+        "title": "Groups (FIO)",
+        "description": "Join an Online Impact Family"
+      },
+      "community": {
+        "title": "Community",
+        "description": "Access the full community space"
+      }
+    },
+    "v2": {
+      "blog": {
+        "title": "Blog V2",
+        "description": "Articles and resources on the new site"
+      },
+      "home": {
+        "title": "Home V2",
+        "description": "Back to the homepage"
+      }
+    }
+  },
   "footer": {
     "about": "About",
     "contact": "Contact",

@@ -87,6 +87,57 @@
     "loginError": "Anmeldung nicht möglich.",
     "networkError": "Netzwerkfehler. Bitte erneut versuchen."
   },
+  "memberSpace": {
+    "eyebrow": "Mitgliederbereich",
+    "pageTitle": "Hallo {name}",
+    "pageSubtitle": "Hier findest du deine Shortcuts zur ICC-Online-Community.",
+    "connectedBadge": "Angemeldet",
+    "viewWpProfile": "Mein WP-Profil ansehen",
+    "opensNewTab": "öffnet in neuem Tab",
+    "communityShortcuts": "Community-Shortcuts",
+    "v2Shortcuts": "Auf dieser Website",
+    "infoBanner": "Die vollständige Community (Gruppen, Nachrichten, Kurse) bleibt vorerst auf ICC Online. Du erreichst sie mit denselben Zugangsdaten.",
+    "shortcuts": {
+      "publications": {
+        "title": "Publikationen",
+        "description": "Artikel, Videos und Ressourcen lesen und veröffentlichen"
+      },
+      "submitArticle": {
+        "title": "Artikel einreichen",
+        "description": "Beitrag über das Community-Formular veröffentlichen"
+      },
+      "events": {
+        "title": "Veranstaltungen",
+        "description": "Kalender und Termine der Community"
+      },
+      "activity": {
+        "title": "Website-Aktivitäten",
+        "description": "BuddyPress-Aktivitätsfeed"
+      },
+      "members": {
+        "title": "Mitglieder",
+        "description": "Verzeichnis und Community-Profile"
+      },
+      "groups": {
+        "title": "Gruppen (FIO)",
+        "description": "Einer Online Impact Family beitreten"
+      },
+      "community": {
+        "title": "Community",
+        "description": "Zum vollständigen Community-Bereich"
+      }
+    },
+    "v2": {
+      "blog": {
+        "title": "Blog V2",
+        "description": "Artikel und Ressourcen auf der neuen Website"
+      },
+      "home": {
+        "title": "Startseite V2",
+        "description": "Zurück zur Startseite"
+      }
+    }
+  },
   "footer": {
     "about": "Über uns",
     "contact": "Kontakt",

@@ -87,6 +87,57 @@
     "loginError": "No se pudo iniciar sesión.",
     "networkError": "Error de red. Inténtalo de nuevo."
   },
+  "memberSpace": {
+    "eyebrow": "Área de miembros",
+    "pageTitle": "Hola {name}",
+    "pageSubtitle": "Aquí encontrarás tus accesos directos a la comunidad ICC Online.",
+    "connectedBadge": "Conectado",
+    "viewWpProfile": "Ver mi perfil WP",
+    "opensNewTab": "se abre en una nueva pestaña",
+    "communityShortcuts": "Accesos a la comunidad",
+    "v2Shortcuts": "En este sitio",
+    "infoBanner": "La comunidad completa (grupos, mensajería, cursos) sigue en ICC Online por ahora. Accedes con las mismas credenciales.",
+    "shortcuts": {
+      "publications": {
+        "title": "Publicaciones",
+        "description": "Leer y publicar artículos, vídeos y recursos"
+      },
+      "submitArticle": {
+        "title": "Enviar un artículo",
+        "description": "Publicar un post mediante el formulario comunitario"
+      },
+      "events": {
+        "title": "Eventos",
+        "description": "Agenda y encuentros de la comunidad"
+      },
+      "activity": {
+        "title": "Actividad del sitio",
+        "description": "Feed de actividad BuddyPress"
+      },
+      "members": {
+        "title": "Miembros",
+        "description": "Directorio y perfiles de la comunidad"
+      },
+      "groups": {
+        "title": "Grupos (FIO)",
+        "description": "Unirse a una Familia de Impacto Online"
+      },
+      "community": {
+        "title": "Comunidad",
+        "description": "Acceder al espacio comunitario completo"
+      }
+    },
+    "v2": {
+      "blog": {
+        "title": "Blog V2",
+        "description": "Artículos y recursos en el nuevo sitio"
+      },
+      "home": {
+        "title": "Inicio V2",
+        "description": "Volver a la página de inicio"
+      }
+    }
+  },
   "footer": {
     "about": "Acerca de",
     "contact": "Contacto",

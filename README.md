@@ -19,7 +19,7 @@ WordPress reste le backend (API REST) sur cPanel — ce dépôt ne remplace pas 
 | `/blog/[slug]` | Article (YouTube, PDF, articles liés) |
 | `/contact` | Formulaire de contact |
 | `/connexion` | Connexion JWT WordPress |
-| `/espace` | Espace membre (protégé) |
+| `/espace` | Hub membre (profil + raccourcis communauté WP) |
 | `/mentions-legales` | Mentions légales |
 | `/politique-de-confidentialite` | Politique de confidentialité RGPD |
 
@@ -90,6 +90,17 @@ Connexion via le plugin WordPress `jwt-auth` :
 
 `AUTH_SECRET` est **obligatoire** (Vercel + `.env.local`).
 
+## Mon espace (`/espace`)
+
+Hub membre après connexion JWT :
+
+- **Profil** : avatar, nom, e-mail, `@slug`, badge « Connecté », lien profil WP, déconnexion
+- **Raccourcis communauté** : cartes vers les sections WordPress (publications, évènements, groupes FIO, etc.) — URLs centralisées dans `src/lib/wp/community-links.ts`
+- **Sur ce site** : liens internes vers `/blog` et `/`
+- Les liens WP s’ouvrent dans un nouvel onglet ; la session BuddyPress reste active côté WordPress
+
+Traductions : namespace `memberSpace` dans `messages/*.json` (FR / EN / DE / ES).
+
 ## Contact
 
 Le formulaire `/contact` appelle `POST /api/contact` (Resend).  
@@ -111,8 +122,8 @@ npm run lint     # ESLint
 ```
 src/
   app/                 # routes App Router (+ sitemap.xml, robots.txt)
-  components/          # UI (layout, home, blog, legal)
-  lib/wp/              # client + mapping API WordPress
+  components/          # UI (layout, home, blog, legal, member)
+  lib/wp/              # client + mapping API WordPress + community-links
   lib/utils/           # dates, HTML, temps de lecture
 ```
 
