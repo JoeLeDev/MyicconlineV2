@@ -369,7 +369,18 @@
     "filterPillar": "Pillar",
     "filterPillarAll": "All pillars",
     "filterCategory": "Category",
-    "filterCategoryAll": "All categories"
+    "filterCategoryAll": "All categories",
+    "filterSearchLabel": "Search",
+    "filterPillarHint": "All pillars",
+    "filterCategoryHint": "All categories",
+    "filterMore": "Filters",
+    "filterMoreTitle": "More filters",
+    "filterClose": "Close",
+    "filterReset": "Reset",
+    "filterDone": "Done",
+    "filterSchedule": "Schedule",
+    "filterMeetingDays": "Meeting days",
+    "filterOnlineOnly": "Online only (Zoom)"
   },
   "wpPages": {
     "readOnSite": "Read on site",

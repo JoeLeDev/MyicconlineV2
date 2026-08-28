@@ -369,7 +369,18 @@
     "filterPillar": "Pfeiler",
     "filterPillarAll": "Alle Pfeiler",
     "filterCategory": "Kategorie",
-    "filterCategoryAll": "Alle Kategorien"
+    "filterCategoryAll": "Alle Kategorien",
+    "filterSearchLabel": "Suchen",
+    "filterPillarHint": "Alle Pfeiler",
+    "filterCategoryHint": "Alle Kategorien",
+    "filterMore": "Filter",
+    "filterMoreTitle": "Weitere Filter",
+    "filterClose": "Schließen",
+    "filterReset": "Zurücksetzen",
+    "filterDone": "Fertig",
+    "filterSchedule": "Zeitplan",
+    "filterMeetingDays": "Treff-Tage",
+    "filterOnlineOnly": "Nur online (Zoom)"
   },
   "wpPages": {
     "readOnSite": "Auf der Website lesen",

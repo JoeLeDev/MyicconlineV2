@@ -40,30 +40,16 @@ export default async function GroupsPage({ params }: Props) {
 
   return (
     <div>
-      <section className="relative overflow-hidden bg-icc-ink text-white">
+      <section className="bg-icc-ink">
         <EventBannerImage
           src={FIO_GROUPS_PAGE_BANNER}
-          alt=""
-          layout="cover"
+          alt={t("groupsTitle")}
+          layout="full"
           priority
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          className="block h-auto w-full"
         />
-        <div
-          className="absolute inset-0 bg-gradient-to-r from-icc-ink/70 via-icc-ink/35 to-transparent md:from-icc-ink/55 md:via-icc-ink/20"
-          aria-hidden
-        />
-
-        <div className="container-icc relative z-10 max-w-6xl py-14 md:py-20">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-icc-coral-hot">
-            {t("groupsEyebrow")}
-          </p>
-          <h1 className="mt-3 max-w-3xl text-[clamp(2.2rem,5vw,3.5rem)] font-extrabold leading-[1.05] tracking-tight">
-            {t("groupsTitle")}
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/80 md:text-lg">
-            {t("groupsHeroSubtitle")}
-          </p>
-        </div>
+        <h1 className="sr-only">{t("groupsTitle")}</h1>
+        <p className="sr-only">{t("groupsHeroSubtitle")}</p>
       </section>
 
       <section className="bg-icc-cream/40 py-12 md:py-16">

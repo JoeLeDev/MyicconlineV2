@@ -1,15 +1,18 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { FioCategorySection } from "@/components/community/FioCategorySection";
-import { FioDirectoryFilters } from "@/components/community/FioDirectoryFilters";
 import {
-  getFioPrimaryCategory,
+  applyFioDirectoryFilters,
+  DEFAULT_FIO_DIRECTORY_FILTERS,
+  FioDirectorySearchBar,
+} from "@/components/community/FioDirectorySearchBar";
+import {
   getOrderedCategorySections,
   groupFiosByCategory,
+  type FioCategorySlug,
 } from "@/lib/wp/fio-categories";
-import { translateWeekday } from "@/lib/utils/fio-schedule";
 import type { WpFio } from "@/lib/wp/community-types";
 
 type Props = {
@@ -19,43 +22,17 @@ type Props = {
 export function FioDirectory({ fios }: Props) {
   const t = useTranslations("community");
   const locale = useLocale();
-  const [query, setQuery] = useState("");
-  const [filteredByControls, setFilteredByControls] = useState(fios);
-
-  const handleFilterChange = useCallback((next: WpFio[]) => {
-    setFilteredByControls(next);
-  }, []);
+  const [filters, setFilters] = useState(DEFAULT_FIO_DIRECTORY_FILTERS);
 
   const filtered = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return filteredByControls;
-
-    return filteredByControls.filter((fio) => {
-      const category = fio.category ?? getFioPrimaryCategory(fio.types);
-      const categoryLabel = t(
+    const translateCategory = (category: FioCategorySlug | "other") =>
+      t(
         category === "other"
           ? "groupCategoryOther"
           : (`groupCategory_${category}` as "groupCategory_fio"),
       );
-
-      const haystack = [
-        fio.nom,
-        fio.description,
-        fio.pilote,
-        fio.pilier,
-        fio.ville,
-        fio.jour,
-        translateWeekday(fio.jour, locale),
-        categoryLabel,
-        ...(fio.types ?? []),
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-
-      return haystack.includes(normalized);
-    });
-  }, [filteredByControls, locale, query, t]);
+    return applyFioDirectoryFilters(fios, filters, locale, translateCategory);
+  }, [fios, filters, locale, t]);
 
   const sections = useMemo(
     () => getOrderedCategorySections(groupFiosByCategory(filtered)),
@@ -64,24 +41,12 @@ export function FioDirectory({ fios }: Props) {
 
   return (
     <div>
-      <div className="mb-10 max-w-xl">
-        <label htmlFor="fio-search" className="sr-only">
-          {t("searchGroups")}
-        </label>
-        <input
-          id="fio-search"
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder={t("searchGroupsPlaceholder")}
-          className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm text-icc-ink shadow-sm outline-none transition placeholder:text-icc-muted focus:border-icc-coral focus:ring-2 focus:ring-icc-coral/20"
-        />
-        <p className="mt-2 text-sm text-icc-muted">
-          {t("groupsCount", { count: filtered.length })}
-        </p>
-      </div>
-
-      <FioDirectoryFilters fios={fios} onChange={handleFilterChange} />
+      <FioDirectorySearchBar
+        fios={fios}
+        value={filters}
+        onChange={setFilters}
+        resultCount={filtered.length}
+      />
 
       {sections.length === 0 ? (
         <p className="text-icc-muted">{t("noGroupsMatch")}</p>

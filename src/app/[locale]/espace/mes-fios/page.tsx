@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { FioCard } from "@/components/community/FioCard";
+import { FioCardClient } from "@/components/community/FioCardClient";
 import { Link } from "@/i18n/navigation";
 import { redirect } from "@/i18n/navigation";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { getAuthToken, getCurrentUser } from "@/lib/auth/session";
+import { getFios } from "@/lib/wp/community";
 import { getMyFios } from "@/lib/wp/community-auth";
+import { enrichMembershipsAsFios } from "@/lib/wp/my-fios";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -44,12 +46,18 @@ export default async function MesFiosPage({ params }: Props) {
     });
   }
 
-  const result = await getMyFios(token!);
-  const fios = result.ok ? result.data : [];
+  const [result, catalog] = await Promise.all([
+    getMyFios(token!),
+    getFios().catch(() => []),
+  ]);
+
+  const fios = result.ok
+    ? enrichMembershipsAsFios(result.data, catalog)
+    : [];
 
   return (
-    <div className="bg-white py-12 md:py-16">
-      <div className="container-icc max-w-5xl">
+    <div className="bg-icc-cream/40 py-12 md:py-16">
+      <div className="container-icc max-w-6xl">
         <Link
           href="/espace"
           className="text-sm font-semibold text-icc-coral hover:text-icc-coral-deep"
@@ -58,7 +66,7 @@ export default async function MesFiosPage({ params }: Props) {
         </Link>
 
         <header className="mt-6 mb-8 md:mb-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-icc-coral">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-icc-coral-hot">
             {t("eyebrow")}
           </p>
           <h1 className="mt-2 text-[clamp(2rem,5vw,3rem)] font-extrabold tracking-tight text-icc-ink">
@@ -70,13 +78,13 @@ export default async function MesFiosPage({ params }: Props) {
         </header>
 
         {!result.ok ? (
-          <p className="rounded-lg border border-icc-coral/30 bg-icc-cream px-4 py-3 text-sm text-icc-ink">
+          <p className="rounded-lg border border-icc-coral/30 bg-white px-4 py-3 text-sm text-icc-ink">
             {t("myFiosError")}
           </p>
         ) : null}
 
         {result.ok && fios.length === 0 ? (
-          <div className="rounded-xl border border-black/8 bg-icc-cream/40 px-6 py-10 text-center">
+          <div className="rounded-2xl border border-black/8 bg-white px-6 py-10 text-center shadow-sm">
             <p className="text-icc-muted">{t("myFiosEmpty")}</p>
             <Link
               href="/groupes"
@@ -88,26 +96,10 @@ export default async function MesFiosPage({ params }: Props) {
         ) : null}
 
         {result.ok && fios.length > 0 ? (
-          <ul className="grid list-none gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid list-none gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {fios.map((fio) => (
               <li key={fio.id}>
-                <FioCard
-                  fio={{
-                    id: fio.id,
-                    nom: fio.name,
-                    description: "",
-                    jour: "",
-                    horaire: "",
-                    pilote: "",
-                    pilier: "",
-                    membres: 0,
-                    image: "",
-                    link: fio.link,
-                    date_creation: fio.date_modified,
-                    slug: fio.slug,
-                    zoom_link: "",
-                  }}
-                />
+                <FioCardClient fio={fio} />
               </li>
             ))}
           </ul>
