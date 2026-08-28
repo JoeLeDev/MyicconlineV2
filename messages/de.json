@@ -100,6 +100,7 @@
     "pageTitle": "Hallo {name}",
     "pageSubtitle": "Hier findest du deine Shortcuts zur ICC-Online-Community.",
     "connectedBadge": "Angemeldet",
+    "viewProfile": "Mein Profil ansehen",
     "viewWpProfile": "Mein WP-Profil ansehen",
     "opensNewTab": "öffnet in neuem Tab",
     "communityShortcuts": "Community-Shortcuts",
@@ -120,15 +121,15 @@
       },
       "activity": {
         "title": "Website-Aktivitäten",
-        "description": "BuddyPress-Aktivitätsfeed"
+        "description": "Aktivitätsfeed der ICC-Online-Community"
       },
       "members": {
         "title": "Mitglieder",
-        "description": "Verzeichnis und Community-Profile"
+        "description": "Mitgliederverzeichnis ICC Online"
       },
       "groups": {
         "title": "Gruppen (FIO)",
-        "description": "Einer Online Impact Family beitreten"
+        "description": "Online Impact Families auf dieser Website"
       },
       "community": {
         "title": "Community",
@@ -218,6 +219,47 @@
     "successBody": "Ihr Artikel wurde an das Redaktionsteam gesendet und erscheint nach Freigabe im Blog.",
     "viewBlog": "Blog ansehen",
     "submitAnother": "Weiteren Artikel einreichen"
+  },
+  "community": {
+    "activitiesEyebrow": "Community",
+    "activitiesTitle": "Aktivitäten",
+    "activitiesSubtitle": "Verfolgen Sie Austausch, Beiträge und Highlights der ICC-Online-Familie.",
+    "membersEyebrow": "Community",
+    "membersTitle": "Mitglieder",
+    "membersSubtitle": "Entdecken Sie ICC-Online-Mitglieder und ihre Online Impact Families (FIO).",
+    "groupsEyebrow": "FIO",
+    "groupsTitle": "Gruppen · Online Impact Families",
+    "groupsSubtitle": "Treten Sie einer FIO bei, um Gemeinschaft, Gebet und Wachstum zu leben – wo auch immer Sie sind.",
+    "searchMembers": "Mitglied suchen",
+    "searchMembersPlaceholder": "Name, Benutzername oder FIO…",
+    "membersCount": "{count, plural, one {# Mitglied} other {# Mitglieder}}",
+    "membersCountShort": "{count, plural, one {# Mitglied} other {# Mitglieder}}",
+    "primaryFio": "FIO · {name}",
+    "pilot": "Pilot · {name}",
+    "pilotLabel": "Pilot",
+    "schedule": "Termin",
+    "city": "Stadt",
+    "membersLabel": "Mitglieder",
+    "groupMembers": "Gruppenmitglieder",
+    "memberFios": "Impact Families",
+    "joinZoom": "Per Zoom beitreten",
+    "comments": "{count, plural, one {# Kommentar} other {# Kommentare}}",
+    "favorites": "{count, plural, one {# Favorit} other {# Favoriten}}",
+    "viewOnWp": "Auf klassischem ICC Online ansehen",
+    "backToMembers": "← Alle Mitglieder",
+    "backToGroups": "← Alle Gruppen",
+    "memberNotFound": "Mitglied nicht gefunden",
+    "groupNotFound": "Gruppe nicht gefunden",
+    "memberProfileDescription": "Profil von {name} auf ICC Online",
+    "groupProfileDescription": "Online Impact Family · {name}",
+    "emptyActivities": "Keine recenten Aktivitäten.",
+    "emptyGroups": "Derzeit keine FIO-Gruppen verfügbar.",
+    "noMembers": "Keine Mitglieder entsprechen Ihrer Suche.",
+    "noFioMembers": "Keine Mitglieder für diese Gruppe gelistet.",
+    "error": "Dieser Bereich kann derzeit nicht geladen werden.",
+    "prev": "← Zurück",
+    "next": "Weiter →",
+    "page": "Seite {page}"
   },
   "wpPages": {
     "readOnSite": "Auf der Website lesen",

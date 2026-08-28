@@ -26,12 +26,17 @@ export const WP_COMMUNITY_LINKS: CommunityLink[] = [
   { id: "publications", href: "/blog", external: false },
   { id: "submitArticle", href: "/soumettre-un-article", external: false },
   { id: "events", href: "/evenements", external: false },
-  { id: "activity", href: wpPath("/activites-du-site/") },
-  { id: "members", href: wpPath("/membres/") },
-  { id: "groups", href: wpPath("/groupes/") },
+  { id: "activity", href: "/activites", external: false },
+  { id: "members", href: "/membres", external: false },
+  { id: "groups", href: "/groupes", external: false },
   { id: "community", href: getWpLoginUrl().replace(/\/?$/, "/") },
 ];
 
+export function getMemberProfilePath(slug: string): `/membres/${string}` {
+  return `/membres/${slug}`;
+}
+
+/** @deprecated Utiliser getMemberProfilePath pour le profil V2 */
 export function getWpMemberProfileUrl(slug: string): string {
   return wpPath(`/membres/${slug}/`);
 }

@@ -17,6 +17,18 @@ export function formatDate(iso: string, locale: string = "fr"): string {
   }).format(new Date(iso));
 }
 
+export function formatDateTime(iso: string, locale: string = "fr"): string {
+  const bcp47 =
+    localeToBcp47[locale as AppLocale] ?? localeToBcp47.fr;
+  return new Intl.DateTimeFormat(bcp47, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(iso));
+}
+
 /** @deprecated Prefer formatDate(iso, locale) */
 export function formatFrDate(iso: string): string {
   return formatDate(iso, "fr");

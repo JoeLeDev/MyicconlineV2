@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import type { AuthUser } from "@/lib/auth/types";
-import { getWpMemberProfileUrl } from "@/lib/wp/community-links";
+import { getMemberProfilePath } from "@/lib/wp/community-links";
 
 type Props = {
   member: AuthUser;
@@ -10,7 +11,7 @@ type Props = {
 
 export async function MemberProfileCard({ member }: Props) {
   const t = await getTranslations("memberSpace");
-  const profileUrl = getWpMemberProfileUrl(member.slug);
+  const profilePath = getMemberProfilePath(member.slug);
 
   return (
     <section
@@ -52,15 +53,12 @@ export async function MemberProfileCard({ member }: Props) {
               <p className="mt-1 truncate text-sm text-icc-muted">{member.email}</p>
             ) : null}
             <p className="mt-1 text-sm text-icc-muted">@{member.slug}</p>
-            <a
-              href={profileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href={profilePath}
               className="mt-3 inline-flex text-sm font-medium text-icc-coral hover:text-icc-coral-deep"
             >
-              {t("viewWpProfile")}
-              <span className="sr-only"> ({t("opensNewTab")})</span>
-            </a>
+              {t("viewProfile")}
+            </Link>
           </div>
         </div>
 
