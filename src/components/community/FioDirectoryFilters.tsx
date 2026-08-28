@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   FIO_CATEGORY_ORDER,
   getFioPrimaryCategory,
-  type FioCategorySlug,
 } from "@/lib/wp/fio-categories";
+import {
+  isFioSchedulePlaceholder,
+  sortWeekdays,
+  translateWeekday,
+} from "@/lib/utils/fio-schedule";
 import type { WpFio } from "@/lib/wp/community-types";
 
 type Props = {
@@ -15,21 +19,21 @@ type Props = {
 };
 
 function isPlaceholder(value: string): boolean {
-  const normalized = value.trim().toLowerCase();
-  return !normalized || normalized === "non défini" || normalized === "non renseigné";
+  return isFioSchedulePlaceholder(value);
 }
 
 export function FioDirectoryFilters({ fios, onChange }: Props) {
   const t = useTranslations("community");
+  const locale = useLocale();
   const [day, setDay] = useState("");
   const [pillar, setPillar] = useState("");
   const [category, setCategory] = useState("");
 
   const days = useMemo(
     () =>
-      [...new Set(fios.map((fio) => fio.jour).filter((value) => !isPlaceholder(value)))].sort(
-        (a, b) => a.localeCompare(b, "fr"),
-      ),
+      sortWeekdays([
+        ...new Set(fios.map((fio) => fio.jour).filter((value) => !isPlaceholder(value))),
+      ]),
     [fios],
   );
 
@@ -68,7 +72,7 @@ export function FioDirectoryFilters({ fios, onChange }: Props) {
           <option value="">{t("filterDayAll")}</option>
           {days.map((value) => (
             <option key={value} value={value}>
-              {value}
+              {translateWeekday(value, locale)}
             </option>
           ))}
         </select>

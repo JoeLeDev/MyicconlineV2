@@ -20,6 +20,7 @@ import { Link } from "@/i18n/navigation";
 import { peekAuthToken } from "@/lib/auth/session";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { communityTextExcerpt } from "@/lib/utils/community-text";
+import { formatFioSchedule, isFioSchedulePlaceholder } from "@/lib/utils/fio-schedule";
 import { getFioActivitiesAuthenticated } from "@/lib/wp/community-auth";
 import {
   buildMemberSlugIndex,
@@ -40,8 +41,7 @@ type Props = {
 export const revalidate = 120;
 
 function isPlaceholder(value: string): boolean {
-  const normalized = value.trim().toLowerCase();
-  return !normalized || normalized === "non défini" || normalized === "non renseigné";
+  return isFioSchedulePlaceholder(value);
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -102,7 +102,7 @@ export default async function GroupDetailPage({ params }: Props) {
   const hasMore = Boolean(activityPayload?.has_more);
   const latestActivityId = activities[0]?.id ?? null;
 
-  const schedule = [fio.jour, fio.horaire].filter((v) => !isPlaceholder(v)).join(" · ");
+  const schedule = formatFioSchedule(fio.jour, fio.horaire, locale);
   const mapLabel = [fio.ville, fio.nom].filter(Boolean).join(" · ");
 
   const feedPanel = (

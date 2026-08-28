@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { FioCategorySection } from "@/components/community/FioCategorySection";
 import { FioDirectoryFilters } from "@/components/community/FioDirectoryFilters";
 import {
@@ -9,6 +9,7 @@ import {
   getOrderedCategorySections,
   groupFiosByCategory,
 } from "@/lib/wp/fio-categories";
+import { translateWeekday } from "@/lib/utils/fio-schedule";
 import type { WpFio } from "@/lib/wp/community-types";
 
 type Props = {
@@ -17,6 +18,7 @@ type Props = {
 
 export function FioDirectory({ fios }: Props) {
   const t = useTranslations("community");
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [filteredByControls, setFilteredByControls] = useState(fios);
 
@@ -43,6 +45,7 @@ export function FioDirectory({ fios }: Props) {
         fio.pilier,
         fio.ville,
         fio.jour,
+        translateWeekday(fio.jour, locale),
         categoryLabel,
         ...(fio.types ?? []),
       ]
@@ -52,7 +55,7 @@ export function FioDirectory({ fios }: Props) {
 
       return haystack.includes(normalized);
     });
-  }, [filteredByControls, query, t]);
+  }, [filteredByControls, locale, query, t]);
 
   const sections = useMemo(
     () => getOrderedCategorySections(groupFiosByCategory(filtered)),

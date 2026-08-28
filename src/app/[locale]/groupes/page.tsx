@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { EventBannerImage } from "@/components/events/EventBannerImage";
 import { FioDirectory } from "@/components/community/FioDirectory";
 import { buildPageMetadata } from "@/lib/seo/metadata";
+import { FIO_GROUPS_PAGE_BANNER } from "@/lib/wp/fio-assets";
 import { getFios } from "@/lib/wp/community";
 
 type Props = {
@@ -19,6 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     href: "/groupes",
     title: t("groupsTitle"),
     description: t("groupsSubtitle"),
+    images: [FIO_GROUPS_PAGE_BANNER],
   });
 }
 
@@ -36,26 +38,20 @@ export default async function GroupsPage({ params }: Props) {
     error = t("error");
   }
 
-  const heroImage = fios.find((fio) => fio.image.trim())?.image;
-
   return (
     <div>
       <section className="relative overflow-hidden bg-icc-ink text-white">
-        {heroImage ? (
-          <>
-            <EventBannerImage
-              src={heroImage}
-              alt=""
-              layout="cover"
-              priority
-              className="absolute inset-0 h-full w-full object-cover object-center opacity-50"
-            />
-            <div
-              className="absolute inset-0 bg-gradient-to-r from-icc-ink/95 via-icc-ink/80 to-icc-ink/55"
-              aria-hidden
-            />
-          </>
-        ) : null}
+        <EventBannerImage
+          src={FIO_GROUPS_PAGE_BANNER}
+          alt=""
+          layout="cover"
+          priority
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-icc-ink/70 via-icc-ink/35 to-transparent md:from-icc-ink/55 md:via-icc-ink/20"
+          aria-hidden
+        />
 
         <div className="container-icc relative z-10 max-w-6xl py-14 md:py-20">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-icc-coral-hot">

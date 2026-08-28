@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { normalizeCommunityPlainText } from "@/lib/utils/community-text";
+import { formatFioSchedule, isFioSchedulePlaceholder } from "@/lib/utils/fio-schedule";
 import type { WpFio } from "@/lib/wp/community-types";
 
 function fioDetailPath(slug: string): `/groupes/${string}` {
@@ -13,13 +14,13 @@ type Props = {
 };
 
 function isPlaceholder(value: string): boolean {
-  const normalized = value.trim().toLowerCase();
-  return !normalized || normalized === "non défini" || normalized === "non renseigné";
+  return isFioSchedulePlaceholder(value);
 }
 
 export async function FioCard({ fio }: Props) {
   const t = await getTranslations("community");
-  const schedule = [fio.jour, fio.horaire].filter((v) => !isPlaceholder(v)).join(" · ");
+  const locale = await getLocale();
+  const schedule = formatFioSchedule(fio.jour, fio.horaire, locale);
 
   return (
     <Link

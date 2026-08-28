@@ -1,9 +1,10 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { FioCardBanner } from "@/components/community/FioCardBanner";
 import { normalizeCommunityPlainText } from "@/lib/utils/community-text";
+import { formatFioSchedule, isFioSchedulePlaceholder } from "@/lib/utils/fio-schedule";
 import {
   getCategoryAccentClass,
   getFioPrimaryCategory,
@@ -20,13 +21,13 @@ type Props = {
 };
 
 function isPlaceholder(value: string): boolean {
-  const normalized = value.trim().toLowerCase();
-  return !normalized || normalized === "non défini" || normalized === "non renseigné";
+  return isFioSchedulePlaceholder(value);
 }
 
 export function FioCardClient({ fio }: Props) {
   const t = useTranslations("community");
-  const schedule = [fio.jour, fio.horaire].filter((v) => !isPlaceholder(v)).join(" · ");
+  const locale = useLocale();
+  const schedule = formatFioSchedule(fio.jour, fio.horaire, locale);
   const category = (fio.category ??
     getFioPrimaryCategory(fio.types)) as FioCategorySlug;
   const categoryLabel = t(
