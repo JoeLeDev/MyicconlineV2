@@ -192,6 +192,33 @@
     "notFoundTitle": "Event not found",
     "contentInFrench": "The editorial content of this event is written in French."
   },
+  "submitArticle": {
+    "eyebrow": "Community",
+    "title": "Submit an article",
+    "subtitle": "Share an article, video or resource with the ICC Online community.",
+    "helpText": "Your post will be reviewed before it appears on the blog. Sign in with your ICC Online credentials.",
+    "connectedAs": "Signed in as {name}",
+    "titleLabel": "Title",
+    "categoryLabel": "Category",
+    "categoryPlaceholder": "Choose a category",
+    "contentLabel": "Content",
+    "tagsLabel": "Tags (optional)",
+    "tagsPlaceholder": "prayer, testimony, FIO…",
+    "youtubeLabel": "YouTube video (optional)",
+    "featuredImageLabel": "Cover image (optional)",
+    "featuredImageHint": "JPEG, PNG, WebP or GIF — max 5 MB.",
+    "attachmentsLabel": "Attachments (optional)",
+    "attachmentsHint": "PDF or images — max 5 files, 10 MB each.",
+    "moderationNote": "Your article will be submitted for review before publication.",
+    "submit": "Submit for review",
+    "submitting": "Submitting…",
+    "submitError": "Unable to submit the article.",
+    "networkError": "Network error. Please try again.",
+    "successTitle": "Thank you for your contribution!",
+    "successBody": "Your article has been sent to the editorial team. It will appear on the blog after approval.",
+    "viewBlog": "View blog",
+    "submitAnother": "Submit another article"
+  },
   "wpPages": {
     "readOnSite": "Read on site",
     "downloadPdf": "Download PDF",
@@ -219,11 +246,6 @@
       "eyebrow": "Resources",
       "title": "ICC Online Magazine",
       "description": "Read or download the ICC Online magazine."
-    },
-    "submitArticle": {
-      "eyebrow": "Community",
-      "title": "Submit an article",
-      "description": "Share an article, video or resource with the ICC Online community."
     }
   }
 }

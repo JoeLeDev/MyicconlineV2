@@ -192,6 +192,33 @@
     "notFoundTitle": "Évènement introuvable",
     "contentInFrench": "Le contenu éditorial de cet évènement est rédigé en français."
   },
+  "submitArticle": {
+    "eyebrow": "Communauté",
+    "title": "Soumettre un article",
+    "subtitle": "Partagez un article, une vidéo ou une ressource avec la communauté ICC Online.",
+    "helpText": "Votre publication sera relue par l’équipe avant d’apparaître sur le blog. Connectez-vous avec vos identifiants ICC Online.",
+    "connectedAs": "Connecté en tant que {name}",
+    "titleLabel": "Titre",
+    "categoryLabel": "Catégorie",
+    "categoryPlaceholder": "Choisir une catégorie",
+    "contentLabel": "Contenu",
+    "tagsLabel": "Tags (optionnel)",
+    "tagsPlaceholder": "prière, témoignage, FIO…",
+    "youtubeLabel": "Vidéo YouTube (optionnel)",
+    "featuredImageLabel": "Image de couverture (optionnel)",
+    "featuredImageHint": "JPEG, PNG, WebP ou GIF — max 5 Mo.",
+    "attachmentsLabel": "Pièces jointes (optionnel)",
+    "attachmentsHint": "PDF ou images — max 5 fichiers, 10 Mo chacun.",
+    "moderationNote": "L’article sera soumis en attente de validation avant publication.",
+    "submit": "Envoyer pour validation",
+    "submitting": "Envoi en cours…",
+    "submitError": "Impossible d’envoyer l’article.",
+    "networkError": "Erreur réseau. Réessayez.",
+    "successTitle": "Merci pour votre contribution !",
+    "successBody": "Votre article a été transmis à l’équipe éditoriale. Il apparaîtra sur le blog après validation.",
+    "viewBlog": "Voir le blog",
+    "submitAnother": "Soumettre un autre article"
+  },
   "wpPages": {
     "readOnSite": "Lire sur le site",
     "downloadPdf": "Télécharger le PDF",
@@ -219,11 +246,6 @@
       "eyebrow": "Ressources",
       "title": "Magazine ICC Online",
       "description": "Lisez ou téléchargez le magazine ICC Online."
-    },
-    "submitArticle": {
-      "eyebrow": "Communauté",
-      "title": "Soumettre un article",
-      "description": "Partagez un article, une vidéo ou une ressource avec la communauté ICC Online."
     }
   }
 }

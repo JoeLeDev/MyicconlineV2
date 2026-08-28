@@ -192,6 +192,33 @@
     "notFoundTitle": "Veranstaltung nicht gefunden",
     "contentInFrench": "Der redaktionelle Inhalt dieser Veranstaltung ist auf Französisch verfasst."
   },
+  "submitArticle": {
+    "eyebrow": "Community",
+    "title": "Artikel einreichen",
+    "subtitle": "Teilen Sie einen Artikel, ein Video oder eine Ressource mit der ICC-Online-Community.",
+    "helpText": "Ihr Beitrag wird geprüft, bevor er im Blog erscheint. Melden Sie sich mit Ihren ICC-Online-Zugangsdaten an.",
+    "connectedAs": "Angemeldet als {name}",
+    "titleLabel": "Titel",
+    "categoryLabel": "Kategorie",
+    "categoryPlaceholder": "Kategorie wählen",
+    "contentLabel": "Inhalt",
+    "tagsLabel": "Tags (optional)",
+    "tagsPlaceholder": "Gebet, Zeugnis, FIO…",
+    "youtubeLabel": "YouTube-Video (optional)",
+    "featuredImageLabel": "Titelbild (optional)",
+    "featuredImageHint": "JPEG, PNG, WebP oder GIF — max. 5 MB.",
+    "attachmentsLabel": "Anhänge (optional)",
+    "attachmentsHint": "PDF oder Bilder — max. 5 Dateien, je 10 MB.",
+    "moderationNote": "Der Artikel wird zur Freigabe eingereicht.",
+    "submit": "Zur Prüfung senden",
+    "submitting": "Wird gesendet…",
+    "submitError": "Artikel konnte nicht gesendet werden.",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen.",
+    "successTitle": "Vielen Dank für Ihren Beitrag!",
+    "successBody": "Ihr Artikel wurde an das Redaktionsteam gesendet und erscheint nach Freigabe im Blog.",
+    "viewBlog": "Blog ansehen",
+    "submitAnother": "Weiteren Artikel einreichen"
+  },
   "wpPages": {
     "readOnSite": "Auf der Website lesen",
     "downloadPdf": "PDF herunterladen",
@@ -219,11 +246,6 @@
       "eyebrow": "Ressourcen",
       "title": "ICC-Online-Magazin",
       "description": "Lies oder lade das ICC-Online-Magazin herunter."
-    },
-    "submitArticle": {
-      "eyebrow": "Community",
-      "title": "Artikel einreichen",
-      "description": "Teile einen Artikel, ein Video oder eine Ressource mit der ICC-Online-Community."
     }
   }
 }

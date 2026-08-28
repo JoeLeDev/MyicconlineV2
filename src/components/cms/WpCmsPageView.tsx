@@ -66,10 +66,6 @@ async function CmsDownloads({ downloads }: { downloads: IccPageDownload[] }) {
 }
 
 function isFormOnlyPage(page: CmsPage, messageKey: CmsPageMessageKey): boolean {
-  if (messageKey === "submitArticle" && page.embeds.length > 0) {
-    return true;
-  }
-
   return (
     page.embeds.length > 0 &&
     !page.magazine &&

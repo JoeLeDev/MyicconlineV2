@@ -192,6 +192,33 @@
     "notFoundTitle": "Evento no encontrado",
     "contentInFrench": "El contenido editorial de este evento está redactado en francés."
   },
+  "submitArticle": {
+    "eyebrow": "Comunidad",
+    "title": "Enviar un artículo",
+    "subtitle": "Comparte un artículo, un vídeo o un recurso con la comunidad ICC Online.",
+    "helpText": "Tu publicación será revisada antes de aparecer en el blog. Inicia sesión con tus credenciales de ICC Online.",
+    "connectedAs": "Conectado como {name}",
+    "titleLabel": "Título",
+    "categoryLabel": "Categoría",
+    "categoryPlaceholder": "Elegir una categoría",
+    "contentLabel": "Contenido",
+    "tagsLabel": "Etiquetas (opcional)",
+    "tagsPlaceholder": "oración, testimonio, FIO…",
+    "youtubeLabel": "Vídeo de YouTube (opcional)",
+    "featuredImageLabel": "Imagen de portada (opcional)",
+    "featuredImageHint": "JPEG, PNG, WebP o GIF — máx. 5 MB.",
+    "attachmentsLabel": "Archivos adjuntos (opcional)",
+    "attachmentsHint": "PDF o imágenes — máx. 5 archivos, 10 MB cada uno.",
+    "moderationNote": "El artículo se enviará para revisión antes de su publicación.",
+    "submit": "Enviar para revisión",
+    "submitting": "Enviando…",
+    "submitError": "No se pudo enviar el artículo.",
+    "networkError": "Error de red. Inténtalo de nuevo.",
+    "successTitle": "¡Gracias por tu contribución!",
+    "successBody": "Tu artículo ha sido enviado al equipo editorial. Aparecerá en el blog tras su validación.",
+    "viewBlog": "Ver el blog",
+    "submitAnother": "Enviar otro artículo"
+  },
   "wpPages": {
     "readOnSite": "Leer en el sitio",
     "downloadPdf": "Descargar PDF",
@@ -219,11 +246,6 @@
       "eyebrow": "Recursos",
       "title": "Revista ICC Online",
       "description": "Lee o descarga la revista ICC Online."
-    },
-    "submitArticle": {
-      "eyebrow": "Comunidad",
-      "title": "Enviar un artículo",
-      "description": "Comparte un artículo, vídeo o recurso con la comunidad ICC Online."
     }
   }
 }

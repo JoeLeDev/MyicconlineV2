@@ -21,7 +21,7 @@ WordPress reste le backend (API REST) sur cPanel — ce dépôt ne remplace pas 
 | `/nous-rejoindre` | Inscription communauté (formulaire de contact Elvanto) |
 | `/a-votre-ecoute` | Formulaire d’écoute (Elvanto) |
 | `/jai-besoin-de-prieres` | Demande de prière (Elvanto) |
-| `/soumettre-un-article` | Soumission d’article (WordPress USP / BuddyPress, iframe `blog-2`) |
+| `/soumettre-un-article` | Soumission d’article (formulaire React → API WordPress) |
 | `/magazine` | Magazine ICC Online (lecteur + PDF) |
 | `/connexion` | Connexion JWT WordPress |
 | `/espace` | Hub membre (profil + raccourcis communauté WP) |
@@ -78,8 +78,9 @@ Pages WordPress servies dynamiquement via REST :
 - `GET /wp-json/wp/v2/pages?slug={slug}&_embed=1`
 - Champ enrichi `icc_page` : `embeds` (iframes), `magazine`, `downloads`, `intro_html`
 - **Elvanto** : formulaires de contact externes uniquement (`nous-rejoindre`, `a-votre-ecoute`, `jai-besoin-de-prieres`)
-- **WordPress / BuddyPress** : communauté, publications et soumission d’articles (plugin USP sur `blog-2`, iframe WP)
-- Routes V2 : `/nous-rejoindre`, `/a-votre-ecoute`, `/jai-besoin-de-prieres`, `/magazine`, `/soumettre-un-article`
+- **WordPress REST** : soumission d’articles via `POST /api/articles/submit` (JWT membre → `wp/v2/posts` en `pending`)
+- Routes CMS : `/nous-rejoindre`, `/a-votre-ecoute`, `/jai-besoin-de-prieres`, `/magazine`
+- Route dédiée : `/soumettre-un-article` (formulaire natif, connexion requise)
 - Config : `src/lib/wp/page-config.ts` · fetch : `src/lib/wp/pages.ts`
 - ISR : `revalidate = 300`, tag cache `wp-pages`
 
