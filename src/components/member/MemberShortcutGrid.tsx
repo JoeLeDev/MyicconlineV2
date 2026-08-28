@@ -146,8 +146,12 @@ export async function MemberShortcutGrid() {
                   title={t(`shortcuts.${link.id}.title`)}
                   description={t(`shortcuts.${link.id}.description`)}
                   icon={<Icon />}
-                  external
-                  ariaLabel={`${t(`shortcuts.${link.id}.title`)} — ${t("opensNewTab")}`}
+                  external={link.external ?? true}
+                  ariaLabel={
+                    link.external ?? true
+                      ? `${t(`shortcuts.${link.id}.title`)} — ${t("opensNewTab")}`
+                      : t(`shortcuts.${link.id}.title`)
+                  }
                 />
               </li>
             );

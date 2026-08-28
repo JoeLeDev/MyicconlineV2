@@ -11,6 +11,7 @@
     "login": "Je me connecte",
     "mySpace": "Mon espace",
     "communityNav": "Communauté",
+    "events": "Évènements",
     "joinUs": "Nous rejoindre",
     "listen": "À votre écoute",
     "prayer": "J’ai besoin de prières",
@@ -147,6 +148,7 @@
     "about": "À propos",
     "contact": "Contact",
     "blog": "Blog",
+    "events": "Évènements",
     "legal": "Mentions légales",
     "privacy": "Politique de confidentialité",
     "copyright": "© {year} — My ICC Online · Impact Centre Chrétien"
@@ -167,6 +169,23 @@
   },
   "lang": {
     "label": "Langue"
+  },
+  "events": {
+    "eyebrow": "Agenda",
+    "title": "Évènements",
+    "subtitle": "Retrouvez les rendez-vous, cultes en ligne et temps forts de la famille ICC Online.",
+    "tabUpcoming": "À venir",
+    "tabPast": "Passés",
+    "emptyUpcoming": "Aucun évènement à venir pour le moment. Revenez bientôt !",
+    "emptyPast": "Aucun évènement passé à afficher.",
+    "error": "Impossible de charger les évènements pour le moment.",
+    "prev": "← Précédent",
+    "next": "Suivant →",
+    "page": "Page {page} / {total}",
+    "online": "En ligne",
+    "upcomingBadge": "À venir",
+    "backToList": "← Tous les évènements",
+    "notFoundTitle": "Évènement introuvable"
   },
   "wpPages": {
     "readOnSite": "Lire sur le site",

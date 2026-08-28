@@ -11,6 +11,7 @@
     "login": "Iniciar sesión",
     "mySpace": "Mi espacio",
     "communityNav": "Comunidad",
+    "events": "Eventos",
     "joinUs": "Únete",
     "listen": "A tu escucha",
     "prayer": "Petición de oración",
@@ -147,6 +148,7 @@
     "about": "Acerca de",
     "contact": "Contacto",
     "blog": "Blog",
+    "events": "Eventos",
     "legal": "Aviso legal",
     "privacy": "Política de privacidad",
     "copyright": "© {year} — My ICC Online · Impact Centre Chrétien"
@@ -167,6 +169,23 @@
   },
   "lang": {
     "label": "Idioma"
+  },
+  "events": {
+    "eyebrow": "Agenda",
+    "title": "Eventos",
+    "subtitle": "Encuentra citas, cultos en línea y momentos destacados de la familia ICC Online.",
+    "tabUpcoming": "Próximos",
+    "tabPast": "Pasados",
+    "emptyUpcoming": "No hay eventos próximos por ahora. ¡Vuelve pronto!",
+    "emptyPast": "No hay eventos pasados que mostrar.",
+    "error": "No se pueden cargar los eventos por ahora.",
+    "prev": "← Anterior",
+    "next": "Siguiente →",
+    "page": "Página {page} / {total}",
+    "online": "En línea",
+    "upcomingBadge": "Próximo",
+    "backToList": "← Todos los eventos",
+    "notFoundTitle": "Evento no encontrado"
   },
   "wpPages": {
     "readOnSite": "Leer en el sitio",

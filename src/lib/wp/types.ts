@@ -183,3 +183,52 @@ export type CmsPage = {
   downloads: IccPageDownload[];
   magazine?: IccPageMagazine | null;
 };
+
+export type WpEventApi = {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content_html: string;
+  status: string;
+  is_upcoming: boolean;
+  start_date: string;
+  end_date: string;
+  start_time: string;
+  end_time: string;
+  location: string;
+  online: boolean;
+  image: string;
+  banner: string;
+  link: string;
+  modified: string;
+};
+
+export type WpEventsListResponse = {
+  items: WpEventApi[];
+  total: number;
+  total_pages: number;
+  page: number;
+  per_page: number;
+  scope: string;
+};
+
+export type IccEvent = {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt: string;
+  contentHtml: string;
+  status: string;
+  isUpcoming: boolean;
+  startDate: string;
+  endDate: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  online: boolean;
+  imageUrl: string;
+  bannerUrl: string;
+  link: string;
+  modified: string;
+};

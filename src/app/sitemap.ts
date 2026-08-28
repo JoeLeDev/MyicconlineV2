@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 import { getSiteUrl } from "@/lib/site-url";
+import { getAllEventsForSitemap } from "@/lib/wp/events";
 import { getAllCmsPagesForSitemap } from "@/lib/wp/pages";
 import { getAllPostsForSitemap } from "@/lib/wp/posts";
 
@@ -12,6 +13,16 @@ function localizedUrl(base: string, locale: string, path: string): string {
   return `${base}/${locale}${normalized}`;
 }
 
+function staticRouteMeta(path: string) {
+  if (path === "") {
+    return { changeFrequency: "daily" as const, priority: 1 };
+  }
+  if (path === "/blog" || path === "/evenements") {
+    return { changeFrequency: "daily" as const, priority: 0.9 };
+  }
+  return { changeFrequency: "monthly" as const, priority: 0.7 };
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
 
@@ -19,6 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "",
     "/a-propos",
     "/blog",
+    "/evenements",
     "/contact",
     "/mentions-legales",
     "/politique-de-confidentialite",
@@ -28,12 +40,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     (locale) =>
       staticPaths.map((path) => {
         const routePath = path || "/";
+        const meta = staticRouteMeta(path);
         return {
           url: localizedUrl(base, locale, routePath === "/" ? "/" : path),
           lastModified: new Date(),
-          changeFrequency:
-            path === "/blog" || path === "" ? "daily" : "monthly",
-          priority: path === "" ? 1 : path === "/blog" ? 0.9 : 0.7,
+          changeFrequency: meta.changeFrequency,
+          priority: meta.priority,
           alternates: {
             languages: Object.fromEntries(
               routing.locales.map((l) => [
@@ -69,6 +81,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     cmsPages = [];
   }
 
+  let events: MetadataRoute.Sitemap = [];
+  try {
+    const entries = await getAllEventsForSitemap();
+    events = routing.locales.flatMap((locale) =>
+      entries.map((event) => ({
+        url: localizedUrl(base, locale, `/evenements/${event.slug}`),
+        lastModified: new Date(event.modified),
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+        alternates: {
+          languages: Object.fromEntries(
+            routing.locales.map((l) => [
+              l,
+              localizedUrl(base, l, `/evenements/${event.slug}`),
+            ]),
+          ),
+        },
+      })),
+    );
+  } catch {
+    events = [];
+  }
+
   let posts: MetadataRoute.Sitemap = [];
   try {
     const entries = await getAllPostsForSitemap();
@@ -92,5 +127,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     posts = [];
   }
 
-  return [...staticRoutes, ...cmsPages, ...posts];
+  return [...staticRoutes, ...cmsPages, ...events, ...posts];
 }

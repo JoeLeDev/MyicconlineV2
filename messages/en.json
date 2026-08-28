@@ -11,6 +11,7 @@
     "login": "Sign in",
     "mySpace": "My space",
     "communityNav": "Community",
+    "events": "Events",
     "joinUs": "Join us",
     "listen": "We're listening",
     "prayer": "Prayer request",
@@ -147,6 +148,7 @@
     "about": "About",
     "contact": "Contact",
     "blog": "Blog",
+    "events": "Events",
     "legal": "Legal notice",
     "privacy": "Privacy policy",
     "copyright": "© {year} — My ICC Online · Impact Centre Chrétien"
@@ -167,6 +169,23 @@
   },
   "lang": {
     "label": "Language"
+  },
+  "events": {
+    "eyebrow": "Calendar",
+    "title": "Events",
+    "subtitle": "Find gatherings, online services and highlights from the ICC Online family.",
+    "tabUpcoming": "Upcoming",
+    "tabPast": "Past",
+    "emptyUpcoming": "No upcoming events right now. Check back soon!",
+    "emptyPast": "No past events to display.",
+    "error": "Unable to load events right now.",
+    "prev": "← Previous",
+    "next": "Next →",
+    "page": "Page {page} / {total}",
+    "online": "Online",
+    "upcomingBadge": "Upcoming",
+    "backToList": "← All events",
+    "notFoundTitle": "Event not found"
   },
   "wpPages": {
     "readOnSite": "Read on site",

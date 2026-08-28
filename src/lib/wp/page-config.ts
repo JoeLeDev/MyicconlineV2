@@ -43,6 +43,7 @@ export const CMS_PAGE_ROUTES = Object.keys(CMS_PAGE_CONFIG);
 
 /** Liens barre communauté (header) */
 export const CMS_NAV_ITEMS = [
+  { href: "/evenements", labelKey: "events" as const },
   { href: "/nous-rejoindre", labelKey: "joinUs" as const },
   { href: "/a-votre-ecoute", labelKey: "listen" as const },
   { href: "/jai-besoin-de-prieres", labelKey: "prayer" as const },

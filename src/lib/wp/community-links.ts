@@ -12,6 +12,7 @@ export type CommunityLinkId =
 export type CommunityLink = {
   id: CommunityLinkId;
   href: string;
+  external?: boolean;
 };
 
 function wpPath(path: string): string {
@@ -24,7 +25,7 @@ function wpPath(path: string): string {
 export const WP_COMMUNITY_LINKS: CommunityLink[] = [
   { id: "publications", href: wpPath("/blog/") },
   { id: "submitArticle", href: wpPath("/blog-2/") },
-  { id: "events", href: wpPath("/evenements-6/") },
+  { id: "events", href: "/evenements", external: false },
   { id: "activity", href: wpPath("/activites-du-site/") },
   { id: "members", href: wpPath("/membres/") },
   { id: "groups", href: wpPath("/groupes/") },
