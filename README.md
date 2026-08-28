@@ -18,9 +18,10 @@ WordPress reste le backend (API REST) sur cPanel — ce dépôt ne remplace pas 
 | `/blog` | Liste des articles |
 | `/blog/[slug]` | Article (YouTube, PDF, articles liés) |
 | `/contact` | Formulaire de contact |
-| `/nous-rejoindre` | Inscription communauté (formulaire Elvanto WP) |
+| `/nous-rejoindre` | Inscription communauté (formulaire de contact Elvanto) |
 | `/a-votre-ecoute` | Formulaire d’écoute (Elvanto) |
 | `/jai-besoin-de-prieres` | Demande de prière (Elvanto) |
+| `/soumettre-un-article` | Soumission d’article (WordPress USP / BuddyPress, iframe `blog-2`) |
 | `/magazine` | Magazine ICC Online (lecteur + PDF) |
 | `/connexion` | Connexion JWT WordPress |
 | `/espace` | Hub membre (profil + raccourcis communauté WP) |
@@ -75,8 +76,10 @@ Les images `.pdf` cassées dans le contenu HTML sont filtrées.
 Pages WordPress servies dynamiquement via REST :
 
 - `GET /wp-json/wp/v2/pages?slug={slug}&_embed=1`
-- Champ enrichi `icc_page` : `embeds` (iframe Elvanto), `magazine`, `downloads`, `intro_html`
-- Routes V2 : `/nous-rejoindre`, `/a-votre-ecoute`, `/jai-besoin-de-prieres`, `/magazine`
+- Champ enrichi `icc_page` : `embeds` (iframes), `magazine`, `downloads`, `intro_html`
+- **Elvanto** : formulaires de contact externes uniquement (`nous-rejoindre`, `a-votre-ecoute`, `jai-besoin-de-prieres`)
+- **WordPress / BuddyPress** : communauté, publications et soumission d’articles (plugin USP sur `blog-2`, iframe WP)
+- Routes V2 : `/nous-rejoindre`, `/a-votre-ecoute`, `/jai-besoin-de-prieres`, `/magazine`, `/soumettre-un-article`
 - Config : `src/lib/wp/page-config.ts` · fetch : `src/lib/wp/pages.ts`
 - ISR : `revalidate = 300`, tag cache `wp-pages`
 

@@ -6,6 +6,10 @@ import { DownloadResources } from "@/components/blog/DownloadResources";
 import { PostContent } from "@/components/blog/PostContent";
 import { RelatedPosts } from "@/components/blog/RelatedPosts";
 import { YouTubeEmbed } from "@/components/blog/YouTubeEmbed";
+import { WpContentLocaleNotice } from "@/components/cms/WpContentLocaleNotice";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { buildPageMetadata, buildLocalizedUrl } from "@/lib/seo/metadata";
+import { buildBlogPostingSchema } from "@/lib/seo/schemas";
 import { formatDate } from "@/lib/utils/dates";
 import {
   getAllPostSlugs,
@@ -34,20 +38,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: t("notFoundTitle") };
   }
 
-  return {
+  return buildPageMetadata({
+    locale,
+    href: `/blog/${slug}`,
     title: post.title,
     description: post.excerpt || undefined,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt || undefined,
-      type: "article",
-      publishedTime: post.date,
-      modifiedTime: post.modified,
-      images: post.featuredImage?.url
-        ? [{ url: post.featuredImage.url }]
-        : undefined,
-    },
-  };
+    type: "article",
+    images: post.featuredImage?.url ? [post.featuredImage.url] : undefined,
+    publishedTime: post.date,
+    modifiedTime: post.modified,
+  });
 }
 
 export default async function BlogPostPage({ params }: Props) {
@@ -58,15 +58,20 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound();
 
   const related = await getRelatedPosts(post, 3).catch(() => []);
+  const pageUrl = buildLocalizedUrl(locale, `/blog/${slug}`);
+  const readingTimeLabel = t("readingTime", {
+    minutes: post.readingTimeMinutes,
+  });
 
   return (
     <article className="bg-white py-12 md:py-16">
+      <JsonLd data={buildBlogPostingSchema(post, pageUrl)} />
       <div className="container-icc max-w-3xl">
         <header>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold uppercase tracking-[0.14em] text-icc-coral">
             {post.category ? <span>{post.category.name}</span> : null}
             <span className="font-medium normal-case tracking-normal text-icc-muted">
-              {post.readingTimeLabel}
+              {readingTimeLabel}
             </span>
           </div>
 
@@ -98,6 +103,8 @@ export default async function BlogPostPage({ params }: Props) {
         {post.youtubeUrl ? (
           <YouTubeEmbed url={post.youtubeUrl} title={post.title} />
         ) : null}
+
+        <WpContentLocaleNotice locale={locale} namespace="blog" />
 
         <div className="mt-10">
           <PostContent html={post.contentHtml} />

@@ -1,14 +1,17 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { MagazineShowcase } from "@/components/cms/MagazineShowcase";
+import { WpContentLocaleNotice } from "@/components/cms/WpContentLocaleNotice";
 import { WpFormEmbed } from "@/components/cms/WpFormEmbed";
 import { PostContent } from "@/components/blog/PostContent";
+import { isDefaultWpContentLocale } from "@/lib/wp/content-locale";
 import type { CmsPageMessageKey } from "@/lib/wp/page-config";
 import type { CmsPage, IccPageDownload } from "@/lib/wp/types";
 
 type Props = {
   page: CmsPage;
   messageKey: CmsPageMessageKey;
+  locale?: string;
 };
 
 function formatFilesize(bytes?: number | string): string | null {
@@ -62,7 +65,11 @@ async function CmsDownloads({ downloads }: { downloads: IccPageDownload[] }) {
   );
 }
 
-function isFormOnlyPage(page: CmsPage): boolean {
+function isFormOnlyPage(page: CmsPage, messageKey: CmsPageMessageKey): boolean {
+  if (messageKey === "submitArticle" && page.embeds.length > 0) {
+    return true;
+  }
+
   return (
     page.embeds.length > 0 &&
     !page.magazine &&
@@ -71,11 +78,19 @@ function isFormOnlyPage(page: CmsPage): boolean {
   );
 }
 
-export async function WpCmsPageView({ page, messageKey }: Props) {
+export async function WpCmsPageView({
+  page,
+  messageKey,
+  locale = "fr",
+}: Props & { locale?: string }) {
   const t = await getTranslations("wpPages");
   const eyebrow = t(`${messageKey}.eyebrow`);
   const fallbackTitle = t(`${messageKey}.title`);
-  const formOnly = isFormOnlyPage(page);
+  const localizedDescription = t(`${messageKey}.description`);
+  const formOnly = isFormOnlyPage(page, messageKey);
+  const introHtml = isDefaultWpContentLocale(locale)
+    ? page.introHtml
+    : localizedDescription;
 
   if (formOnly) {
     return (
@@ -122,7 +137,15 @@ export async function WpCmsPageView({ page, messageKey }: Props) {
 
         {page.introHtml && !page.magazine ? (
           <div className="mb-8 md:mb-10">
-            <PostContent html={page.introHtml} />
+            <WpContentLocaleNotice locale={locale} namespace="wpPages" />
+            <PostContent html={introHtml} />
+          </div>
+        ) : !page.magazine && !isDefaultWpContentLocale(locale) ? (
+          <div className="mb-8 md:mb-10">
+            <WpContentLocaleNotice locale={locale} namespace="wpPages" />
+            <p className="text-base leading-relaxed text-icc-muted md:text-lg">
+              {localizedDescription}
+            </p>
           </div>
         ) : null}
 

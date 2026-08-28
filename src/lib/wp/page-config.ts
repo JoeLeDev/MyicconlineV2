@@ -6,7 +6,8 @@ export type CmsPageMessageKey =
   | "nousRejoindre"
   | "aVotreEcoute"
   | "jaiBesoinDePrieres"
-  | "magazine";
+  | "magazine"
+  | "submitArticle";
 
 export type CmsPageConfig = {
   /** Segment d’URL Next.js (ex. /nous-rejoindre) */
@@ -36,6 +37,11 @@ export const CMS_PAGE_CONFIG: Record<string, CmsPageConfig> = {
     route: "magazine",
     wpSlug: "magazine",
     messageKey: "magazine",
+  },
+  "soumettre-un-article": {
+    route: "soumettre-un-article",
+    wpSlug: "blog-2",
+    messageKey: "submitArticle",
   },
 };
 

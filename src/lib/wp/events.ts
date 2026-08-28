@@ -4,6 +4,17 @@ import { normalizeRemoteImageUrl } from "../utils/url";
 import type { IccEvent, WpEventApi, WpEventsListResponse } from "./types";
 
 export const EVENTS_PAGE_WP_SLUG = "evenements-6";
+
+/** Intro WP trop courte (ex. seul le titre « Évènements »). */
+export function isMinimalEventsIntro(introHtml: string): boolean {
+  const text = introHtml
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!text) return true;
+  if (text.length <= 60) return true;
+  return /^évènements$/i.test(text);
+}
 export const WP_EVENTS_REVALIDATE = 300;
 export const WP_EVENTS_TAG = "wp-events";
 

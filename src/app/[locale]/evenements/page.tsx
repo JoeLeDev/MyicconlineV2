@@ -2,10 +2,17 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PostContent } from "@/components/blog/PostContent";
+import { WpContentLocaleNotice } from "@/components/cms/WpContentLocaleNotice";
 import { EventCard } from "@/components/events/EventCard";
 import { EventsScopeTabs } from "@/components/events/EventsScopeTabs";
 import { Link } from "@/i18n/navigation";
-import { EVENTS_PAGE_WP_SLUG, getEvents } from "@/lib/wp/events";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+import { isDefaultWpContentLocale } from "@/lib/wp/content-locale";
+import {
+  EVENTS_PAGE_WP_SLUG,
+  getEvents,
+  isMinimalEventsIntro,
+} from "@/lib/wp/events";
 import { getPageBySlug } from "@/lib/wp/pages";
 
 type Props = {
@@ -18,14 +25,12 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "events" });
-  return {
+  return buildPageMetadata({
+    locale,
+    href: "/evenements",
     title: t("title"),
     description: t("subtitle"),
-    openGraph: {
-      title: t("title"),
-      description: t("subtitle"),
-    },
-  };
+  });
 }
 
 function buildListHref(
@@ -52,6 +57,11 @@ export default async function EventsPage({ params, searchParams }: Props) {
   const page = Math.max(1, Number(query.page) || 1);
 
   const introPage = await getPageBySlug(EVENTS_PAGE_WP_SLUG).catch(() => null);
+  const wpIntroHtml = introPage?.introHtml.trim() ?? "";
+  const useWpIntro =
+    isDefaultWpContentLocale(locale) &&
+    wpIntroHtml.length > 0 &&
+    !isMinimalEventsIntro(wpIntroHtml);
 
   let events: Awaited<ReturnType<typeof getEvents>>["events"] = [];
   let totalPages = 1;
@@ -78,14 +88,15 @@ export default async function EventsPage({ params, searchParams }: Props) {
           <h1 className="mt-2 text-[clamp(2rem,5vw,3.2rem)] font-extrabold tracking-tight text-icc-ink">
             {t("title")}
           </h1>
-          {introPage?.introHtml ? (
+          {useWpIntro ? (
             <div className="mt-4 max-w-3xl">
-              <PostContent html={introPage.introHtml} />
+              <PostContent html={wpIntroHtml} />
             </div>
           ) : (
-            <p className="mt-3 max-w-xl text-base text-icc-muted md:text-lg">
-              {t("subtitle")}
-            </p>
+            <div className="mt-4 max-w-3xl space-y-3 text-base leading-relaxed text-icc-muted md:text-lg">
+              <p>{t("introLead")}</p>
+              <p>{t("introBody")}</p>
+            </div>
           )}
         </header>
 
@@ -98,6 +109,8 @@ export default async function EventsPage({ params, searchParams }: Props) {
             <EventsScopeTabs />
           </div>
         </Suspense>
+
+        <WpContentLocaleNotice locale={locale} namespace="events" />
 
         {error ? (
           <p className="rounded-lg border border-icc-coral/30 bg-icc-cream px-4 py-3 text-sm text-icc-ink">

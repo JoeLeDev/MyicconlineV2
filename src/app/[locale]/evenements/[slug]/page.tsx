@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PostContent } from "@/components/blog/PostContent";
+import { WpContentLocaleNotice } from "@/components/cms/WpContentLocaleNotice";
 import { EventBannerImage } from "@/components/events/EventBannerImage";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { Link } from "@/i18n/navigation";
+import { buildPageMetadata, buildLocalizedUrl } from "@/lib/seo/metadata";
+import { buildEventSchema } from "@/lib/seo/schemas";
 import { formatEventSchedule } from "@/lib/utils/dates";
 import { getAllEventSlugs, getEventBySlug } from "@/lib/wp/events";
 
@@ -31,16 +35,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: t("notFoundTitle") };
   }
 
-  return {
+  return buildPageMetadata({
+    locale,
+    href: `/evenements/${slug}`,
     title: event.title,
     description: event.excerpt || undefined,
-    openGraph: {
-      title: event.title,
-      description: event.excerpt || undefined,
-      type: "website",
-      images: event.bannerUrl ? [{ url: event.bannerUrl }] : undefined,
-    },
-  };
+    type: "article",
+    images: event.bannerUrl ? [event.bannerUrl] : undefined,
+  });
 }
 
 export default async function EventDetailPage({ params }: Props) {
@@ -59,9 +61,11 @@ export default async function EventDetailPage({ params }: Props) {
     event.endTime,
   );
   const locationLabel = event.online ? t("online") : event.location;
+  const pageUrl = buildLocalizedUrl(locale, `/evenements/${slug}`);
 
   return (
     <article className="bg-white py-12 md:py-16">
+      <JsonLd data={buildEventSchema(event, pageUrl)} />
       <div className="container-icc max-w-3xl">
         <Link
           href="/evenements"
@@ -101,6 +105,8 @@ export default async function EventDetailPage({ params }: Props) {
             </p>
           ) : null}
         </header>
+
+        <WpContentLocaleNotice locale={locale} namespace="events" />
 
         <div className="mt-10">
           <PostContent html={event.contentHtml} />

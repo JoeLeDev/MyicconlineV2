@@ -4,10 +4,14 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { Poppins } from "next/font/google";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { CommunityNav } from "@/components/layout/CommunityNav";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { routing } from "@/i18n/routing";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+import { buildOrganizationSchema } from "@/lib/seo/schemas";
+import { SITE_LOGO } from "@/lib/site";
 import { getSiteUrl } from "@/lib/site-url";
 import "../globals.css";
 
@@ -34,21 +38,25 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "meta" });
+  const title = `${t("siteName")} — Impact Centre Chrétien`;
+  const pageMeta = buildPageMetadata({
+    locale,
+    href: "/",
+    title,
+    description: t("defaultDescription"),
+    images: [SITE_LOGO],
+  });
 
   return {
     metadataBase: new URL(getSiteUrl()),
     title: {
-      default: `${t("siteName")} — Impact Centre Chrétien`,
+      default: title,
       template: `%s · ${t("siteName")}`,
     },
-    description: t("defaultDescription"),
-    openGraph: {
-      type: "website",
-      locale,
-      siteName: t("siteName"),
-      title: `${t("siteName")} — Impact Centre Chrétien`,
-      description: t("defaultDescription"),
-    },
+    description: pageMeta.description,
+    alternates: pageMeta.alternates,
+    openGraph: pageMeta.openGraph,
+    twitter: pageMeta.twitter,
   };
 }
 
@@ -68,6 +76,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       className={`${poppins.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-white font-sans text-icc-ink">
+        <JsonLd data={buildOrganizationSchema()} />
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>
             <Header />

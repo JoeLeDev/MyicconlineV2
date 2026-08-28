@@ -23,8 +23,8 @@ function wpPath(path: string): string {
 
 /** Liens vers les sections communautaires WordPress (BuddyPress, USP, etc.). */
 export const WP_COMMUNITY_LINKS: CommunityLink[] = [
-  { id: "publications", href: wpPath("/blog/") },
-  { id: "submitArticle", href: wpPath("/blog-2/") },
+  { id: "publications", href: "/blog", external: false },
+  { id: "submitArticle", href: "/soumettre-un-article", external: false },
   { id: "events", href: "/evenements", external: false },
   { id: "activity", href: wpPath("/activites-du-site/") },
   { id: "members", href: wpPath("/membres/") },

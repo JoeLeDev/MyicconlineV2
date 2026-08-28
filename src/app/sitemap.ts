@@ -23,6 +23,18 @@ function staticRouteMeta(path: string) {
   return { changeFrequency: "monthly" as const, priority: 0.7 };
 }
 
+function buildSitemapAlternates(base: string, path: string) {
+  const languages = Object.fromEntries(
+    routing.locales.map((locale) => [
+      locale,
+      localizedUrl(base, locale, path),
+    ]),
+  ) as Record<string, string>;
+
+  languages["x-default"] = localizedUrl(base, routing.defaultLocale, path);
+  return { languages };
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
 
@@ -46,14 +58,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           lastModified: new Date(),
           changeFrequency: meta.changeFrequency,
           priority: meta.priority,
-          alternates: {
-            languages: Object.fromEntries(
-              routing.locales.map((l) => [
-                l,
-                localizedUrl(base, l, routePath === "/" ? "/" : path),
-              ]),
-            ),
-          },
+          alternates: buildSitemapAlternates(
+            base,
+            routePath === "/" ? "/" : path,
+          ),
         };
       }),
   );
@@ -67,14 +75,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(page.modified),
         changeFrequency: "weekly" as const,
         priority: 0.75,
-        alternates: {
-          languages: Object.fromEntries(
-            routing.locales.map((l) => [
-              l,
-              localizedUrl(base, l, page.path),
-            ]),
-          ),
-        },
+        alternates: buildSitemapAlternates(base, page.path),
       })),
     );
   } catch {
@@ -90,14 +91,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(event.modified),
         changeFrequency: "weekly" as const,
         priority: 0.8,
-        alternates: {
-          languages: Object.fromEntries(
-            routing.locales.map((l) => [
-              l,
-              localizedUrl(base, l, `/evenements/${event.slug}`),
-            ]),
-          ),
-        },
+        alternates: buildSitemapAlternates(base, `/evenements/${event.slug}`),
       })),
     );
   } catch {
@@ -113,14 +107,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(post.modified),
         changeFrequency: "weekly" as const,
         priority: 0.8,
-        alternates: {
-          languages: Object.fromEntries(
-            routing.locales.map((l) => [
-              l,
-              localizedUrl(base, l, `/blog/${post.slug}`),
-            ]),
-          ),
-        },
+        alternates: buildSitemapAlternates(base, `/blog/${post.slug}`),
       })),
     );
   } catch {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { WpCmsPageView } from "@/components/cms/WpCmsPageView";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { routing } from "@/i18n/routing";
 import {
   CMS_PAGE_ROUTES,
@@ -30,14 +31,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: "wpPages" });
   const page = await getCmsPageByRoute(cmsPage).catch(() => null);
 
-  return {
-    title: page?.title || t(`${config.messageKey}.title`),
-    description: t(`${config.messageKey}.description`),
-    openGraph: {
-      title: page?.title || t(`${config.messageKey}.title`),
-      description: t(`${config.messageKey}.description`),
-    },
-  };
+  const title = page?.title || t(`${config.messageKey}.title`);
+  const description = t(`${config.messageKey}.description`);
+
+  return buildPageMetadata({
+    locale,
+    href: `/${cmsPage}`,
+    title,
+    description,
+    images: page?.featuredImage?.url ? [page.featuredImage.url] : undefined,
+  });
 }
 
 export default async function CmsDynamicPage({ params }: Props) {
@@ -54,5 +57,11 @@ export default async function CmsDynamicPage({ params }: Props) {
     notFound();
   }
 
-  return <WpCmsPageView page={page} messageKey={config.messageKey} />;
+  return (
+    <WpCmsPageView
+      page={page}
+      messageKey={config.messageKey}
+      locale={locale}
+    />
+  );
 }

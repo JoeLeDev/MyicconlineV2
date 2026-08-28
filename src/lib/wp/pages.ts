@@ -1,4 +1,5 @@
 import { wpFetch } from "./client";
+import { getWpBaseUrl } from "./config";
 import {
   CMS_PAGE_CONFIG,
   CMS_PAGE_ROUTES,
@@ -34,6 +35,26 @@ function mapFeaturedImage(
   };
 }
 
+function resolveEmbeds(page: WpPage): IccPageEmbed[] {
+  const icc = page.icc_page;
+  if (icc?.embeds?.length) {
+    return icc.embeds.map(normalizeEmbed);
+  }
+
+  if (page.slug === "blog-2") {
+    return [
+      {
+        type: "iframe",
+        src: `${getWpBaseUrl()}/blog-2/`,
+        title: "Soumettre un article",
+        height: "200vh",
+      },
+    ];
+  }
+
+  return [];
+}
+
 function mapWpPage(page: WpPage): CmsPage {
   const icc = page.icc_page;
   const title = decodeHtmlEntities(page.title.rendered);
@@ -47,7 +68,7 @@ function mapWpPage(page: WpPage): CmsPage {
     introHtml: icc?.intro_html?.trim() || "",
     contentHtml: page.content.rendered,
     featuredImage: mapFeaturedImage(page, title),
-    embeds: (icc?.embeds || []).map(normalizeEmbed),
+    embeds: resolveEmbeds(page),
     downloads: icc?.downloads || [],
     magazine: icc?.magazine || null,
   };

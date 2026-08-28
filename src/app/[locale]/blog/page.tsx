@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PostCard } from "@/components/blog/PostCard";
 import { Link } from "@/i18n/navigation";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { getPosts } from "@/lib/wp/posts";
 
 type Props = {
@@ -12,14 +13,12 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "blog" });
-  return {
+  return buildPageMetadata({
+    locale,
+    href: "/blog",
     title: t("title"),
     description: t("subtitle"),
-    openGraph: {
-      title: t("title"),
-      description: t("subtitle"),
-    },
-  };
+  });
 }
 
 export default async function BlogPage({ params, searchParams }: Props) {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -10,10 +11,13 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "auth" });
-  return {
+  return buildPageMetadata({
+    locale,
+    href: "/connexion",
     title: t("loginTitle"),
     description: t("loginSubtitle"),
-  };
+    noIndex: true,
+  });
 }
 
 export default async function ConnexionPage({ params }: Props) {

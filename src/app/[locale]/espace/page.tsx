@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { MemberProfileCard } from "@/components/member/MemberProfileCard";
 import { MemberShortcutGrid } from "@/components/member/MemberShortcutGrid";
 import { redirect } from "@/i18n/navigation";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { getCurrentUser } from "@/lib/auth/session";
 
 type Props = {
@@ -12,10 +13,14 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "nav" });
-  return {
+  const memberT = await getTranslations({ locale, namespace: "memberSpace" });
+  return buildPageMetadata({
+    locale,
+    href: "/espace",
     title: t("mySpace"),
-    description: "ICC Online",
-  };
+    description: memberT("pageSubtitle"),
+    noIndex: true,
+  });
 }
 
 export default async function EspacePage({ params }: Props) {

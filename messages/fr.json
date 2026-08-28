@@ -56,7 +56,9 @@
     "readNext": "À lire ensuite",
     "downloads": "Ressources à télécharger",
     "by": "Par",
-    "notFoundTitle": "Article introuvable"
+    "notFoundTitle": "Article introuvable",
+    "contentInFrench": "Le contenu éditorial de cet article est rédigé en français.",
+    "readingTime": "{minutes} min de lecture"
   },
   "contact": {
     "eyebrow": "Écrire à l’équipe",
@@ -106,7 +108,7 @@
     "shortcuts": {
       "publications": {
         "title": "Publications",
-        "description": "Lire et publier des articles, vidéos et ressources"
+        "description": "Lire les articles et ressources sur le blog ICC Online"
       },
       "submitArticle": {
         "title": "Soumettre un article",
@@ -174,6 +176,8 @@
     "eyebrow": "Agenda",
     "title": "Évènements",
     "subtitle": "Retrouvez les rendez-vous, cultes en ligne et temps forts de la famille ICC Online.",
+    "introLead": "Retrouvez les rendez-vous, cultes en ligne et temps forts de la famille ICC Online.",
+    "introBody": "Célébrations, veillées de prière, conférences, camps ou rassemblements : consultez l’agenda à venir ou revivez les moments passés. Les évènements en ligne sont accessibles où que vous soyez ; d’autres se déroulent sur nos campus ou au sein des FIO (Familles d’Impact Online).",
     "tabUpcoming": "À venir",
     "tabPast": "Passés",
     "emptyUpcoming": "Aucun évènement à venir pour le moment. Revenez bientôt !",
@@ -185,7 +189,8 @@
     "online": "En ligne",
     "upcomingBadge": "À venir",
     "backToList": "← Tous les évènements",
-    "notFoundTitle": "Évènement introuvable"
+    "notFoundTitle": "Évènement introuvable",
+    "contentInFrench": "Le contenu éditorial de cet évènement est rédigé en français."
   },
   "wpPages": {
     "readOnSite": "Lire sur le site",
@@ -194,6 +199,7 @@
     "pageLabel": "Page {page}",
     "downloadsTitle": "Ressources à télécharger",
     "notFoundTitle": "Page introuvable",
+    "contentInFrench": "Le contenu éditorial de cette page est rédigé en français.",
     "nousRejoindre": {
       "eyebrow": "Rejoindre ICC Online",
       "title": "Nous rejoindre",
@@ -213,6 +219,11 @@
       "eyebrow": "Ressources",
       "title": "Magazine ICC Online",
       "description": "Lisez ou téléchargez le magazine ICC Online."
+    },
+    "submitArticle": {
+      "eyebrow": "Communauté",
+      "title": "Soumettre un article",
+      "description": "Partagez un article, une vidéo ou une ressource avec la communauté ICC Online."
     }
   }
 }

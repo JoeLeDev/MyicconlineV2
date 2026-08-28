@@ -56,7 +56,9 @@
     "readNext": "Als Nächstes lesen",
     "downloads": "Downloads",
     "by": "Von",
-    "notFoundTitle": "Beitrag nicht gefunden"
+    "notFoundTitle": "Beitrag nicht gefunden",
+    "contentInFrench": "Der redaktionelle Inhalt dieses Artikels ist auf Französisch verfasst.",
+    "readingTime": "{minutes} Min. Lesezeit"
   },
   "contact": {
     "eyebrow": "Schreib dem Team",
@@ -106,7 +108,7 @@
     "shortcuts": {
       "publications": {
         "title": "Publikationen",
-        "description": "Artikel, Videos und Ressourcen lesen und veröffentlichen"
+        "description": "Artikel und Ressourcen im ICC-Online-Blog lesen"
       },
       "submitArticle": {
         "title": "Artikel einreichen",
@@ -174,6 +176,8 @@
     "eyebrow": "Agenda",
     "title": "Veranstaltungen",
     "subtitle": "Termine, Online-Gottesdienste und Highlights der ICC-Online-Familie.",
+    "introLead": "Termine, Online-Gottesdienste und Highlights der ICC-Online-Familie.",
+    "introBody": "Feiern, Gebetswachen, Konferenzen, Camps und Treffen — entdecken Sie kommende Termine oder vergangene Highlights. Online-Veranstaltungen sind von überall zugänglich; andere finden auf unseren Campus oder in FIO-Gruppen (Online Impact Families) statt.",
     "tabUpcoming": "Bevorstehend",
     "tabPast": "Vergangen",
     "emptyUpcoming": "Derzeit keine bevorstehenden Veranstaltungen. Schau bald wieder vorbei!",
@@ -185,7 +189,8 @@
     "online": "Online",
     "upcomingBadge": "Bevorstehend",
     "backToList": "← Alle Veranstaltungen",
-    "notFoundTitle": "Veranstaltung nicht gefunden"
+    "notFoundTitle": "Veranstaltung nicht gefunden",
+    "contentInFrench": "Der redaktionelle Inhalt dieser Veranstaltung ist auf Französisch verfasst."
   },
   "wpPages": {
     "readOnSite": "Auf der Website lesen",
@@ -194,6 +199,7 @@
     "pageLabel": "Seite {page}",
     "downloadsTitle": "Downloads",
     "notFoundTitle": "Seite nicht gefunden",
+    "contentInFrench": "Der redaktionelle Inhalt dieser Seite ist auf Französisch verfasst.",
     "nousRejoindre": {
       "eyebrow": "ICC Online beitreten",
       "title": "Mitmachen",
@@ -213,6 +219,11 @@
       "eyebrow": "Ressourcen",
       "title": "ICC-Online-Magazin",
       "description": "Lies oder lade das ICC-Online-Magazin herunter."
+    },
+    "submitArticle": {
+      "eyebrow": "Community",
+      "title": "Artikel einreichen",
+      "description": "Teile einen Artikel, ein Video oder eine Ressource mit der ICC-Online-Community."
     }
   }
 }

@@ -56,7 +56,9 @@
     "readNext": "Read next",
     "downloads": "Downloads",
     "by": "By",
-    "notFoundTitle": "Post not found"
+    "notFoundTitle": "Post not found",
+    "contentInFrench": "The editorial content of this post is written in French.",
+    "readingTime": "{minutes} min read"
   },
   "contact": {
     "eyebrow": "Write to the team",
@@ -106,7 +108,7 @@
     "shortcuts": {
       "publications": {
         "title": "Publications",
-        "description": "Read and publish articles, videos and resources"
+        "description": "Read articles and resources on the ICC Online blog"
       },
       "submitArticle": {
         "title": "Submit an article",
@@ -174,6 +176,8 @@
     "eyebrow": "Calendar",
     "title": "Events",
     "subtitle": "Find gatherings, online services and highlights from the ICC Online family.",
+    "introLead": "Find gatherings, online services and highlights from the ICC Online family.",
+    "introBody": "Celebrations, prayer vigils, conferences, camps and gatherings — browse what’s coming up or revisit past events. Online events are accessible wherever you are; others take place on our campuses or within FIO groups (Online Impact Families).",
     "tabUpcoming": "Upcoming",
     "tabPast": "Past",
     "emptyUpcoming": "No upcoming events right now. Check back soon!",
@@ -185,7 +189,8 @@
     "online": "Online",
     "upcomingBadge": "Upcoming",
     "backToList": "← All events",
-    "notFoundTitle": "Event not found"
+    "notFoundTitle": "Event not found",
+    "contentInFrench": "The editorial content of this event is written in French."
   },
   "wpPages": {
     "readOnSite": "Read on site",
@@ -194,6 +199,7 @@
     "pageLabel": "Page {page}",
     "downloadsTitle": "Downloads",
     "notFoundTitle": "Page not found",
+    "contentInFrench": "The editorial content of this page is written in French.",
     "nousRejoindre": {
       "eyebrow": "Join ICC Online",
       "title": "Join us",
@@ -213,6 +219,11 @@
       "eyebrow": "Resources",
       "title": "ICC Online Magazine",
       "description": "Read or download the ICC Online magazine."
+    },
+    "submitArticle": {
+      "eyebrow": "Community",
+      "title": "Submit an article",
+      "description": "Share an article, video or resource with the ICC Online community."
     }
   }
 }
