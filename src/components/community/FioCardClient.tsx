@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { EventBannerImage } from "@/components/events/EventBannerImage";
+import { FioCardBanner } from "@/components/community/FioCardBanner";
 import { normalizeCommunityPlainText } from "@/lib/utils/community-text";
 import {
   getCategoryAccentClass,
@@ -40,23 +40,13 @@ export function FioCardClient({ fio }: Props) {
       href={fioDetailPath(fio.slug)}
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/8 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-icc-coral/25 hover:shadow-md"
     >
-      <div className="relative aspect-[16/10] overflow-hidden bg-icc-cream">
-        {fio.image ? (
-          <EventBannerImage
-            src={fio.image}
-            alt={fio.nom}
-            layout="cover"
-            className="transition duration-500 group-hover:scale-[1.03]"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-icc-warm-brown/35 to-icc-coral/25" />
-        )}
-        {schedule ? (
-          <p className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-icc-ink shadow-sm">
-            {schedule}
-          </p>
-        ) : null}
-      </div>
+      <FioCardBanner
+        image={fio.image}
+        name={fio.nom}
+        category={category}
+        categoryLabel={categoryLabel}
+        schedule={schedule || undefined}
+      />
 
       <div className="flex flex-1 flex-col p-5">
         <h2 className="text-lg font-bold tracking-tight text-icc-ink group-hover:text-icc-coral">

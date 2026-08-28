@@ -1,6 +1,8 @@
 import { wpFetch, wpFetchWithTotal } from "./client";
 import { fetchGroupActivities } from "./group-activity";
 import { getFioPrimaryCategory } from "./fio-categories";
+import { enrichFioImage, type BpGroupMeta } from "./fio-image";
+import { normalizeWpFioText } from "@/lib/utils/community-text";
 import type {
   CommunityMember,
   CommunityMemberProfile,
@@ -13,6 +15,10 @@ import type {
 
 export const COMMUNITY_REVALIDATE = 120;
 export const COMMUNITY_TAG = "community";
+
+function normalizeFio(fio: WpFio, meta?: BpGroupMeta): WpFio {
+  return normalizeWpFioText(enrichFioImage(fio, meta));
+}
 
 function stripSensitiveMember(member: WpMemberSummary): CommunityMember {
   const { email: _email, ...rest } = member;
@@ -80,40 +86,46 @@ export async function getMemberBySlug(
 }
 
 export async function getFios(): Promise<WpFio[]> {
-  const [fios, typeMap] = await Promise.all([
+  const [fios, metaMap] = await Promise.all([
     wpFetch<WpFio[]>("/myicconline/v1/fios", {
       revalidate: COMMUNITY_REVALIDATE,
       tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:fios`],
     }),
-    fetchBpGroupTypesMap().catch(() => new Map<number, string[]>()),
+    fetchBpGroupMetaMap().catch(() => new Map<number, BpGroupMeta>()),
   ]);
 
   return fios.map((fio) => {
-    const types = typeMap.get(fio.id) ?? ["fio"];
-    return {
-      ...fio,
-      types,
-      category: getFioPrimaryCategory(types),
-    };
+    const meta = metaMap.get(fio.id);
+    const types = meta?.types ?? ["fio"];
+    return normalizeFio(
+      {
+        ...fio,
+        types,
+        category: getFioPrimaryCategory(types),
+      },
+      meta,
+    );
   });
 }
 
-async function fetchBpGroupTypesMap(): Promise<Map<number, string[]>> {
-  const map = new Map<number, string[]>();
+async function fetchBpGroupMetaMap(): Promise<Map<number, BpGroupMeta>> {
+  const map = new Map<number, BpGroupMeta>();
   let page = 1;
   let totalPages = 1;
 
   while (page <= totalPages && page <= 5) {
-    const result = await wpFetchWithTotal<Array<{ id: number; types?: string[] }>>(
-      `/buddypress/v1/groups?per_page=100&page=${page}`,
-      {
-        revalidate: COMMUNITY_REVALIDATE,
-        tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:bp-group-types`],
-      },
-    );
+    const result = await wpFetchWithTotal<
+      Array<{ id: number; types?: string[]; avatar_urls?: { full?: string } }>
+    >(`/buddypress/v1/groups?per_page=100&page=${page}`, {
+      revalidate: COMMUNITY_REVALIDATE,
+      tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:bp-group-meta`],
+    });
 
     for (const group of result.data) {
-      map.set(group.id, group.types?.length ? group.types : ["fio"]);
+      map.set(group.id, {
+        types: group.types?.length ? group.types : ["fio"],
+        avatarFull: group.avatar_urls?.full?.trim() ?? "",
+      });
     }
 
     totalPages = result.totalPages || 1;
@@ -129,13 +141,14 @@ export async function getFioBySlug(slug: string): Promise<WpFio | null> {
 
   for (const candidate of slugCandidates) {
     try {
-      return await wpFetch<WpFio>(
+      const fio = await wpFetch<WpFio>(
         `/myicconline/v1/fio/${encodeURIComponent(candidate)}`,
         {
           revalidate: COMMUNITY_REVALIDATE,
           tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:fio:${candidate}`],
         },
       );
+      return enrichFioFromBuddyPress(fio);
     } catch {
       // Essayer le slug suivant ou le fallback liste.
     }
@@ -149,6 +162,35 @@ export async function getFioBySlug(slug: string): Promise<WpFio | null> {
     );
   } catch {
     return null;
+  }
+}
+
+async function enrichFioFromBuddyPress(fio: WpFio): Promise<WpFio> {
+  try {
+    const groups = await wpFetch<
+      Array<{ types?: string[]; avatar_urls?: { full?: string } }>
+    >(`/buddypress/v1/groups/${fio.id}`, {
+      revalidate: COMMUNITY_REVALIDATE,
+      tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:bp-group:${fio.id}`],
+    });
+    const group = groups[0];
+    if (!group) return normalizeFio(fio);
+
+    const meta: BpGroupMeta = {
+      types: group.types?.length ? group.types : ["fio"],
+      avatarFull: group.avatar_urls?.full?.trim() ?? "",
+    };
+
+    return normalizeFio(
+      {
+        ...fio,
+        types: meta.types,
+        category: getFioPrimaryCategory(meta.types),
+      },
+      meta,
+    );
+  } catch {
+    return normalizeFio(fio);
   }
 }
 
