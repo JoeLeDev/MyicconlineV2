@@ -117,3 +117,69 @@ export type BlogPost = {
   readingTimeLabel: string;
   readingTimeMinutes: number;
 };
+
+export type IccPageEmbed = {
+  type: string;
+  src: string;
+  title?: string;
+  height?: string;
+};
+
+export type IccPageDownload = {
+  url: string;
+  title: string;
+  extension?: string;
+  filesize?: number | string;
+};
+
+export type IccPageMagazine = {
+  edition?: string;
+  title?: string;
+  intro?: string;
+  cover_url?: string;
+  pdf_url?: string;
+  pages?: string[];
+};
+
+export type IccPage = {
+  slug: string;
+  modified?: string;
+  featured_image?: string;
+  intro_html?: string;
+  embeds?: IccPageEmbed[];
+  downloads?: IccPageDownload[];
+  magazine?: IccPageMagazine | null;
+  wp_link?: string;
+};
+
+export type WpPage = {
+  id: number;
+  slug: string;
+  modified: string;
+  link: string;
+  title: WpRendered;
+  content: WpRendered;
+  excerpt: WpRendered;
+  featured_media: number;
+  icc_page?: IccPage | null;
+  _embedded?: {
+    "wp:featuredmedia"?: WpMedia[];
+  };
+};
+
+export type CmsPage = {
+  id: number;
+  slug: string;
+  title: string;
+  modified: string;
+  link: string;
+  introHtml: string;
+  contentHtml: string;
+  featuredImage?: {
+    url: string;
+    alt: string;
+  };
+  embeds: IccPageEmbed[];
+  downloads: IccPageDownload[];
+  magazine?: IccPageMagazine | null;
+};

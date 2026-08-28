@@ -142,6 +142,10 @@
     "about": "About",
     "contact": "Contact",
     "blog": "Blog",
+    "joinUs": "Join us",
+    "listen": "We’re listening",
+    "prayer": "Prayer request",
+    "magazine": "Magazine",
     "legal": "Legal notice",
     "privacy": "Privacy policy",
     "copyright": "© {year} — My ICC Online · Impact Centre Chrétien"
@@ -162,5 +166,33 @@
   },
   "lang": {
     "label": "Language"
+  },
+  "wpPages": {
+    "readOnSite": "Read on site",
+    "downloadPdf": "Download PDF",
+    "readerTitle": "Reading",
+    "pageLabel": "Page {page}",
+    "downloadsTitle": "Downloads",
+    "notFoundTitle": "Page not found",
+    "nousRejoindre": {
+      "eyebrow": "Join ICC Online",
+      "title": "Join us",
+      "description": "Sign up and join the ICC Online community."
+    },
+    "aVotreEcoute": {
+      "eyebrow": "Listening & support",
+      "title": "We’re listening",
+      "description": "Share your situation — the ICC Online team is here for you."
+    },
+    "jaiBesoinDePrieres": {
+      "eyebrow": "Prayer",
+      "title": "I need prayer",
+      "description": "Share your prayer request with the ICC Online community."
+    },
+    "magazine": {
+      "eyebrow": "Resources",
+      "title": "ICC Online Magazine",
+      "description": "Read or download the ICC Online magazine."
+    }
   }
 }

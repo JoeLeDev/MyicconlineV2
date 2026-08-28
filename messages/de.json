@@ -142,6 +142,10 @@
     "about": "Über uns",
     "contact": "Kontakt",
     "blog": "Blog",
+    "joinUs": "Mitmachen",
+    "listen": "Wir hören zu",
+    "prayer": "Gebetsanliegen",
+    "magazine": "Magazin",
     "legal": "Impressum",
     "privacy": "Datenschutz",
     "copyright": "© {year} — My ICC Online · Impact Centre Chrétien"
@@ -162,5 +166,33 @@
   },
   "lang": {
     "label": "Sprache"
+  },
+  "wpPages": {
+    "readOnSite": "Auf der Website lesen",
+    "downloadPdf": "PDF herunterladen",
+    "readerTitle": "Lektüre",
+    "pageLabel": "Seite {page}",
+    "downloadsTitle": "Downloads",
+    "notFoundTitle": "Seite nicht gefunden",
+    "nousRejoindre": {
+      "eyebrow": "ICC Online beitreten",
+      "title": "Mitmachen",
+      "description": "Melde dich an und werde Teil der ICC-Online-Community."
+    },
+    "aVotreEcoute": {
+      "eyebrow": "Zuhören & Begleitung",
+      "title": "Wir hören zu",
+      "description": "Teile deine Situation — das ICC-Online-Team begleitet dich."
+    },
+    "jaiBesoinDePrieres": {
+      "eyebrow": "Gebet",
+      "title": "Ich brauche Gebet",
+      "description": "Vertraue dein Gebetsanliegen der ICC-Online-Community an."
+    },
+    "magazine": {
+      "eyebrow": "Ressourcen",
+      "title": "ICC-Online-Magazin",
+      "description": "Lies oder lade das ICC-Online-Magazin herunter."
+    }
   }
 }

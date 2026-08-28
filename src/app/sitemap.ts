@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 import { getSiteUrl } from "@/lib/site-url";
+import { getAllCmsPagesForSitemap } from "@/lib/wp/pages";
 import { getAllPostsForSitemap } from "@/lib/wp/posts";
 
 function localizedUrl(base: string, locale: string, path: string): string {
@@ -45,6 +46,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }),
   );
 
+  let cmsPages: MetadataRoute.Sitemap = [];
+  try {
+    const entries = await getAllCmsPagesForSitemap();
+    cmsPages = routing.locales.flatMap((locale) =>
+      entries.map((page) => ({
+        url: localizedUrl(base, locale, page.path),
+        lastModified: new Date(page.modified),
+        changeFrequency: "weekly" as const,
+        priority: 0.75,
+        alternates: {
+          languages: Object.fromEntries(
+            routing.locales.map((l) => [
+              l,
+              localizedUrl(base, l, page.path),
+            ]),
+          ),
+        },
+      })),
+    );
+  } catch {
+    cmsPages = [];
+  }
+
   let posts: MetadataRoute.Sitemap = [];
   try {
     const entries = await getAllPostsForSitemap();
@@ -68,5 +92,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     posts = [];
   }
 
-  return [...staticRoutes, ...posts];
+  return [...staticRoutes, ...cmsPages, ...posts];
 }

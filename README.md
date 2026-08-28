@@ -18,6 +18,10 @@ WordPress reste le backend (API REST) sur cPanel — ce dépôt ne remplace pas 
 | `/blog` | Liste des articles |
 | `/blog/[slug]` | Article (YouTube, PDF, articles liés) |
 | `/contact` | Formulaire de contact |
+| `/nous-rejoindre` | Inscription communauté (formulaire Elvanto WP) |
+| `/a-votre-ecoute` | Formulaire d’écoute (Elvanto) |
+| `/jai-besoin-de-prieres` | Demande de prière (Elvanto) |
+| `/magazine` | Magazine ICC Online (lecteur + PDF) |
 | `/connexion` | Connexion JWT WordPress |
 | `/espace` | Hub membre (profil + raccourcis communauté WP) |
 | `/mentions-legales` | Mentions légales |
@@ -65,6 +69,17 @@ Le front consomme les posts natifs WP via `/wp-json/wp/v2/posts?_embed` et privi
 
 Fallbacks (si `icc_editorial` vide) : `meta._myicc_youtube_url` / `meta._myicc_attached_files`, puis extraction HTML.  
 Les images `.pdf` cassées dans le contenu HTML sont filtrées.
+
+## Pages CMS (`icc_page`)
+
+Pages WordPress servies dynamiquement via REST :
+
+- `GET /wp-json/wp/v2/pages?slug={slug}&_embed=1`
+- Champ enrichi `icc_page` : `embeds` (iframe Elvanto), `magazine`, `downloads`, `intro_html`
+- Routes V2 : `/nous-rejoindre`, `/a-votre-ecoute`, `/jai-besoin-de-prieres`, `/magazine`
+- Config : `src/lib/wp/page-config.ts` · fetch : `src/lib/wp/pages.ts`
+- ISR : `revalidate = 300`, tag cache `wp-pages`
+
 ## Déploiement Vercel
 
 1. Importer le repo GitHub dans Vercel
@@ -122,8 +137,8 @@ npm run lint     # ESLint
 ```
 src/
   app/                 # routes App Router (+ sitemap.xml, robots.txt)
-  components/          # UI (layout, home, blog, legal, member)
-  lib/wp/              # client + mapping API WordPress + community-links
+  components/          # UI (layout, home, blog, legal, member, cms)
+  lib/wp/              # client + posts + pages + community-links
   lib/utils/           # dates, HTML, temps de lecture
 ```
 

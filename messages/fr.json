@@ -142,6 +142,10 @@
     "about": "À propos",
     "contact": "Contact",
     "blog": "Blog",
+    "joinUs": "Nous rejoindre",
+    "listen": "À votre écoute",
+    "prayer": "J’ai besoin de prières",
+    "magazine": "Magazine",
     "legal": "Mentions légales",
     "privacy": "Politique de confidentialité",
     "copyright": "© {year} — My ICC Online · Impact Centre Chrétien"
@@ -162,5 +166,33 @@
   },
   "lang": {
     "label": "Langue"
+  },
+  "wpPages": {
+    "readOnSite": "Lire sur le site",
+    "downloadPdf": "Télécharger le PDF",
+    "readerTitle": "Lecture",
+    "pageLabel": "Page {page}",
+    "downloadsTitle": "Ressources à télécharger",
+    "notFoundTitle": "Page introuvable",
+    "nousRejoindre": {
+      "eyebrow": "Rejoindre ICC Online",
+      "title": "Nous rejoindre",
+      "description": "Inscrivez-vous et rejoignez la communauté ICC Online."
+    },
+    "aVotreEcoute": {
+      "eyebrow": "Écoute & accompagnement",
+      "title": "À votre écoute",
+      "description": "Partagez votre situation — l’équipe ICC Online vous accompagne."
+    },
+    "jaiBesoinDePrieres": {
+      "eyebrow": "Prière",
+      "title": "J’ai besoin de prières",
+      "description": "Confiez votre demande de prière à la communauté ICC Online."
+    },
+    "magazine": {
+      "eyebrow": "Ressources",
+      "title": "Magazine ICC Online",
+      "description": "Lisez ou téléchargez le magazine ICC Online."
+    }
   }
 }
