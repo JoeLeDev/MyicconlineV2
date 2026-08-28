@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { getActivities } from "@/lib/wp/community";
 import { getActivitiesAuthenticated } from "@/lib/wp/community-auth";
-import { getAuthToken, getCurrentUser } from "@/lib/auth/session";
+import { peekAuthToken } from "@/lib/auth/session";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -36,11 +36,10 @@ export default async function ActivitiesPage({ params, searchParams }: Props) {
   let hasMore = false;
   let error: string | null = null;
 
-  const user = await getCurrentUser();
-  const token = await getAuthToken();
+  const token = await peekAuthToken();
 
   try {
-    if (user && token) {
+    if (token) {
       const result = await getActivitiesAuthenticated(token, { page, perPage: 15 });
       if (result.ok) {
         activities = result.data.activities;

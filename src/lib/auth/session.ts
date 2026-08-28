@@ -52,6 +52,29 @@ export async function hasValidSignedSession(): Promise<boolean> {
   return Boolean(verifySessionToken(jar.get(SESSION_COOKIE)?.value));
 }
 
+/** Lit le JWT sans modifier les cookies — pour les pages publiques. */
+export async function peekAuthToken(): Promise<string | null> {
+  const jar = await cookies();
+  const session = verifySessionToken(jar.get(SESSION_COOKIE)?.value);
+  const token = jar.get(WP_TOKEN_COOKIE)?.value;
+
+  if (!session || !token) {
+    return null;
+  }
+
+  const valid = await validateWpJwtToken(token);
+  if (!valid) {
+    return null;
+  }
+
+  const user = await fetchWpMe(token);
+  if (!user || user.id !== session.sub) {
+    return null;
+  }
+
+  return token;
+}
+
 export async function getCurrentUser(): Promise<AuthUser | null> {
   const jar = await cookies();
   const session = verifySessionToken(jar.get(SESSION_COOKIE)?.value);

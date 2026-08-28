@@ -85,17 +85,44 @@ export async function getFios(): Promise<WpFio[]> {
 }
 
 export async function getFioBySlug(slug: string): Promise<WpFio | null> {
+  const decodedSlug = safeDecodeURIComponent(slug);
+  const slugCandidates = [...new Set([slug, decodedSlug].filter(Boolean))];
+
+  for (const candidate of slugCandidates) {
+    try {
+      return await wpFetch<WpFio>(
+        `/myicconline/v1/fio/${encodeURIComponent(candidate)}`,
+        {
+          revalidate: COMMUNITY_REVALIDATE,
+          tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:fio:${candidate}`],
+        },
+      );
+    } catch {
+      // Essayer le slug suivant ou le fallback liste.
+    }
+  }
+
   try {
-    return await wpFetch<WpFio>(
-      `/myicconline/v1/fio/${encodeURIComponent(slug)}`,
-      {
-        revalidate: COMMUNITY_REVALIDATE,
-        tags: [COMMUNITY_TAG, `${COMMUNITY_TAG}:fio:${slug}`],
-      },
+    const fios = await getFios();
+    const target = normalizeFioSlug(decodedSlug);
+    return (
+      fios.find((fio) => normalizeFioSlug(fio.slug) === target) ?? null
     );
   } catch {
     return null;
   }
+}
+
+function safeDecodeURIComponent(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function normalizeFioSlug(slug: string): string {
+  return safeDecodeURIComponent(slug).trim().toLowerCase();
 }
 
 export async function getFioMembers(fioId: number): Promise<WpFioMember[]> {

@@ -4,6 +4,10 @@ import { Link } from "@/i18n/navigation";
 import { normalizeCommunityPlainText } from "@/lib/utils/community-text";
 import type { WpFio } from "@/lib/wp/community-types";
 
+function fioDetailPath(slug: string): `/groupes/${string}` {
+  return `/groupes/${encodeURIComponent(slug)}`;
+}
+
 type Props = {
   fio: WpFio;
 };
@@ -19,7 +23,7 @@ export async function FioCard({ fio }: Props) {
 
   return (
     <Link
-      href={`/groupes/${fio.slug}`}
+      href={fioDetailPath(fio.slug)}
       className="group flex h-full flex-col overflow-hidden rounded-xl border border-black/8 bg-white transition hover:border-icc-coral/30 hover:shadow-sm"
     >
       <div className="relative aspect-[16/9] bg-icc-cream">

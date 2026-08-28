@@ -8,7 +8,7 @@ import { CommunityText } from "@/components/community/CommunityText";
 import { Link } from "@/i18n/navigation";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { communityTextExcerpt } from "@/lib/utils/community-text";
-import { getAuthToken, getCurrentUser } from "@/lib/auth/session";
+import { peekAuthToken } from "@/lib/auth/session";
 import { getMyFios } from "@/lib/wp/community-auth";
 import {
   buildMemberSlugIndex,
@@ -62,9 +62,8 @@ export default async function GroupDetailPage({ params }: Props) {
     getFioMembers(fio.id).catch(() => []),
     getMembers().catch(() => []),
     (async () => {
-      const user = await getCurrentUser();
-      const token = await getAuthToken();
-      if (!user || !token) return null;
+      const token = await peekAuthToken();
+      if (!token) return null;
       return getMyFios(token);
     })(),
   ]);
