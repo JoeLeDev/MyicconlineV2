@@ -36,19 +36,13 @@ export async function EventCard({
             : "md:grid-cols-[220px_1fr] md:items-start",
         ].join(" ")}
       >
-        <div
-          className={[
-            "relative flex items-center justify-center overflow-hidden bg-icc-cream",
-            featured
-              ? "aspect-[16/10] md:aspect-[5/3]"
-              : "aspect-[16/10] md:aspect-[4/3]",
-          ].join(" ")}
-        >
+        <div className="relative aspect-[16/9] overflow-hidden bg-icc-cream">
           {event.bannerUrl ? (
             <EventBannerImage
               src={event.bannerUrl}
               alt={event.title}
-              layout="frame"
+              layout="cover"
+              className="transition duration-500 group-hover:scale-[1.03]"
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-icc-warm-brown/40 to-icc-coral/30" />

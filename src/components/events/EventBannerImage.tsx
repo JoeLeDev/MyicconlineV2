@@ -3,8 +3,8 @@ type Props = {
   alt: string;
   className?: string;
   priority?: boolean;
-  /** full = image entière (page détail) ; frame = cadre liste sans rognage */
-  layout?: "full" | "frame";
+  /** full = image entière (page détail) ; cover = cadre 16:9 rogné (liste) */
+  layout?: "full" | "cover";
 };
 
 /** Bannières WP servies directement (sans next/image) pour fiabilité des URLs externes. */
@@ -16,8 +16,8 @@ export function EventBannerImage({
   layout = "full",
 }: Props) {
   const layoutClass =
-    layout === "frame"
-      ? "max-h-full max-w-full object-contain"
+    layout === "cover"
+      ? "absolute inset-0 h-full w-full object-cover"
       : "block h-auto w-full";
 
   return (
