@@ -106,6 +106,12 @@
     "communityShortcuts": "Community shortcuts",
     "v2Shortcuts": "On this site",
     "infoBanner": "The full community (groups, messaging, courses) remains on ICC Online for now. You access it with the same credentials.",
+    "myFiosTitle": "My FIO groups",
+    "myFiosSubtitle": "The Online Impact Families you belong to.",
+    "myFiosEmpty": "You are not a member of any FIO yet.",
+    "myFiosError": "Unable to load your FIO groups right now.",
+    "browseGroups": "Browse groups",
+    "backToSpace": "← My space",
     "shortcuts": {
       "publications": {
         "title": "Publications",
@@ -137,6 +143,10 @@
       }
     },
     "v2": {
+      "myFios": {
+        "title": "My FIO groups",
+        "description": "Your Online Impact Families"
+      },
       "blog": {
         "title": "Blog V2",
         "description": "Articles and resources on the new site"
@@ -233,6 +243,8 @@
     "searchMembers": "Search members",
     "searchMembersPlaceholder": "Name, username or FIO…",
     "membersCount": "{count, plural, one {# member} other {# members}}",
+    "membersPageRange": "{from}–{to}",
+    "pageOf": "Page {page} / {total}",
     "membersCountShort": "{count, plural, one {# member} other {# members}}",
     "primaryFio": "FIO · {name}",
     "pilot": "Pilot · {name}",
@@ -255,11 +267,33 @@
     "emptyActivities": "No recent activity to display.",
     "emptyGroups": "No FIO groups available right now.",
     "noMembers": "No members match your search.",
+    "loadingMembers": "Loading…",
     "noFioMembers": "No members listed for this group.",
     "error": "Unable to load this section right now.",
     "prev": "← Previous",
     "next": "Next →",
-    "page": "Page {page}"
+    "page": "Page {page}",
+    "favorite": "Add to favorites",
+    "unfavorite": "Remove from favorites",
+    "favoriteError": "Unable to update favorite.",
+    "showComments": "{count, plural, =0 {Comment} one {View # comment} other {View # comments}}",
+    "hideComments": "Hide comments",
+    "loadingComments": "Loading comments…",
+    "commentsLoadError": "Unable to load comments.",
+    "noComments": "No comments yet.",
+    "commentPlaceholder": "Write a comment…",
+    "commentSubmit": "Post",
+    "commentSubmitting": "Posting…",
+    "commentError": "Unable to post comment.",
+    "loginToInteract": "Sign in to comment or add favorites.",
+    "loginLink": "Sign in",
+    "networkError": "Network error. Please try again.",
+    "joinFio": "Join this FIO",
+    "joinFioSubmitting": "Request in progress…",
+    "joinFioSuccess": "You joined {name}.",
+    "joinFioError": "Unable to join this group.",
+    "loginToJoinFio": "Sign in to join this FIO.",
+    "alreadyMember": "You are a member of this FIO."
   },
   "wpPages": {
     "readOnSite": "Read on site",

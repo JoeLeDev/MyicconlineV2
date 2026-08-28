@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { PostContent } from "@/components/blog/PostContent";
+import { CommunityText } from "@/components/community/CommunityText";
 import { Link } from "@/i18n/navigation";
 import { buildPageMetadata } from "@/lib/seo/metadata";
+import { communityTextExcerpt } from "@/lib/utils/community-text";
 import { getMemberBySlug } from "@/lib/wp/community";
 
 type Props = {
@@ -26,7 +27,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     locale,
     href: `/membres/${slug}`,
     title: member.name,
-    description: member.bio || t("memberProfileDescription", { name: member.name }),
+    description:
+      communityTextExcerpt(member.bio) ||
+      t("memberProfileDescription", { name: member.name }),
     images: member.avatar ? [member.avatar] : undefined,
   });
 }
@@ -84,9 +87,10 @@ export default async function MemberProfilePage({ params }: Props) {
         </header>
 
         {member.bio ? (
-          <div className="prose-icc mt-8 text-base leading-relaxed text-icc-ink">
-            <PostContent html={member.bio} />
-          </div>
+          <CommunityText
+            text={member.bio}
+            className="prose-icc mt-8 text-base leading-relaxed text-icc-ink"
+          />
         ) : null}
 
         {member.fios.length > 0 ? (

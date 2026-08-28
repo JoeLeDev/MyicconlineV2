@@ -105,6 +105,12 @@
     "opensNewTab": "ouvre dans un nouvel onglet",
     "communityShortcuts": "Raccourcis communauté",
     "v2Shortcuts": "Sur ce site",
+    "myFiosTitle": "Mes FIO",
+    "myFiosSubtitle": "Les Familles d’Impact Online auxquelles vous appartenez.",
+    "myFiosEmpty": "Vous n’êtes membre d’aucune FIO pour le moment.",
+    "myFiosError": "Impossible de charger vos FIO pour le moment.",
+    "browseGroups": "Parcourir les groupes",
+    "backToSpace": "← Mon espace",
     "infoBanner": "La communauté complète (groupes, messagerie, cours) reste sur ICC Online pour l’instant. Vous y accédez avec les mêmes identifiants.",
     "shortcuts": {
       "publications": {
@@ -137,6 +143,10 @@
       }
     },
     "v2": {
+      "myFios": {
+        "title": "Mes FIO",
+        "description": "Vos Familles d’Impact Online"
+      },
       "blog": {
         "title": "Blog V2",
         "description": "Articles et ressources sur le nouveau site"
@@ -233,6 +243,8 @@
     "searchMembers": "Rechercher un membre",
     "searchMembersPlaceholder": "Nom, identifiant ou FIO…",
     "membersCount": "{count, plural, one {# membre} other {# membres}}",
+    "membersPageRange": "{from}–{to}",
+    "pageOf": "Page {page} / {total}",
     "membersCountShort": "{count, plural, one {# membre} other {# membres}}",
     "primaryFio": "FIO · {name}",
     "pilot": "Pilote · {name}",
@@ -255,11 +267,33 @@
     "emptyActivities": "Aucune activité récente à afficher.",
     "emptyGroups": "Aucun groupe FIO disponible pour le moment.",
     "noMembers": "Aucun membre ne correspond à votre recherche.",
+    "loadingMembers": "Chargement…",
     "noFioMembers": "Aucun membre listé pour ce groupe.",
     "error": "Impossible de charger cette section pour le moment.",
     "prev": "← Précédent",
     "next": "Suivant →",
-    "page": "Page {page}"
+    "page": "Page {page}",
+    "favorite": "Ajouter aux favoris",
+    "unfavorite": "Retirer des favoris",
+    "favoriteError": "Impossible de mettre à jour le favori.",
+    "showComments": "{count, plural, =0 {Commenter} one {Voir # commentaire} other {Voir # commentaires}}",
+    "hideComments": "Masquer les commentaires",
+    "loadingComments": "Chargement des commentaires…",
+    "commentsLoadError": "Impossible de charger les commentaires.",
+    "noComments": "Aucun commentaire pour le moment.",
+    "commentPlaceholder": "Écrire un commentaire…",
+    "commentSubmit": "Publier",
+    "commentSubmitting": "Publication…",
+    "commentError": "Impossible de publier le commentaire.",
+    "loginToInteract": "Connectez-vous pour commenter ou ajouter aux favoris.",
+    "loginLink": "Se connecter",
+    "networkError": "Erreur réseau. Réessayez.",
+    "joinFio": "Rejoindre cette FIO",
+    "joinFioSubmitting": "Demande en cours…",
+    "joinFioSuccess": "Vous avez rejoint {name}.",
+    "joinFioError": "Impossible de rejoindre ce groupe.",
+    "loginToJoinFio": "Connectez-vous pour rejoindre cette FIO.",
+    "alreadyMember": "Vous êtes membre de cette FIO."
   },
   "wpPages": {
     "readOnSite": "Lire sur le site",

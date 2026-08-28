@@ -85,6 +85,8 @@ Pages WordPress servies dynamiquement via REST :
 - **Elvanto** : formulaires de contact externes uniquement (`nous-rejoindre`, `a-votre-ecoute`, `jai-besoin-de-prieres`)
 - **WordPress REST** : soumission d’articles via `POST /api/articles/submit` (JWT membre → `wp/v2/posts` en `pending`)
 - **Communauté** : activités, membres et FIO via `myicconline/v1` (`src/lib/wp/community.ts`, ISR 120s)
+- **Interactions communauté (JWT)** : favoris / commentaires sur `/activites`, rejoindre une FIO, page `/espace/mes-fios` — proxy `POST /api/community/*`
+- **RGPD e-mails** : masqués côté V2 ; patch PHP recommandé pour l’API WP → `docs/wp-rgpd-hide-member-emails.php`
 - Routes CMS : `/nous-rejoindre`, `/a-votre-ecoute`, `/jai-besoin-de-prieres`, `/magazine`
 - Route dédiée : `/soumettre-un-article` (formulaire natif, connexion requise)
 - Config : `src/lib/wp/page-config.ts` · fetch : `src/lib/wp/pages.ts`
@@ -121,7 +123,7 @@ Hub membre après connexion JWT :
 
 - **Profil** : avatar, nom, e-mail, `@slug`, badge « Connecté », lien profil WP, déconnexion
 - **Raccourcis communauté** : cartes vers les sections WordPress (publications, évènements, groupes FIO, etc.) — URLs centralisées dans `src/lib/wp/community-links.ts`
-- **Sur ce site** : liens internes vers `/blog` et `/`
+- **Sur ce site** : liens internes vers `/espace/mes-fios`, `/blog` et `/`
 - Les liens WP s’ouvrent dans un nouvel onglet ; la session BuddyPress reste active côté WordPress
 
 Traductions : namespace `memberSpace` dans `messages/*.json` (FR / EN / DE / ES).

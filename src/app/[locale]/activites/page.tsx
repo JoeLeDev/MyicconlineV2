@@ -4,6 +4,8 @@ import { ActivityCard } from "@/components/community/ActivityCard";
 import { Link } from "@/i18n/navigation";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { getActivities } from "@/lib/wp/community";
+import { getActivitiesAuthenticated } from "@/lib/wp/community-auth";
+import { getAuthToken, getCurrentUser } from "@/lib/auth/session";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -34,10 +36,25 @@ export default async function ActivitiesPage({ params, searchParams }: Props) {
   let hasMore = false;
   let error: string | null = null;
 
+  const user = await getCurrentUser();
+  const token = await getAuthToken();
+
   try {
-    const result = await getActivities({ page, perPage: 15 });
-    activities = result.activities;
-    hasMore = result.has_more;
+    if (user && token) {
+      const result = await getActivitiesAuthenticated(token, { page, perPage: 15 });
+      if (result.ok) {
+        activities = result.data.activities;
+        hasMore = result.data.has_more;
+      } else {
+        const fallback = await getActivities({ page, perPage: 15 });
+        activities = fallback.activities;
+        hasMore = fallback.has_more;
+      }
+    } else {
+      const result = await getActivities({ page, perPage: 15 });
+      activities = result.activities;
+      hasMore = result.has_more;
+    }
   } catch {
     error = t("error");
   }

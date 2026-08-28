@@ -109,6 +109,20 @@ function IconHome() {
   );
 }
 
+function IconMyFios() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M12 3 2 8l10 5 10-5-10-5ZM2 13l10 5 10-5M2 18l10 5 10-5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 const WP_ICONS: Record<CommunityLinkId, () => React.ReactNode> = {
   publications: IconNewspaper,
   submitArticle: IconPen,
@@ -120,6 +134,7 @@ const WP_ICONS: Record<CommunityLinkId, () => React.ReactNode> = {
 };
 
 const V2_ICONS: Record<V2ShortcutId, () => React.ReactNode> = {
+  myFios: IconMyFios,
   blog: IconNewspaper,
   home: IconHome,
 };
@@ -166,7 +181,7 @@ export async function MemberShortcutGrid() {
         >
           {t("v2Shortcuts")}
         </h2>
-        <ul className="mt-5 grid list-none gap-4 sm:grid-cols-2">
+        <ul className="mt-5 grid list-none gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {V2_SHORTCUTS.map((link) => {
             const Icon = V2_ICONS[link.id];
             return (

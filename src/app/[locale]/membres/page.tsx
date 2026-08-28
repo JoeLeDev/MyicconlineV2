@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { MemberDirectory } from "@/components/community/MemberDirectory";
 import { buildPageMetadata } from "@/lib/seo/metadata";
@@ -55,7 +56,9 @@ export default async function MembersPage({ params }: Props) {
             {error}
           </p>
         ) : (
-          <MemberDirectory members={members} />
+          <Suspense fallback={<p className="text-icc-muted">{t("loadingMembers")}</p>}>
+            <MemberDirectory members={members} />
+          </Suspense>
         )}
       </div>
     </div>

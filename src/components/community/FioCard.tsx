@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { normalizeCommunityPlainText } from "@/lib/utils/community-text";
 import type { WpFio } from "@/lib/wp/community-types";
 
 type Props = {
@@ -40,8 +41,8 @@ export async function FioCard({ fio }: Props) {
           {fio.nom}
         </h2>
         {fio.description ? (
-          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-icc-muted">
-            {fio.description}
+          <p className="mt-2 line-clamp-3 whitespace-pre-line text-sm leading-relaxed text-icc-muted">
+            {normalizeCommunityPlainText(fio.description)}
           </p>
         ) : null}
         <div className="mt-auto space-y-1 pt-4 text-sm text-icc-muted">

@@ -3,8 +3,13 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FioMemberList } from "@/components/community/FioMemberList";
+import { JoinFioButton } from "@/components/community/JoinFioButton";
+import { CommunityText } from "@/components/community/CommunityText";
 import { Link } from "@/i18n/navigation";
 import { buildPageMetadata } from "@/lib/seo/metadata";
+import { communityTextExcerpt } from "@/lib/utils/community-text";
+import { getAuthToken, getCurrentUser } from "@/lib/auth/session";
+import { getMyFios } from "@/lib/wp/community-auth";
 import {
   buildMemberSlugIndex,
   getFioBySlug,
@@ -36,7 +41,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     locale,
     href: `/groupes/${slug}`,
     title: fio.nom,
-    description: fio.description || t("groupProfileDescription", { name: fio.nom }),
+    description:
+      communityTextExcerpt(fio.description) ||
+      t("groupProfileDescription", { name: fio.nom }),
     images: fio.image ? [fio.image] : undefined,
   });
 }
@@ -51,11 +58,20 @@ export default async function GroupDetailPage({ params }: Props) {
     notFound();
   }
 
-  const [members, allMembers] = await Promise.all([
+  const [members, allMembers, myFiosResult] = await Promise.all([
     getFioMembers(fio.id).catch(() => []),
     getMembers().catch(() => []),
+    (async () => {
+      const user = await getCurrentUser();
+      const token = await getAuthToken();
+      if (!user || !token) return null;
+      return getMyFios(token);
+    })(),
   ]);
   const slugById = buildMemberSlugIndex(allMembers);
+  const isMember = myFiosResult?.ok
+    ? myFiosResult.data.some((membership) => membership.id === fio.id)
+    : false;
   const schedule = [fio.jour, fio.horaire].filter((v) => !isPlaceholder(v)).join(" · ");
 
   return (
@@ -90,9 +106,10 @@ export default async function GroupDetailPage({ params }: Props) {
           </h1>
 
           {fio.description ? (
-            <p className="mt-4 max-w-2xl text-base leading-relaxed text-icc-muted md:text-lg">
-              {fio.description}
-            </p>
+            <CommunityText
+              text={fio.description}
+              className="prose-icc mt-4 max-w-2xl text-base leading-relaxed text-icc-muted md:text-lg [&_p:last-child]:mb-0"
+            />
           ) : null}
 
           <dl className="mt-6 grid gap-3 text-sm text-icc-muted sm:grid-cols-2">
@@ -130,6 +147,13 @@ export default async function GroupDetailPage({ params }: Props) {
               {t("joinZoom")}
             </a>
           ) : null}
+
+          <JoinFioButton
+            fioId={fio.id}
+            fioName={fio.nom}
+            fioSlug={fio.slug}
+            initialMember={isMember}
+          />
         </header>
 
         <section className="mt-12">

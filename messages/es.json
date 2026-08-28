@@ -106,6 +106,12 @@
     "communityShortcuts": "Accesos a la comunidad",
     "v2Shortcuts": "En este sitio",
     "infoBanner": "La comunidad completa (grupos, mensajería, cursos) sigue en ICC Online por ahora. Accedes con las mismas credenciales.",
+    "myFiosTitle": "Mis FIO",
+    "myFiosSubtitle": "Las Familias de Impacto Online a las que perteneces.",
+    "myFiosEmpty": "Aún no perteneces a ninguna FIO.",
+    "myFiosError": "No se pudieron cargar tus FIO en este momento.",
+    "browseGroups": "Explorar grupos",
+    "backToSpace": "← Mi espacio",
     "shortcuts": {
       "publications": {
         "title": "Publicaciones",
@@ -137,6 +143,10 @@
       }
     },
     "v2": {
+      "myFios": {
+        "title": "Mis FIO",
+        "description": "Tus Familias de Impacto Online"
+      },
       "blog": {
         "title": "Blog V2",
         "description": "Artículos y recursos en el nuevo sitio"
@@ -233,6 +243,8 @@
     "searchMembers": "Buscar un miembro",
     "searchMembersPlaceholder": "Nombre, usuario o FIO…",
     "membersCount": "{count, plural, one {# miembro} other {# miembros}}",
+    "membersPageRange": "{from}–{to}",
+    "pageOf": "Página {page} / {total}",
     "membersCountShort": "{count, plural, one {# miembro} other {# miembros}}",
     "primaryFio": "FIO · {name}",
     "pilot": "Piloto · {name}",
@@ -255,11 +267,33 @@
     "emptyActivities": "No hay actividad reciente que mostrar.",
     "emptyGroups": "No hay grupos FIO disponibles por ahora.",
     "noMembers": "Ningún miembro coincide con tu búsqueda.",
+    "loadingMembers": "Cargando…",
     "noFioMembers": "No hay miembros listados para este grupo.",
     "error": "No se puede cargar esta sección por ahora.",
     "prev": "← Anterior",
     "next": "Siguiente →",
-    "page": "Página {page}"
+    "page": "Página {page}",
+    "favorite": "Añadir a favoritos",
+    "unfavorite": "Quitar de favoritos",
+    "favoriteError": "No se pudo actualizar el favorito.",
+    "showComments": "{count, plural, =0 {Comentar} one {Ver # comentario} other {Ver # comentarios}}",
+    "hideComments": "Ocultar comentarios",
+    "loadingComments": "Cargando comentarios…",
+    "commentsLoadError": "No se pudieron cargar los comentarios.",
+    "noComments": "Aún no hay comentarios.",
+    "commentPlaceholder": "Escribir un comentario…",
+    "commentSubmit": "Publicar",
+    "commentSubmitting": "Publicando…",
+    "commentError": "No se pudo publicar el comentario.",
+    "loginToInteract": "Inicia sesión para comentar o añadir favoritos.",
+    "loginLink": "Iniciar sesión",
+    "networkError": "Error de red. Inténtalo de nuevo.",
+    "joinFio": "Unirse a esta FIO",
+    "joinFioSubmitting": "Solicitud en curso…",
+    "joinFioSuccess": "Te has unido a {name}.",
+    "joinFioError": "No se pudo unir a este grupo.",
+    "loginToJoinFio": "Inicia sesión para unirte a esta FIO.",
+    "alreadyMember": "Ya eres miembro de esta FIO."
   },
   "wpPages": {
     "readOnSite": "Leer en el sitio",

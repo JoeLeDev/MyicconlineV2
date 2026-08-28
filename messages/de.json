@@ -106,6 +106,12 @@
     "communityShortcuts": "Community-Shortcuts",
     "v2Shortcuts": "Auf dieser Website",
     "infoBanner": "Die vollständige Community (Gruppen, Nachrichten, Kurse) bleibt vorerst auf ICC Online. Du erreichst sie mit denselben Zugangsdaten.",
+    "myFiosTitle": "Meine FIO",
+    "myFiosSubtitle": "Deine Online Impact Families.",
+    "myFiosEmpty": "Du bist derzeit in keiner FIO.",
+    "myFiosError": "Deine FIO konnten gerade nicht geladen werden.",
+    "browseGroups": "Gruppen entdecken",
+    "backToSpace": "← Mein Bereich",
     "shortcuts": {
       "publications": {
         "title": "Publikationen",
@@ -137,6 +143,10 @@
       }
     },
     "v2": {
+      "myFios": {
+        "title": "Meine FIO",
+        "description": "Deine Online Impact Families"
+      },
       "blog": {
         "title": "Blog V2",
         "description": "Artikel und Ressourcen auf der neuen Website"
@@ -233,6 +243,8 @@
     "searchMembers": "Mitglied suchen",
     "searchMembersPlaceholder": "Name, Benutzername oder FIO…",
     "membersCount": "{count, plural, one {# Mitglied} other {# Mitglieder}}",
+    "membersPageRange": "{from}–{to}",
+    "pageOf": "Seite {page} / {total}",
     "membersCountShort": "{count, plural, one {# Mitglied} other {# Mitglieder}}",
     "primaryFio": "FIO · {name}",
     "pilot": "Pilot · {name}",
@@ -255,11 +267,33 @@
     "emptyActivities": "Keine recenten Aktivitäten.",
     "emptyGroups": "Derzeit keine FIO-Gruppen verfügbar.",
     "noMembers": "Keine Mitglieder entsprechen Ihrer Suche.",
+    "loadingMembers": "Wird geladen…",
     "noFioMembers": "Keine Mitglieder für diese Gruppe gelistet.",
     "error": "Dieser Bereich kann derzeit nicht geladen werden.",
     "prev": "← Zurück",
     "next": "Weiter →",
-    "page": "Seite {page}"
+    "page": "Seite {page}",
+    "favorite": "Zu Favoriten hinzufügen",
+    "unfavorite": "Aus Favoriten entfernen",
+    "favoriteError": "Favorit konnte nicht aktualisiert werden.",
+    "showComments": "{count, plural, =0 {Kommentieren} one {# Kommentar anzeigen} other {# Kommentare anzeigen}}",
+    "hideComments": "Kommentare ausblenden",
+    "loadingComments": "Kommentare werden geladen…",
+    "commentsLoadError": "Kommentare konnten nicht geladen werden.",
+    "noComments": "Noch keine Kommentare.",
+    "commentPlaceholder": "Kommentar schreiben…",
+    "commentSubmit": "Veröffentlichen",
+    "commentSubmitting": "Wird veröffentlicht…",
+    "commentError": "Kommentar konnte nicht veröffentlicht werden.",
+    "loginToInteract": "Melde dich an, um zu kommentieren oder Favoriten zu setzen.",
+    "loginLink": "Anmelden",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen.",
+    "joinFio": "Dieser FIO beitreten",
+    "joinFioSubmitting": "Anfrage läuft…",
+    "joinFioSuccess": "Du bist {name} beigetreten.",
+    "joinFioError": "Beitritt zu dieser Gruppe nicht möglich.",
+    "loginToJoinFio": "Melde dich an, um dieser FIO beizutreten.",
+    "alreadyMember": "Du bist Mitglied dieser FIO."
   },
   "wpPages": {
     "readOnSite": "Auf der Website lesen",

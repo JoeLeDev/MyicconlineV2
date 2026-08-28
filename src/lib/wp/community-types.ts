@@ -90,3 +90,24 @@ export type CommunityMember = Omit<WpMemberSummary, "email">;
 export type CommunityMemberProfile = Omit<WpMemberProfile, "email" | "phone"> & {
   phone?: string;
 };
+
+export type WpActivityComment = {
+  id: number;
+  user_id: number;
+  content: { rendered: string };
+  date: string;
+  user_name: string;
+  user_avatar: { thumb: string; full: string };
+};
+
+export type WpFavoriteResult = {
+  favorited: boolean;
+  favorite_count: number;
+};
+
+export type WpJoinFioResult = {
+  success?: boolean;
+  message?: string;
+  fio_id?: number;
+  status?: string;
+};

@@ -1,3 +1,4 @@
+import { ActivityInteractions } from "@/components/community/ActivityInteractions";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { PostContent } from "@/components/blog/PostContent";
@@ -47,18 +48,20 @@ export async function ActivityCard({ activity, locale = "fr" }: Props) {
           </div>
         ) : null}
 
-        <div className="mt-3 flex flex-wrap items-center gap-4 text-xs font-medium text-icc-muted">
-          {activity.comment_count > 0 ? (
-            <span>{t("comments", { count: activity.comment_count })}</span>
-          ) : null}
-          {activity.favorite_count > 0 ? (
-            <span>{t("favorites", { count: activity.favorite_count })}</span>
-          ) : null}
+        <ActivityInteractions
+          activityId={activity.id}
+          initialFavorited={activity.favorited}
+          initialFavoriteCount={activity.favorite_count}
+          initialCommentCount={activity.comment_count}
+          locale={locale}
+        />
+
+        <div className="mt-3">
           <a
             href={activity.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-icc-coral hover:text-icc-coral-deep"
+            className="text-xs font-medium text-icc-coral hover:text-icc-coral-deep"
           >
             {t("viewOnWp")}
           </a>

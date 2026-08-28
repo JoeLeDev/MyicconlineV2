@@ -41,9 +41,10 @@ export function getWpMemberProfileUrl(slug: string): string {
   return wpPath(`/membres/${slug}/`);
 }
 
-export type V2ShortcutId = "blog" | "home";
+export type V2ShortcutId = "blog" | "home" | "myFios";
 
 export const V2_SHORTCUTS: { id: V2ShortcutId; href: string }[] = [
+  { id: "myFios", href: "/espace/mes-fios" },
   { id: "blog", href: "/blog" },
   { id: "home", href: "/" },
 ];
