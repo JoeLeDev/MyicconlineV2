@@ -40,15 +40,13 @@ export default async function GroupsPage({ params }: Props) {
 
   return (
     <div>
-      <section className="bg-icc-ink">
-        <div className="flex h-[60vh] w-full items-center justify-center">
-          <EventBannerImage
-            src={FIO_GROUPS_PAGE_BANNER}
-            alt={t("groupsTitle")}
-            layout="contain"
-            priority
-          />
-        </div>
+      <section className="relative h-[60vh] max-h-[60vh] w-full overflow-hidden bg-icc-ink">
+        <EventBannerImage
+          src={FIO_GROUPS_PAGE_BANNER}
+          alt={t("groupsTitle")}
+          layout="contain"
+          priority
+        />
         <h1 className="sr-only">{t("groupsTitle")}</h1>
         <p className="sr-only">{t("groupsHeroSubtitle")}</p>
       </section>

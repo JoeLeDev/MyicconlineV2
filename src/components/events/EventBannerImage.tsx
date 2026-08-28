@@ -19,7 +19,7 @@ export function EventBannerImage({
     layout === "cover"
       ? "absolute inset-0 h-full w-full object-cover"
       : layout === "contain"
-        ? "max-h-full max-w-full object-contain"
+        ? "block h-full w-full object-contain object-center"
         : "block h-auto w-full";
 
   return (
